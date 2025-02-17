@@ -4,7 +4,7 @@ import { Dashboard, Assessment } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useColorMode } from '../../contexts/ColorModeContext';
 import OrderService from '../../../src/services/wcutBagMakingServices';
-import WcutBagMakingOrderList from './components/WcutBagMakingOrderList';
+import WcutBagMakingOrderList from './components/WCutBagMakingOrderLists';
 
 export default function WcutBagMakingDashboard({ type }) {
     const navigate = useNavigate();
