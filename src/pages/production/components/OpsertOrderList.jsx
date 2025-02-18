@@ -33,14 +33,14 @@ export default function OpsertOrderList({ orders, status, noOrdersFound, onStatu
         toast.error('Failed to update order status');
       });
   };
-  const handleMoveToDelivery = (orderId) => {
-    OrderService.moveToDelivery(orderId)
+  const handleMoveToPackaging = (orderId) => {
+    OrderService.moveToPackaging(orderId)
       .then(() => {
-        toast.success('Order moved to delivery');
+        toast.success('Order moved to packaging');
         onStatusUpdated();
       })
       .catch((error) => {
-        toast.error('Failed to move to delivery');
+        toast.error('Failed to move to packaging');
       });
   };
   return (
@@ -117,9 +117,9 @@ export default function OpsertOrderList({ orders, status, noOrdersFound, onStatu
                           variant="contained"
                           color="primary"
                           size="small"
-                          onClick={() => handleMoveToDelivery(order.orderId)}
+                          onClick={() => handleMoveToPackaging(order.orderId)}
                         >
-                          Move to Delivery
+                          Move to Packaging
                         </Button>
                       )}
                     </TableCell>

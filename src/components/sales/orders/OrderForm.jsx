@@ -323,7 +323,7 @@ export default function OrderForm({ open, onClose, onSubmit, order = null }) {
             </Grid>
             <Grid item xs={12} md={6}>
               <FormInput
-                label="Order Price"
+                label="Order Value"
                 name="orderPrice"
                 value={formData.orderPrice}
                 onChange={handleChange}

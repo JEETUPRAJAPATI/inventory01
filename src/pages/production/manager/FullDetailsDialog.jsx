@@ -73,6 +73,18 @@ export default function FullDetailsDialog({ open, onClose, record }) {
 
                     <Grid item xs={12} sm={6}>
                         <Typography variant="body1">
+                            <strong>Progress:</strong> {productionManager.production_details?.progress || 'N/A'}
+                        </Typography>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                        <Typography variant="body1">
+                            <strong>Remarks:</strong> {productionManager.production_details?.remarks || 'N/A'}
+                        </Typography>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                        <Typography variant="body1">
                             <strong>Roll Size:</strong> {productionManager.production_details?.roll_size || 'N/A'}
                         </Typography>
                     </Grid>

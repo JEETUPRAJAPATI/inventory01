@@ -72,6 +72,8 @@ export const addPackage = async (packageData) => {
 };
 
 export const createPackage = async (payload) => {
+
+    console.log('payload data is ', payload)
     try {
         const response = await api.post(`${PACKAGE_API_URL}/order/addOrder/${payload.order_id}`, payload);
         return response.data;

@@ -17,18 +17,19 @@ export default function UpdateDetailsDialog({ open, onClose, record, type, order
     console.log('record list', record);
 
     if (record && record.production_details) {
+      // Only set form data if production_details exists and contains valid data
       setFormData({
-        type: type, // Ensure type is included
+        type: type || '', // Ensure type is included
         roll_size: record.production_details.roll_size || '',
         cylinder_size: record.production_details.cylinder_size || '',
         quantity_kgs: record.production_details.quantity_kgs || '',
         quantity_rolls: record.production_details.quantity_rolls || '',
-        remarks: record.remarks || '', // assuming remarks is at the same level as production_details
+        remarks: record.production_details.remarks || '', // assuming remarks is at the same level as production_details
       });
     } else {
-      // Set empty values if production_details is null
+      // Reset the form data if production_details is null or missing
       setFormData({
-        type: type, // Ensure type is included even if empty
+        type: type || '', // Ensure type is included even if empty
         roll_size: '',
         cylinder_size: '',
         quantity_kgs: '',
@@ -36,7 +37,7 @@ export default function UpdateDetailsDialog({ open, onClose, record, type, order
         remarks: '',
       });
     }
-  }, [record, type]); // Include type as a dependency
+  }, [record, type]); // Include record and type as dependencies
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,7 +54,15 @@ export default function UpdateDetailsDialog({ open, onClose, record, type, order
     console.log('order id', orderId);
 
     try {
+      // Send the updated record to the backend
       const updatedRecord = await productionService.updateProductionRecord(formData, orderId);
+
+      // Check if the production manager is null in the response
+      if (updatedRecord.data.production_manager === null) {
+        toast.error('Production Manager data is missing');
+        return;
+      }
+
       toast.success('Record updated successfully');
       onClose(); // Close the dialog after success
     } catch (error) {

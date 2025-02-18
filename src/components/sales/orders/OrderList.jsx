@@ -92,7 +92,7 @@ export default function OrderList({ orders, refreshOrders, loading }) {
                 <TableCell>Job Name</TableCell>
                 <TableCell>Bag Type</TableCell>
                 <TableCell>Quantity</TableCell>
-                <TableCell>Order Price</TableCell>
+                <TableCell>Order Value</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>

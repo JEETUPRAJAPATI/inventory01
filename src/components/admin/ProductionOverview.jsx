@@ -31,7 +31,9 @@ export default function ProductionOverview() {
             pendingOrders: flexo.data.filter(order => order.status === 'pending').length || 0,
             inProgress: flexo.data.filter(order => order.status === 'in_progress').length || 0,
             completed: flexo.data.filter(order => order.status === 'completed').length || 0,
-            efficiency: flexo.data.efficiency || 'N/A',
+            efficiency: flexo.data.length > 0
+              ? ((flexo.data.filter(order => order.status === 'completed').length / flexo.data.length) * 100).toFixed(2) + '%'
+              : 'N/A',
           },
           {
             id: 2,
@@ -39,7 +41,9 @@ export default function ProductionOverview() {
             pendingOrders: opsert.data.filter(order => order.status === 'pending').length || 0,
             inProgress: opsert.data.filter(order => order.status === 'in_progress').length || 0,
             completed: opsert.data.filter(order => order.status === 'completed').length || 0,
-            efficiency: opsert.efficiency || 'N/A',
+            efficiency: opsert.data.length > 0
+              ? ((opsert.data.filter(order => order.status === 'completed').length / opsert.data.length) * 100).toFixed(2) + '%'
+              : 'N/A',
           },
           {
             id: 3,
@@ -47,7 +51,9 @@ export default function ProductionOverview() {
             pendingOrders: dcut.data.filter(order => order.status === 'pending').length || 0,
             inProgress: dcut.data.filter(order => order.status === 'in_progress').length || 0,
             completed: dcut.data.filter(order => order.status === 'completed').length || 0,
-            efficiency: dcut.efficiency || 'N/A',
+            efficiency: dcut.data.length > 0
+              ? ((dcut.data.filter(order => order.status === 'completed').length / dcut.data.length) * 100).toFixed(2) + '%'
+              : 'N/A',
           },
           {
             id: 4,
@@ -55,7 +61,9 @@ export default function ProductionOverview() {
             pendingOrders: wcut.data.filter(order => order.status === 'pending').length || 0,
             inProgress: wcut.data.filter(order => order.status === 'in_progress').length || 0,
             completed: wcut.data.filter(order => order.status === 'delivered').length || 0,
-            efficiency: wcut.efficiency || 'N/A',
+            efficiency: wcut.data.length > 0
+              ? ((wcut.data.filter(order => order.status === 'delivered').length / wcut.data.length) * 100).toFixed(2) + '%'
+              : 'N/A',
           },
         ];
 

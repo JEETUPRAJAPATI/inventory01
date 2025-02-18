@@ -10,26 +10,14 @@ import {
   Legend,
 } from 'recharts';
 
-const data = [
-  { name: 'Jan', revenue: 4000, orders: 240 },
-  { name: 'Feb', revenue: 3000, orders: 198 },
-  { name: 'Mar', revenue: 2000, orders: 167 },
-  { name: 'Apr', revenue: 2780, orders: 189 },
-  { name: 'May', revenue: 1890, orders: 145 },
-  { name: 'Jun', revenue: 2390, orders: 178 },
-];
+export default function ChartCard({ data }) {
 
-export default function ChartCard() {
+  console.log('data is', data);
   return (
     <Card>
-      <CardHeader 
-        title="Revenue & Orders Overview" 
-        sx={{ 
-          '& .MuiCardHeader-title': {
-            fontSize: '1.25rem',
-            fontWeight: 600
-          }
-        }}
+      <CardHeader
+        title="Revenue & Orders Overview"
+        sx={{ '& .MuiCardHeader-title': { fontSize: '1.25rem', fontWeight: 600 } }}
       />
       <CardContent>
         <Box sx={{ width: '100%', height: 400 }}>

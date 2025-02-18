@@ -112,6 +112,7 @@ export default function RawMaterials() {
       });
 
       setFormOpen(false);
+      fetchCategories();
       toast.success("Category added successfully");
     } catch (error) {
       console.error("Error adding category:", error);

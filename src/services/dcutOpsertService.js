@@ -23,7 +23,7 @@ const OrderService = {
         }
     },
 
-    moveToDelivery: async (orderId) => {
+    moveToPackaging: async (orderId) => {
         try {
             const response = await api.post(`${API_BASE_URL}/orders/${orderId}/move-to-delivery`);
             return response.data;

@@ -100,11 +100,11 @@ export default function FlexoOrderList({ status = 'pending', bagType }) {
   const handleMoveToBagMaking = (orderId) => {
     OrderService.moveToBagMaking(orderId)
       .then(() => {
-        toast.success('Order moved to delivery');
+        toast.success('Order moved to packaging');
         fetchOrders();
       })
       .catch((error) => {
-        toast.error('Failed to move to delivery');
+        toast.error('Failed to move to packaging');
       });
   };
 

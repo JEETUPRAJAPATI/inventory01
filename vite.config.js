@@ -8,6 +8,7 @@ export default defineConfig({
     // Add server configuration to prevent timeout issues
     hmr: {
       timeout: 5000
+      // 32492961
     }
   }
 })

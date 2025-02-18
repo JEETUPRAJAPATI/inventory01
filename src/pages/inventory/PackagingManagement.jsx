@@ -106,7 +106,8 @@ export default function PackagingManagement() {
   // Handle order selection
   const handleOrderChange = (e) => {
     const selectedOrderId = e.target.value; // Get the selected orderId
-    const order = orders.find((o) => o.orderId === selectedOrderId); // Match with orderId
+    console.log(selectedOrderId);
+    const order = orders.find((o) => o.order_id === selectedOrderId); // Match with order_id
     setSelectedOrder(order); // Set the selected order
 
     if (order) {
@@ -122,14 +123,13 @@ export default function PackagingManagement() {
     if (!selectedOrder) return;
     setPackages({
       ...packages,
-      [selectedOrder.orderId]: [
-        ...packages[selectedOrder.orderId],
+      [selectedOrder.order_id]: [
+        ...(packages[selectedOrder.order_id] || []),  // Ensure packages exist for the order
         { ...initialPackageState },
       ],
     });
   };
 
-  // Handle package input changes
   const handlePackageChange = (orderId, index, field, value) => {
     const updatedPackages = [...packages[orderId]];
     updatedPackages[index][field] = value;
@@ -138,7 +138,6 @@ export default function PackagingManagement() {
       [orderId]: updatedPackages,
     });
   };
-
   // Save packages using the service
   const handleSavePackages = async () => {
     if (!selectedOrder) {
@@ -148,8 +147,8 @@ export default function PackagingManagement() {
 
     try {
       const payload = {
-        order_id: selectedOrder.orderId,
-        package_details: packages[selectedOrder.orderId].map((pkg) => ({
+        order_id: selectedOrder.order_id, // Use the correct field for order_id
+        package_details: packages[selectedOrder.order_id].map((pkg) => ({
           length: parseFloat(pkg.length),
           width: parseFloat(pkg.width),
           height: parseFloat(pkg.height),
@@ -166,27 +165,24 @@ export default function PackagingManagement() {
     }
   };
 
-  const handleCancel = () => {
-    setSelectedOrder(null);
-    setPackages({});
-    setAddPackageOpen(false);
-    setEditPackageOpen(false);
-  };
 
+
+  // Handle order view and fetching packages
   const handleViewPackages = async (order) => {
+    console.log('order view', order);
     setSelectedOrder(order);
     setPackageListOpen(true);
 
     try {
-      const { packages } = await PackageService.fetchPackagesByOrderId(order.orderId); // Deconstruct to get packages
+      const { packages } = await PackageService.fetchPackagesByOrderId(order.order_id); // Ensure the API call uses the correct field
       console.log('Fetched order packages:', packages);
-      setPackages(packages);  // Set only the package data
+      setPackages(packages);  // Set the packages state correctly
     } catch (error) {
       console.error('Error fetching packages:', error);
     }
   };
 
-
+  // Handle package editing
   const handleEditPackage = (pkg) => {
     setSelectedPackage(pkg);
     setNewPackage({
@@ -197,6 +193,7 @@ export default function PackagingManagement() {
     });
     setEditPackageOpen(true);
   };
+
 
   const handleUpdatePackage = async () => {
     if (!selectedPackage || !selectedOrder) {
@@ -219,8 +216,8 @@ export default function PackagingManagement() {
     setPackages(updatedPackages);
 
     try {
-      await PackageService.updatePackage(selectedOrder.orderId, selectedPackage._id, updatedPackage);
-      const fetchedPackages = await PackageService.fetchPackagesByOrderId(selectedOrder.orderId);
+      await PackageService.updatePackage(selectedOrder.order_id, selectedPackage._id, updatedPackage);
+      const fetchedPackages = await PackageService.fetchPackagesByOrderId(selectedOrder.order_id);
       console.log('Refresh Data Fetched order list', fetchedPackages);
       setPackages(fetchedPackages || []);
       toast.success('Package updated successfully');
@@ -230,16 +227,16 @@ export default function PackagingManagement() {
       console.error('Error updating package:', error);
     }
   };
-
+  // Create new package for the selected order
   const createPackages = async () => {
     console.log('new package data', newPackage);
-    console.log('order id', selectedOrder);
+    console.log('order id', selectedOrder.order_id);
 
     // Prepare the payload to include the orderId and new package data
     const payload = {
-      order_id: selectedOrder.orderId, // Add orderId to the payload
+      order_id: selectedOrder.order_id, // Correct order_id usage
       package_details: [{
-        length: parseFloat(newPackage.length),  // Ensure numbers are passed
+        length: parseFloat(newPackage.length),
         width: parseFloat(newPackage.width),
         height: parseFloat(newPackage.height),
         weight: parseFloat(newPackage.weight),
@@ -250,12 +247,11 @@ export default function PackagingManagement() {
       // Call the service method with the prepared payload
       const response = await PackageService.createPackage(payload);
       console.log('Package added successfully:', response);
-      const fetchedPackages = await PackageService.fetchPackagesByOrderId(selectedOrder.orderId);
-      console.log('Refresh Data Fetched order list', fetchedPackages);
-      setPackages(fetchedPackages || []);
+      const { packages } = await PackageService.fetchPackagesByOrderId(selectedOrder.order_id);
+      console.log('Refresh Data Fetched order list', packages);
+      setPackages(packages || []); // Update packages with the fetched data
       handleCloseDialog();  // Close the dialog on success
     } catch (error) {
-      // Log error in case the request fails
       console.error('Failed to add package:', error);
       alert(`Failed to add package: ${error.message || 'Unknown error'}`);
     }
@@ -276,7 +272,12 @@ export default function PackagingManagement() {
   };
 
 
-
+  const handleCancel = () => {
+    setSelectedOrder(null);
+    setPackages({});
+    setAddPackageOpen(false);
+    setEditPackageOpen(false);
+  };
 
 
   const generatePackageLabel = (pkg, salesOrder) => {
@@ -430,7 +431,15 @@ export default function PackagingManagement() {
                     <TableCell>
                       <Chip
                         label={order.status.toUpperCase()}
-                        color={order.status === 'ready' ? 'success' : 'warning'}
+                        color={
+                          order.status === 'pending'
+                            ? 'warning'
+                            : order.status === 'delivered'
+                              ? 'success'
+                              : order.status === 'cancelled'
+                                ? 'error'
+                                : 'default' // fallback color
+                        }
                         size="small"
                       />
                     </TableCell>
@@ -534,7 +543,7 @@ export default function PackagingManagement() {
       >
         <Box sx={modalStyle}>
           <Typography variant="h6" gutterBottom>
-            Update Delivery Status
+            Update Packaging Status
           </Typography>
           <FormControl fullWidth sx={{ mt: 2 }}>
             <InputLabel>Status</InputLabel>
@@ -694,7 +703,7 @@ export default function PackagingManagement() {
                 select
                 label="Select Order"
                 fullWidth
-                value={selectedOrder?.orderId || ''}
+                value={selectedOrder?.order_id || ''}  // Make sure it matches 'order_id'
                 onChange={handleOrderChange}
                 SelectProps={{
                   native: true,
@@ -702,9 +711,11 @@ export default function PackagingManagement() {
               >
                 <option value="">Select an order</option>
                 {orders.map((order) => (
-                  <option key={order.orderId} value={order.orderId}>
-                    {order.orderId} - {order.customerName}
-                  </option>
+                  order.order && (  // Check if 'order' exists
+                    <option key={order._id} value={order.order_id}>
+                      {order.order_id} - {order.order.customerName}
+                    </option>
+                  )
                 ))}
               </TextField>
             </Grid>
@@ -716,15 +727,16 @@ export default function PackagingManagement() {
                   <Typography variant="subtitle2" gutterBottom>
                     Order Details
                   </Typography>
-                  <Typography variant="body2">Customer: {selectedOrder.customerName}</Typography>
-                  <Typography variant="body2">Dimensions: {selectedOrder.totalDimensions}</Typography>
-                  <Typography variant="body2">Weight: {selectedOrder.totalWeight} kg</Typography>
+                  <Typography variant="body2">Customer: {selectedOrder?.order?.customerName || 'N/A'}</Typography>
+                  <Typography variant="body2">Dimensions: {selectedOrder?.order?.totalDimensions || 'N/A'}</Typography>
+                  <Typography variant="body2">Weight: {selectedOrder?.totalWeight || 'N/A'} kg</Typography>
+
                 </Box>
               </Grid>
             )}
 
             {/* Package List for Selected Order */}
-            {selectedOrder && packages[selectedOrder.orderId] && packages[selectedOrder.orderId].map((pkg, index) => (
+            {selectedOrder && packages[selectedOrder.order_id] && packages[selectedOrder.order_id].map((pkg, index) => (
               <Grid item xs={12} key={index}>
                 <Box sx={{ border: '1px solid #ddd', p: 2, borderRadius: 1 }}>
                   <Typography variant="h6" gutterBottom>
@@ -735,7 +747,7 @@ export default function PackagingManagement() {
                       <TextField
                         label="Length (cm)"
                         value={pkg.length}
-                        onChange={(e) => handlePackageChange(selectedOrder.orderId, index, 'length', e.target.value)}
+                        onChange={(e) => handlePackageChange(selectedOrder.order_id, index, 'length', e.target.value)}
                         fullWidth
                       />
                     </Grid>
@@ -743,7 +755,7 @@ export default function PackagingManagement() {
                       <TextField
                         label="Width (cm)"
                         value={pkg.width}
-                        onChange={(e) => handlePackageChange(selectedOrder.orderId, index, 'width', e.target.value)}
+                        onChange={(e) => handlePackageChange(selectedOrder.order_id, index, 'width', e.target.value)}
                         fullWidth
                       />
                     </Grid>
@@ -751,7 +763,7 @@ export default function PackagingManagement() {
                       <TextField
                         label="Height (cm)"
                         value={pkg.height}
-                        onChange={(e) => handlePackageChange(selectedOrder.orderId, index, 'height', e.target.value)}
+                        onChange={(e) => handlePackageChange(selectedOrder.order_id, index, 'height', e.target.value)}
                         fullWidth
                       />
                     </Grid>
@@ -759,7 +771,7 @@ export default function PackagingManagement() {
                       <TextField
                         label="Weight (kg)"
                         value={pkg.weight}
-                        onChange={(e) => handlePackageChange(selectedOrder.orderId, index, 'weight', e.target.value)}
+                        onChange={(e) => handlePackageChange(selectedOrder.order_id, index, 'weight', e.target.value)}
                         fullWidth
                       />
                     </Grid>

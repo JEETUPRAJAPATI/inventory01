@@ -120,7 +120,7 @@ export default function WCutBagMakingOrderLists({ orders, status, noOrdersFound,
                                                     size="small"
                                                     onClick={() => handleMoveToDelivery(order.orderId)}
                                                 >
-                                                    Move to Delivery
+                                                    Move to Packaging
                                                 </Button>
                                             )}
                                         </TableCell>
