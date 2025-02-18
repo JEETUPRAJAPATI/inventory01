@@ -4,7 +4,7 @@ import {
   TableCell, TableContainer, TableHead, TableRow, Chip, Typography
 } from '@mui/material';
 import flexoService from '../../services/flexoService.js';
-import OrderService from '../../services/adminService.js';
+import OrderService from '../../services/productionManagerService.js';
 import DcutOpsert from '../../services/dcutOpsertService.js';
 
 export default function ProductionOverview() {

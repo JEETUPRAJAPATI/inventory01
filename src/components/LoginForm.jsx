@@ -32,6 +32,7 @@ export default function LoginForm() {
         user.operatorType
       );
       toast.success('Login successful!');
+      console.log('redirect path', redirectPath)
       navigate(redirectPath);
     } catch (error) {
       toast.error(error.message || 'Login failed');

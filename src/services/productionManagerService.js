@@ -51,12 +51,58 @@ const getFullOrderDetails = async (orderId) => {
         console.error('Error fetching full order details:', error);
         throw error;
     }
-}
+};
+// W-Cut Production Management
+const getWCutFlexo = async (params) => {
+    try {
+        const response = await api.get('production/manager/w-cut/flexo', { params });
+        return response.data;
+    } catch (error) {
+        console.error('API Error:', error);
+        throw new Error(error.response?.data?.message || 'Failed to fetch W-Cut Flexo data');
+    }
+};
+
+const getWCutBagMaking = async (params) => {
+    try {
+        const response = await api.get('production/manager/w-cut/bag-making', { params });
+        return response.data;
+    } catch (error) {
+        console.error('API Error:', error);
+        throw new Error(error.response?.data?.message || 'Failed to fetch W-Cut Bag Making data');
+    }
+};
+
+// D-Cut Production Management
+const getDCutOpsert = async (params) => {
+    try {
+        const response = await api.get('production/manager/d-cut/opsert', { params });
+        return response.data;
+    } catch (error) {
+        console.error('API Error:', error);
+        throw new Error(error.response?.data?.message || 'Failed to fetch D-Cut Opsert data');
+    }
+};
+
+const getDCutBagMaking = async (params) => {
+    try {
+        const response = await api.get('production/manager/d-cut/bag-making', { params });
+        return response.data;
+    } catch (error) {
+        console.error('API Error:', error);
+        throw new Error(error.response?.data?.message || 'Failed to fetch D-Cut Bag Making data');
+    }
+};
+
 
 export default {
     getWcutOrders,
     getDcutOrders,
     updateProductionRecord,
     getProductionRecord,
+    getWCutFlexo,
+    getWCutBagMaking,
+    getDCutOpsert,
+    getDCutBagMaking,
     getFullOrderDetails
 };
