@@ -55,10 +55,19 @@ const deleteOrder = async (productId) => {
     }
 };
 
+const sendInvoiceEmail = async (invoice) => {
+    try {
+        const response = await api.post(`${API_URL}/send-invoice`, { invoice });
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || 'Failed to send invoice');
+    }
+};
 export default {
     getInvoices,
     getProductById,
     addProduct,
     updateOrder,
+    sendInvoiceEmail,
     deleteOrder,
 };

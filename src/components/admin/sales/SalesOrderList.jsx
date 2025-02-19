@@ -59,7 +59,7 @@ export default function SalesOrderList({ onFilterChange }) {
           <TableHead>
             <TableRow>
               <TableCell>Order ID</TableCell>
-              <TableCell>Customer Name</TableCell>
+              <TableCell>Customer Name dsda</TableCell>
               <TableCell>Job Name</TableCell>
               <TableCell>Bag Type</TableCell>
               <TableCell>Quantity</TableCell>

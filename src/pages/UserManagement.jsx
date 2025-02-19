@@ -30,6 +30,10 @@ export default function UserManagement() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  // Pagination states
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [filters, setFilters] = useState({
     search: '',
     status: 'all',
@@ -40,13 +44,13 @@ export default function UserManagement() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await adminService.getUsers(filters);
-      console.log('Users response:', response); // Debug log
+      const response = await adminService.getUsers(); // Fetch all users without filters
       setUsers(response?.data || []);
+      setFilteredUsers(response?.data || []); // Initialize filtered users
     } catch (error) {
-      console.error('Error fetching users:', error); // Debug log
       toast.error('Error fetching users data');
       setUsers([]);
+      setFilteredUsers([]);
     } finally {
       setLoading(false);
     }
@@ -54,16 +58,36 @@ export default function UserManagement() {
 
   useEffect(() => {
     fetchUsers();
-  }, [filters]);
+  }, []);
+
+  useEffect(() => {
+    let updatedUsers = users;
+
+    if (filters.search) {
+      updatedUsers = updatedUsers.filter((user) =>
+        user.fullName.toLowerCase().includes(filters.search.toLowerCase()) ||
+        user.email.toLowerCase().includes(filters.search.toLowerCase()) ||
+        user.mobileNumber.includes(filters.search)
+      );
+    }
+
+    if (filters.status !== 'all') {
+      updatedUsers = updatedUsers.filter((user) => user.status === filters.status);
+    }
+
+    setFilteredUsers(updatedUsers);
+    setPage(0); // Reset to first page when filters change
+  }, [filters, users]);
+
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({
       ...prev,
       [name]: value,
-      page: 1, // Reset to page 1 when filters change
     }));
   };
+
 
   const handleAdd = () => {
     setSelectedUser(null);
@@ -120,6 +144,19 @@ export default function UserManagement() {
       status: 'all',
     });
   };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  // Handle rows per page change
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // Reset to first page
+  };
+
+  // Get paginated users
+  const paginatedUsers = filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <>
@@ -178,15 +215,12 @@ export default function UserManagement() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.map((user) => (
+              {paginatedUsers.map((user) => (
                 <TableRow key={user._id || user.id}>
                   <TableCell>{user.fullName}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.mobileNumber}</TableCell>
-                  <TableCell>
-                    {user.registrationType.charAt(0).toUpperCase() +
-                      user.registrationType.slice(1)}
-                  </TableCell>
+                  <TableCell>{user.registrationType}</TableCell>
                   <TableCell>
                     <Chip
                       label={user.status}
@@ -195,18 +229,10 @@ export default function UserManagement() {
                     />
                   </TableCell>
                   <TableCell>
-                    <IconButton
-                      size="small"
-                      color="primary"
-                      onClick={() => handleEdit(user._id)}
-                    >
+                    <IconButton size="small" color="primary" onClick={() => handleEdit(user._id)}>
                       <Edit />
                     </IconButton>
-                    <IconButton
-                      size="small"
-                      color="error"
-                      onClick={() => handleDelete(user)}
-                    >
+                    <IconButton size="small" color="error" onClick={() => handleDelete(user)}>
                       <Delete />
                     </IconButton>
                   </TableCell>
@@ -215,6 +241,15 @@ export default function UserManagement() {
             </TableBody>
           </Table>
         </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredUsers.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </Card>
 
       <UserForm

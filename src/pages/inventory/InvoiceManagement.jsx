@@ -16,6 +16,7 @@ import { PictureAsPdf, Print } from '@mui/icons-material';
 import toast from 'react-hot-toast';
 import { generateInvoicePDF } from '../../utils/pdfGenerator';
 import invoiceService from '../../services/invoiceService'; // Assuming you have an API service for invoices
+import { MailOutline } from '@mui/icons-material';
 
 const InvoiceManagement = () => {
   const [invoices, setInvoices] = useState([]);
@@ -44,19 +45,16 @@ const InvoiceManagement = () => {
 
   // Handle downloading PDF for an invoice
   const handleDownloadPDF = (invoice) => {
+    console.log('Invoice details:', invoice);
+
     try {
-      generateInvoicePDF({
-        ...invoice,
-        invoiceNumber: invoice.id,
-        subtotal: invoice.amount,
-        gst: invoice.amount * 0.18,
-        total: invoice.amount * 1.18,
-      });
+      generateInvoicePDF(invoice);
       toast.success('Invoice downloaded successfully');
     } catch (error) {
       toast.error('Failed to download invoice');
     }
   };
+
 
   // Handle adding new invoice
   const handleAddInvoice = () => {
@@ -92,6 +90,16 @@ const InvoiceManagement = () => {
       toast.error('Failed to save invoice');
     }
   };
+
+  const handleSendInvoice = async (invoice) => {
+    try {
+      await invoiceService.sendInvoiceEmail(invoice.invoice_id);
+      toast.success('Invoice sent successfully');
+    } catch (error) {
+      toast.error('Failed to send invoice');
+    }
+  };
+
 
   // Handle delete confirmation
   const handleDeleteConfirm = async () => {
@@ -184,9 +192,9 @@ const InvoiceManagement = () => {
                     <IconButton
                       size="small"
                       color="primary"
-                      onClick={() => toast.success('Invoice printed successfully')}
+                      onClick={() => handleSendInvoice(invoice)}
                     >
-                      <Print />
+                      <MailOutline />
                     </IconButton>
                     <IconButton
                       size="small"
@@ -202,6 +210,8 @@ const InvoiceManagement = () => {
                     >
                       {/* Delete icon */}
                     </IconButton>
+
+
                   </TableCell>
                 </TableRow>
               ))}

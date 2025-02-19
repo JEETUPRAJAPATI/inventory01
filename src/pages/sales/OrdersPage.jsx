@@ -7,7 +7,6 @@ import toast from 'react-hot-toast';
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   // Metrics state
   const [totalOrders, setTotalOrders] = useState(0);
@@ -17,15 +16,13 @@ export default function OrdersPage() {
 
   // Function to fetch all orders
   const fetchOrders = async () => {
-    setLoading(true);
+
     try {
       const response = await orderService.getOrders();
       setOrders(response.data);
     } catch (error) {
       toast.error('Failed to fetch orders');
       console.error('Error fetching orders:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -63,7 +60,7 @@ export default function OrdersPage() {
         <SummaryCard title="Total Amount" value={`₹${totalAmount.toLocaleString()}`} color="info" />
       </Grid>
       <Grid item xs={12}>
-        <OrderList orders={orders} refreshOrders={fetchOrders} loading={loading} />
+        <OrderList orders={orders} refreshOrders={fetchOrders} />
       </Grid>
     </Grid>
   );

@@ -11,6 +11,10 @@ import {
   Typography,
   Button,
   Chip,
+  TextField,
+  TablePagination,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import { Add, Edit, Delete, QrCode } from '@mui/icons-material';
 import OrderForm from './OrderForm';
@@ -20,13 +24,36 @@ import { getStatusColor } from '../../../utils/statusColors';
 import toast from 'react-hot-toast';
 import orderService from '/src/services/orderService.js';
 
-export default function OrderList({ orders, refreshOrders, loading }) {
+export default function OrderList({ orders, refreshOrders }) {
   const [formOpen, setFormOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [orderToDelete, setOrderToDelete] = useState(null);
   const [qrDialogOpen, setQrDialogOpen] = useState(false);
   const [selectedQrOrder, setSelectedQrOrder] = useState(null);
+
+  // Search and filter states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+
+  // Pagination states
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  // Filtered and searched orders
+  const filteredOrders = orders
+    .filter(order =>
+      order.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.jobName.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .filter(order => (statusFilter ? order.status === statusFilter : true));
+
+  // Pagination handlers
+  const handleChangePage = (event, newPage) => setPage(newPage);
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   const handleAdd = () => {
     setSelectedOrder(null);
@@ -79,9 +106,32 @@ export default function OrderList({ orders, refreshOrders, loading }) {
       <Card>
         <div className="flex justify-between items-center p-4">
           <Typography variant="h6">Orders</Typography>
-          <Button variant="contained" color="primary" startIcon={<Add />} onClick={handleAdd}>
-            Add Order
-          </Button>
+          <div className="flex gap-3">
+            {/* Search Box */}
+            <TextField
+              label="Search Orders"
+              variant="outlined"
+              size="small"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+            />
+
+            {/* Status Filter */}
+            <Select
+              value={statusFilter}
+              onChange={e => setStatusFilter(e.target.value)}
+              displayEmpty
+              size="small"
+            >
+              <MenuItem value="">All Status</MenuItem>
+              <MenuItem value="pending">Pending</MenuItem>
+              <MenuItem value="completed">Completed</MenuItem>
+              <MenuItem value="cancelled">Cancelled</MenuItem>
+            </Select>
+            <Button variant="contained" color="primary" startIcon={<Add />} onClick={handleAdd}>
+              Add Order
+            </Button>
+          </div>
         </div>
         <TableContainer>
           <Table>
@@ -98,40 +148,50 @@ export default function OrderList({ orders, refreshOrders, loading }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={8}>Loading...</TableCell>
-                </TableRow>
-              ) : (
-                orders.map((order) => (
-                  <TableRow key={order._id}>
-                    <TableCell>{order.orderId}</TableCell>
-                    <TableCell>{order.customerName}</TableCell>
-                    <TableCell>{order.jobName}</TableCell>
-                    <TableCell>{order.bagDetails.type}</TableCell>
-                    <TableCell>{order.quantity}</TableCell>
-                    <TableCell>{order.orderPrice}</TableCell>
-                    <TableCell>
-                      <Chip
-                        label={order.status.toUpperCase()}
-                        color={getStatusColor(order.status)}
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <IconButton size="small" color="primary" onClick={() => handleEdit(order)}>
-                        <Edit />
-                      </IconButton>
-                      <IconButton size="small" color="error" onClick={() => handleDelete(order)}>
-                        <Delete />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
+              {
+                filteredOrders
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((order) => (
+                    <TableRow key={order._id}>
+                      <TableCell>{order.orderId}</TableCell>
+                      <TableCell>{order.customerName}</TableCell>
+                      <TableCell>{order.jobName}</TableCell>
+                      <TableCell>{order.bagDetails.type}</TableCell>
+                      <TableCell>{order.quantity}</TableCell>
+                      <TableCell>{order.orderPrice}</TableCell>
+                      <TableCell>
+                        <Chip
+                          label={order.status.toUpperCase()}
+                          color={getStatusColor(order.status)}
+                          size="small"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <IconButton size="small" color="primary" onClick={() => handleEdit(order)}>
+                          <Edit />
+                        </IconButton>
+                        <IconButton size="small" color="error" onClick={() => handleDelete(order)}>
+                          <Delete />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))
+              }
             </TableBody>
+
           </Table>
         </TableContainer>
+
+        {/* Pagination */}
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredOrders.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </Card>
 
       <OrderForm

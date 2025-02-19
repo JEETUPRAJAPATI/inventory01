@@ -15,6 +15,7 @@ import {
   IconButton,
   Box,
   MenuItem,
+  TablePagination,
 } from '@mui/material';
 import adminService from '../../services/adminService';
 import toast from 'react-hot-toast';
@@ -33,6 +34,9 @@ export default function AdminSalesOverview() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [orderToDelete, setOrderToDelete] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
 
   const fetchOrders = async () => {
     try {
@@ -51,20 +55,15 @@ export default function AdminSalesOverview() {
     fetchOrders();
   }, [filters]);
 
+
+
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleResetFilters = () => {
-    setFilters({
-      search: '',
-      status: '',
-      type: 'all',
-    });
+    setFilters({ search: '', status: '', type: 'all' });
   };
 
   const handleDelete = async (orderId) => {
@@ -109,11 +108,21 @@ export default function AdminSalesOverview() {
     }
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   const totalOrders = orders.length;
   const pendingOrders = orders.filter((order) => order.status === 'pending').length;
   const completedOrders = orders.filter((order) => order.status === 'completed').length;
   const totalAmount = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
 
+  const filteredOrders = orders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   return (
     <Box sx={{ mb: 3 }}>
       <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mb: 3 }}>
@@ -170,7 +179,7 @@ export default function AdminSalesOverview() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {orders.map((order) => (
+                {filteredOrders.map((order) => (
                   <TableRow key={order._id}>
                     <TableCell>{order.orderId}</TableCell>
                     <TableCell>{order.customerName || 'N/A'}</TableCell>
@@ -216,6 +225,17 @@ export default function AdminSalesOverview() {
             </Table>
           )}
         </TableContainer>
+
+        {/* Pagination */}
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={orders.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </Card>
 
       <OrderForm
