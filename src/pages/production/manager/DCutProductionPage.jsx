@@ -1,5 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
+import {
+  Box,
+  Typography,
+  CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  Chip,
+  TablePagination,
+  TextField,
+  Select,
+  MenuItem,
+} from '@mui/material';
 import { Edit, Visibility } from '@mui/icons-material';
 import orderService from '/src/services/productionManagerService.js';
 import UpdateDetailsDialog from './UpdateDetailsDialog';
@@ -8,16 +25,24 @@ import FullDetailsDialog from './FullDetailsDialog';
 export default function DCutProductionPage() {
   function ProductionTable({ type }) {
     const [records, setRecords] = useState([]);
+    const [filteredRecords, setFilteredRecords] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [fullDetailsDialogOpen, setFullDetailsDialogOpen] = useState(false);
-    const [orderIdForDialog, setOrderIdForDialog] = useState(null); // To store the selected orderId
+    const [orderIdForDialog, setOrderIdForDialog] = useState(null);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState('');
 
-    // Fetch records on mount
     useEffect(() => {
       fetchRecords();
     }, []);
+
+    useEffect(() => {
+      filterRecords();
+    }, [searchQuery, statusFilter, records]);
 
     const fetchRecords = async () => {
       try {
@@ -25,26 +50,47 @@ export default function DCutProductionPage() {
         const response = await orderService.getDcutOrders();
         if (response.data && Array.isArray(response.data)) {
           setRecords(response.data);
+          setFilteredRecords(response.data);
         } else {
-          console.error('Invalid response format:', response.data);
           setRecords([]);
+          setFilteredRecords([]);
         }
       } catch (error) {
         console.error('Error fetching records:', error);
         setRecords([]);
+        setFilteredRecords([]);
       } finally {
         setLoading(false);
       }
     };
 
-    const handleViewFullDetails = async (orderId) => {
-      try {
-        const fullDetails = await orderService.getFullOrderDetails(orderId);
-        setSelectedRecord(fullDetails.data);
-        setFullDetailsDialogOpen(true);
-      } catch (error) {
-        console.error('Error fetching full details:', error);
+    const filterRecords = () => {
+      let filtered = records;
+
+      if (searchQuery) {
+        filtered = filtered.filter(record =>
+          record.jobName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          record.orderId.toString().includes(searchQuery)
+        );
       }
+
+      if (statusFilter) {
+        filtered = filtered.filter(record => record.productionManager?.status === statusFilter);
+      }
+
+      setFilteredRecords(filtered);
+    };
+
+    const handleSearchChange = (event) => {
+      setSearchQuery(event.target.value);
+    };
+
+    const handleStatusFilterChange = (event) => {
+      setStatusFilter(event.target.value);
+    };
+
+    const handleChangePage = (event, newPage) => {
+      setPage(newPage);
     };
 
     const handleUpdate = (orderId) => {
@@ -61,28 +107,50 @@ export default function DCutProductionPage() {
           console.error('Error fetching production record:', error);
         });
     };
+    const handleChangeRowsPerPage = (event) => {
+      setRowsPerPage(parseInt(event.target.value, 10));
+      setPage(0);
+    };
 
-    const handleSave = async (updatedRecord) => {
+    const handleViewFullDetails = async (orderId) => {
       try {
-        const response = await orderService.updateDcutOrder(updatedRecord); // Assuming you have an update method
-        if (response.data) {
-          setRecords((prevRecords) =>
-            prevRecords.map((record) =>
-              record.orderId === updatedRecord.orderId ? updatedRecord : record
-            )
-          );
-          setDialogOpen(false); // Close the dialog after saving
-        }
+        const fullDetails = await orderService.getFullOrderDetails(orderId);
+        setSelectedRecord(fullDetails.data);
+        setFullDetailsDialogOpen(true);
       } catch (error) {
-        console.error('Error saving updated record:', error);
+        console.error('Error fetching full details:', error);
       }
     };
 
     return (
       <Box>
-        <Typography variant="h6" gutterBottom>
-          {type} Production Records
-        </Typography>
+        <div className="flex justify-between items-center p-4">
+          <Typography variant="h6" gutterBottom>{type} Production Records</Typography>
+
+          <div className="flex gap-3">
+            {/* Search Box */}
+            <TextField
+              label="Search Orders"
+              variant="outlined"
+              size="small"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+
+            {/* Status Filter */}
+            <Select
+              value={statusFilter}
+              onChange={handleStatusFilterChange}
+              displayEmpty
+              size="small"
+            >
+              <MenuItem value="">All Status</MenuItem>
+              <MenuItem value="completed">Completed</MenuItem>
+              <MenuItem value="pending">Pending</MenuItem>
+              <MenuItem value="cancelled">Cancelled</MenuItem>
+            </Select>
+          </div>
+        </div>
 
         {loading ? (
           <CircularProgress />
@@ -98,12 +166,12 @@ export default function DCutProductionPage() {
                   <TableCell>Quantity</TableCell>
                   <TableCell>Print Colour</TableCell>
                   <TableCell>Fabric Colour</TableCell>
-                  <TableCell>Fabric Quality</TableCell>
+                  <TableCell>Production Status</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {records.map((record) => (
+                {filteredRecords.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(record => (
                   <TableRow key={record.id}>
                     <TableCell>{record.orderId}</TableCell>
                     <TableCell>{record.jobName || 'N/A'}</TableCell>
@@ -112,7 +180,17 @@ export default function DCutProductionPage() {
                     <TableCell>{record.quantity}</TableCell>
                     <TableCell>{record.bagDetails?.printColor || 'N/A'}</TableCell>
                     <TableCell>{record.bagDetails?.color || 'N/A'}</TableCell>
-                    <TableCell>{record.fabricQuality || 'N/A'}</TableCell>
+                    <TableCell>
+                      <Chip
+                        label={record.productionManager?.status || 'N/A'}
+                        color={
+                          record.productionManager?.status === 'Completed' ? 'success' :
+                            record.productionManager?.status === 'Pending' ? 'warning' :
+                              'default'
+                        }
+                        size="small"
+                      />
+                    </TableCell>
                     <TableCell>
                       <IconButton color="primary" size="small" onClick={() => handleUpdate(record.orderId)}>
                         <Edit />
@@ -125,25 +203,22 @@ export default function DCutProductionPage() {
                 ))}
               </TableBody>
             </Table>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={filteredRecords.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
           </TableContainer>
         )}
 
-        {/* Update Dialog */}
-        <UpdateDetailsDialog
-          open={dialogOpen}
-          onClose={() => setDialogOpen(false)}
-          record={selectedRecord}  // Pass the entire record object
+        <UpdateDetailsDialog open={dialogOpen} onClose={() => setDialogOpen(false)} record={selectedRecord}
           type={type}
-          orderId={orderIdForDialog}
-          onSave={handleSave}  // Pass the handleSave function to the dialog
-        />
-
-        {/* Full Details Dialog */}
-        <FullDetailsDialog
-          open={fullDetailsDialogOpen}
-          onClose={() => setFullDetailsDialogOpen(false)}
-          record={selectedRecord}
-        />
+          orderId={orderIdForDialog} />
+        <FullDetailsDialog open={fullDetailsDialogOpen} onClose={() => setFullDetailsDialogOpen(false)} record={selectedRecord} />
       </Box>
     );
   }

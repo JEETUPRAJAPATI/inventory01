@@ -12,6 +12,16 @@ const adminService = {
     }
   },
 
+  getDashboardOverview: async () => {
+    try {
+      const response = await api.get('/admin/dashboardOverview');
+      return response.data;
+    } catch (error) {
+      console.error('API Error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to fetch sales data');
+    }
+  },
+
   updateSalesOrder: async (orderId, updatedData) => {
     try {
       const response = await api.put(`/admin/sales/${orderId}`, updatedData);

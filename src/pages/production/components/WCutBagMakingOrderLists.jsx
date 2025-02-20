@@ -36,11 +36,11 @@ export default function WCutBagMakingOrderLists({ orders, status, noOrdersFound,
     const handleMoveToDelivery = (orderId) => {
         OrderService.moveToDelivery(orderId)
             .then(() => {
-                toast.success('Order moved to delivery');
+                toast.success('Order moved to packaging');
                 onStatusUpdated();
             })
             .catch((error) => {
-                toast.error('Failed to move to delivery');
+                toast.error('Failed to move to packaging');
             });
     };
 

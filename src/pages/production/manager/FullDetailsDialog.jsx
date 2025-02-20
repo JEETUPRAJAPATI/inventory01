@@ -54,6 +54,11 @@ export default function FullDetailsDialog({ open, onClose, record }) {
                             <strong>Agent:</strong> {order.agent || 'N/A'}
                         </Typography>
                     </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Typography variant="body1">
+                            <strong>Order Status:</strong> {order.status || 'N/A'}
+                        </Typography>
+                    </Grid>
                 </Grid>
 
                 <Divider sx={{ my: 2 }} />
@@ -67,7 +72,7 @@ export default function FullDetailsDialog({ open, onClose, record }) {
 
                     <Grid item xs={12} sm={6}>
                         <Typography variant="body1">
-                            <strong>Status:</strong> {productionManager.status || 'N/A'}
+                            <strong>Production Status:</strong> {productionManager.status || 'N/A'}
                         </Typography>
                     </Grid>
 

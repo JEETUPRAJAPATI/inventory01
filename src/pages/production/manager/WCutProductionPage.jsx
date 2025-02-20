@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
-import { Engineering, Edit, Visibility } from '@mui/icons-material';
+import {
+  Box, Typography, CircularProgress, Table, TableBody, TableCell,
+  TableContainer, TableHead, TableRow, Paper, IconButton, Chip,
+  TablePagination, TextField, Select, MenuItem, Button
+} from '@mui/material';
+import { Edit, Visibility, Add } from '@mui/icons-material';
 
 import UpdateDetailsDialog from './UpdateDetailsDialog';
 import FullDetailsDialog from './FullDetailsDialog';
@@ -13,7 +17,11 @@ export default function WCutProductionPage() {
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
     const [fullDetailsDialogOpen, setFullDetailsDialogOpen] = useState(false);
-    const [orderIdForDialog, setOrderIdForDialog] = useState(null); // To store the selected orderId
+    const [orderIdForDialog, setOrderIdForDialog] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [statusFilter, setStatusFilter] = useState("");
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
 
     useEffect(() => {
       fetchRecords();
@@ -32,14 +40,11 @@ export default function WCutProductionPage() {
     };
 
     const handleUpdate = (orderId) => {
-      // Set the orderId immediately for dialog
       setOrderIdForDialog(orderId);
-
-      // Fetch the production record before opening the dialog
       orderService.getProductionRecord(orderId)
         .then((record) => {
-          setSelectedRecord(record); // Set the record from API response
-          setUpdateDialogOpen(true); // Open the update dialog
+          setSelectedRecord(record);
+          setUpdateDialogOpen(true);
         })
         .catch((error) => {
           console.error('Error fetching production record:', error);
@@ -56,60 +61,146 @@ export default function WCutProductionPage() {
       }
     };
 
+    const handleSearchChange = (event) => {
+      setSearchQuery(event.target.value);
+      setPage(0);
+    };
+
+    const handleStatusFilterChange = (event) => {
+      setStatusFilter(event.target.value);
+      setPage(0);
+    };
+
+    const handleChangePage = (event, newPage) => {
+      setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+      setRowsPerPage(parseInt(event.target.value, 10));
+      setPage(0);
+    };
+
+    // 🏷️ Filtering Logic (Search + Status)
+    const filteredRecords = records.filter(record => {
+      const matchesSearch =
+        record.jobName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        record.orderId?.toString().includes(searchQuery);
+
+      const matchesStatus = statusFilter ? record.productionManager?.status === statusFilter : true;
+
+      return matchesSearch && matchesStatus;
+    });
+
     return (
       <Box>
-        <Typography variant="h6" gutterBottom>{type} Production Records</Typography>
+        <div className="flex justify-between items-center p-4">
+
+          <Typography variant="h6" gutterBottom>{type} Production Records</Typography>
+
+          <div className="flex gap-3">
+            {/* Search Box */}
+            <TextField
+              label="Search Orders"
+              variant="outlined"
+              size="small"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+
+            {/* Status Filter */}
+            <Select
+              value={statusFilter}
+              onChange={handleStatusFilterChange}
+              displayEmpty
+              size="small"
+            >
+              <MenuItem value="">All Status</MenuItem>
+              <MenuItem value="completed">Completed</MenuItem>
+              <MenuItem value="pending">Pending</MenuItem>
+              <MenuItem value="cancelled">Cancelled</MenuItem>
+            </Select>
+          </div>
+        </div>
+
         {loading ? (
           <CircularProgress />
         ) : (
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Order ID</TableCell>
-                  <TableCell>Job Name</TableCell>
-                  <TableCell>Bag Size</TableCell>
-                  <TableCell>GSM</TableCell>
-                  <TableCell>Quantity</TableCell>
-                  <TableCell>Print Colour</TableCell>
-                  <TableCell>Fabric Colour</TableCell>
-                  <TableCell>Fabric Quality</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {records.map((record) => (
-                  <TableRow key={record.id}>
-                    <TableCell>{record.orderId}</TableCell>
-                    <TableCell>{record.jobName || 'N/A'}</TableCell>
-                    <TableCell>{record.bagDetails?.size || 'N/A'}</TableCell>
-                    <TableCell>{record.bagDetails?.gsm || 'N/A'}</TableCell>
-                    <TableCell>{record.quantity}</TableCell>
-                    <TableCell>{record.bagDetails?.printColor || 'N/A'}</TableCell>
-                    <TableCell>{record.bagDetails?.color || 'N/A'}</TableCell>
-                    <TableCell>{record.fabricQuality || 'N/A'}</TableCell>
-                    <TableCell>
-                      <IconButton color="primary" size="small" onClick={() => handleUpdate(record.orderId)}>
-                        <Edit />
-                      </IconButton>
-                      <IconButton color="secondary" size="small" onClick={() => handleViewFullDetails(record.orderId)}>
-                        <Visibility />
-                      </IconButton>
-                    </TableCell>
+          <>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Order ID</TableCell>
+                    <TableCell>Job Name</TableCell>
+                    <TableCell>Bag Size</TableCell>
+                    <TableCell>GSM</TableCell>
+                    <TableCell>Quantity</TableCell>
+                    <TableCell>Print Colour</TableCell>
+                    <TableCell>Fabric Colour</TableCell>
+                    <TableCell>Fabric Quality</TableCell>
+                    <TableCell>Production Status</TableCell>
+                    <TableCell>Actions</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {filteredRecords
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((record) => (
+                      <TableRow key={record.id}>
+                        <TableCell>{record.orderId}</TableCell>
+                        <TableCell>{record.jobName || 'N/A'}</TableCell>
+                        <TableCell>{record.bagDetails?.size || 'N/A'}</TableCell>
+                        <TableCell>{record.bagDetails?.gsm || 'N/A'}</TableCell>
+                        <TableCell>{record.quantity}</TableCell>
+                        <TableCell>{record.bagDetails?.printColor || 'N/A'}</TableCell>
+                        <TableCell>{record.bagDetails?.color || 'N/A'}</TableCell>
+                        <TableCell>{record.fabricQuality || 'N/A'}</TableCell>
+                        <TableCell>
+                          <Chip
+                            label={record.productionManager?.status || "N/A"}
+                            color={
+                              record.productionManager?.status === "Completed"
+                                ? "success"
+                                : record.productionManager?.status === "Pending"
+                                  ? "warning"
+                                  : "default"
+                            }
+                            size="small"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <IconButton color="primary" size="small" onClick={() => handleUpdate(record.orderId)}>
+                            <Edit />
+                          </IconButton>
+                          <IconButton color="secondary" size="small" onClick={() => handleViewFullDetails(record.orderId)}>
+                            <Visibility />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+            {/* Pagination Controls */}
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={filteredRecords.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </>
         )}
 
-        {/* Pass the orderId from orderIdForDialog state */}
         <UpdateDetailsDialog
           open={updateDialogOpen}
           onClose={() => setUpdateDialogOpen(false)}
           record={selectedRecord}
           type={type}
-          orderId={orderIdForDialog} // Ensure orderId is always passed to dialog
+          orderId={orderIdForDialog}
         />
 
         <FullDetailsDialog

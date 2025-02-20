@@ -23,6 +23,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  TablePagination,
 } from '@mui/material';
 import { Add, Edit, Visibility } from '@mui/icons-material';
 import toast from 'react-hot-toast';
@@ -61,7 +62,12 @@ export default function PackagingManagement() {
   const [statusToUpdate, setStatusToUpdate] = useState('');
   const [deliveryToUpdate, setDeliveryToUpdate] = useState(null); // Added to manage the delivery being updated
   const [updateStatusModalOpen, setUpdateStatusModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
 
+  // Pagination states
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   // Fetch orders from the service
   const fetchOrders = async () => {
     try {
@@ -77,10 +83,29 @@ export default function PackagingManagement() {
     fetchOrders(); // Fetch orders on mount
   }, []);
 
+
+  // Filtered and searched orders
+  const filteredOrders = orders
+    .filter(order => {
+      const customerName = order?.order?.customerName || ""; // Ensure safe access
+      const orderId = order?.order_id?.toString() || ""; // Convert number to string safely
+      return (
+        customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        orderId.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    })
+    .filter(order => (statusFilter ? order?.status === statusFilter : true));
+
   const handleStatusUpdateClick = (delivery) => {
     setDeliveryToUpdate(delivery); // Set the delivery to be updated
     setStatusToUpdate(delivery.status); // Set the current status to preselect the right option
     setUpdateStatusModalOpen(true); // Open the modal
+  };
+
+  const handleChangePage = (event, newPage) => setPage(newPage);
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   // Handle updating the delivery status
@@ -348,26 +373,26 @@ export default function PackagingManagement() {
         currentY += 10;
 
         // Add sales order details
-        doc.text(`Order ID    : ${salesOrder.orderId || 'N/A'}`, marginLeft, currentY);
-        doc.text(`Customer   : ${salesOrder.customerName || 'N/A'}`, marginLeft, currentY + lineHeight);
-        doc.text(`Email      : ${salesOrder.email || 'N/A'}`, marginLeft, currentY + lineHeight * 2);
-        doc.text(`Mobile     : ${salesOrder.mobileNumber || 'N/A'}`, marginLeft, currentY + lineHeight * 3);
-        doc.text(`Address    : ${salesOrder.address || 'N/A'}`, marginLeft, currentY + lineHeight * 4);
-        doc.text(`Job Name   : ${salesOrder.jobName || 'N/A'}`, marginLeft, currentY + lineHeight * 5);
+        doc.text(`Order ID    : ${salesOrder.order.orderId || 'N/A'}`, marginLeft, currentY);
+        doc.text(`Customer   : ${salesOrder.order.customerName || 'N/A'}`, marginLeft, currentY + lineHeight);
+        doc.text(`Email      : ${salesOrder.order.email || 'N/A'}`, marginLeft, currentY + lineHeight * 2);
+        doc.text(`Mobile     : ${salesOrder.order.mobileNumber || 'N/A'}`, marginLeft, currentY + lineHeight * 3);
+        doc.text(`Address    : ${salesOrder.order.address || 'N/A'}`, marginLeft, currentY + lineHeight * 4);
+        doc.text(`Job Name   : ${salesOrder.order.jobName || 'N/A'}`, marginLeft, currentY + lineHeight * 5);
 
         currentY += lineHeight * 6;
-        doc.text(`Order Price: ${salesOrder.orderPrice || 'N/A'}`, marginLeft, currentY);
+        doc.text(`Order Price: ${salesOrder.order.orderPrice || 'N/A'}`, marginLeft, currentY);
 
         // Add package details in a structured format
         currentY += 20;
         // doc.text(`ROLL No.    : ${pkg.rollNo || 'N/A'}`, marginLeft, currentY);
-        doc.text(`TYPE OF FABRIC : ${salesOrder.bagDetails.type || 'N/A'}`, marginLeft, currentY);
-        doc.text(`COLOR       : ${salesOrder.bagDetails.color || 'N/A'}`, marginLeft, currentY + lineHeight);
+        doc.text(`TYPE OF FABRIC : ${salesOrder.order.bagDetails?.type || 'N/A'}`, marginLeft, currentY);
+        doc.text(`COLOR       : ${salesOrder.order.bagDetails?.color || 'N/A'}`, marginLeft, currentY + lineHeight);
         doc.text(`UNIT No.    : 1`, marginLeft, currentY + lineHeight * 2);
         doc.text(`CUST. Code  : SW350`, marginLeft, currentY + lineHeight * 3);
         doc.text(`Rolls In bundle : 1`, marginLeft, currentY + lineHeight * 4);
 
-        doc.text(`GSM         : ${salesOrder.bagDetails.gsm || 'N/A'}`, pageWidth / 2, currentY);
+        doc.text(`GSM         : ${salesOrder.order.bagDetails?.gsm || 'N/A'}`, pageWidth / 2, currentY);
         doc.text(`WIDTH       : ${pkg.width || 'N/A'}`, pageWidth / 2, currentY + lineHeight);
         doc.text(`LENGTH      : ${pkg.length || 'N/A'}`, pageWidth / 2, currentY + lineHeight * 2);
         doc.text(`GROSS WT.   : ${pkg.grossWeight || 'N/A'}`, pageWidth / 2, currentY + lineHeight * 3);
@@ -394,16 +419,39 @@ export default function PackagingManagement() {
     <>
       <Card>
         <Box sx={{ p: 3 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+          <div className="flex justify-between items-center p-4">
             <Typography variant="h6">Package Management</Typography>
-            <Button
-              variant="contained"
-              startIcon={<Add />}
-              onClick={() => setAddPackageOpen(true)}
-            >
-              Add Package
-            </Button>
-          </Box>
+            <div className="flex gap-3">
+              {/* Search Box */}
+              <TextField
+                label="Search Orders"
+                variant="outlined"
+                size="small"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+              />
+
+              {/* Status Filter */}
+              <Select
+                value={statusFilter}
+                onChange={e => setStatusFilter(e.target.value)}
+                displayEmpty
+                size="small"
+              >
+                <MenuItem value="">All Status</MenuItem>
+                <MenuItem value="pending">Pending</MenuItem>
+                <MenuItem value="completed">Completed</MenuItem>
+                <MenuItem value="delivered">Delivered</MenuItem>
+              </Select>
+              <Button
+                variant="contained"
+                startIcon={<Add />}
+                onClick={() => setAddPackageOpen(true)}
+              >
+                Add Package
+              </Button>
+            </div>
+          </div>
 
           <TableContainer>
             <Table>
@@ -418,52 +466,65 @@ export default function PackagingManagement() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {orders.map((order) => (
-                  <TableRow key={order._id}>
-                    <TableCell>{order?.order_id || 'N/A'}</TableCell>
-                    <TableCell>{order?.order?.customerName || 'N/A'}</TableCell>
-                    <TableCell>
-                      {order?.order?.bagDetails?.size || 'N/A'}
-                    </TableCell>
-                    <TableCell>
-                      {order?.order?.quantity || 'N/A'}
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        label={order.status.toUpperCase()}
-                        color={
-                          order.status === 'pending'
-                            ? 'warning'
-                            : order.status === 'delivered'
-                              ? 'success'
-                              : order.status === 'cancelled'
-                                ? 'error'
-                                : 'default' // fallback color
-                        }
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        color="primary"
-                        onClick={() => handleStatusUpdateClick(order)}
-                      >
-                        <Edit />
-                      </IconButton>
-                      <IconButton
-                        color="secondary"
-                        onClick={() => handleViewPackages(order)}
-                      >
-                        <Visibility />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {filteredOrders
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) // Use filteredOrders
+                  .map((order) => (
+                    <TableRow key={order._id}>
+                      <TableCell>{order?.order_id || 'N/A'}</TableCell>
+                      <TableCell>{order?.order?.customerName || 'N/A'}</TableCell>
+                      <TableCell>
+                        {order?.order?.bagDetails?.size || 'N/A'}
+                      </TableCell>
+                      <TableCell>
+                        {order?.order?.quantity || 'N/A'}
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          label={order.status.toUpperCase()}
+                          color={
+                            order.status === 'pending'
+                              ? 'warning'
+                              : order.status === 'delivered'
+                                ? 'success'
+                                : order.status === 'cancelled'
+                                  ? 'error'
+                                  : 'default' // fallback color
+                          }
+                          size="small"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          color="primary"
+                          onClick={() => handleStatusUpdateClick(order)}
+                        >
+                          <Edit />
+                        </IconButton>
+                        <IconButton
+                          color="secondary"
+                          onClick={() => handleViewPackages(order)}
+                        >
+                          <Visibility />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
 
           </TableContainer>
         </Box>
+
+        {/* Pagination */}
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredOrders.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </Card>
 
       <Dialog
