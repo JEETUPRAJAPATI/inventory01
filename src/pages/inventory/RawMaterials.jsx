@@ -76,6 +76,7 @@ export default function RawMaterials() {
 
   //  Add Category
   const handleAddCategory = async () => {
+    console.log('calling api');
     try {
       const token = authService.getToken();
       if (!token) {
@@ -115,7 +116,9 @@ export default function RawMaterials() {
       fetchCategories();
       toast.success("Category added successfully");
     } catch (error) {
-      console.error("Error adding category:", error);
+      console.log('errors is category', error)
+      const errorMessage = error?.message || 'Error adding category';
+      toast.error(errorMessage);
     }
   };
 
@@ -422,8 +425,17 @@ export default function RawMaterials() {
         quantity: "",
       });
       setAddSubcategoryDialogOpen(false);
+      fetchCategories();
     } catch (error) {
-      console.error(" Error adding subcategory:", error);
+      // Extract error message from API response
+      console.log('error msg', error.response.data.message)
+      let errorMessage = "Error adding subcategory.";
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
     }
   };
 

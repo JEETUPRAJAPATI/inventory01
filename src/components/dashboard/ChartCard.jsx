@@ -1,18 +1,19 @@
 import { Card, CardContent, CardHeader, Box } from '@mui/material';
 import {
-  LineChart,
+  ResponsiveContainer,
+  ComposedChart,
+  Bar,
   Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
-  Legend,
+  Legend
 } from 'recharts';
 
 export default function ChartCard({ data }) {
+  console.log('Chart Data:', data);
 
-  console.log('data is', data);
   return (
     <Card>
       <CardHeader
@@ -22,29 +23,16 @@ export default function ChartCard({ data }) {
       <CardContent>
         <Box sx={{ width: '100%', height: 400 }}>
           <ResponsiveContainer>
-            <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <ComposedChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
-              <YAxis yAxisId="left" />
-              <YAxis yAxisId="right" orientation="right" />
+              <YAxis yAxisId="left" label={{ value: 'Revenue (₹)', angle: -90, position: 'insideLeft' }} />
+              <YAxis yAxisId="right" orientation="right" label={{ value: 'Orders', angle: -90, position: 'insideRight' }} />
               <Tooltip />
               <Legend />
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="revenue"
-                stroke="#8884d8"
-                activeDot={{ r: 8 }}
-                name="Revenue (₹)"
-              />
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="orders"
-                stroke="#82ca9d"
-                name="Orders"
-              />
-            </LineChart>
+              <Bar yAxisId="left" dataKey="revenue" fill="#8884d8" name="Revenue (₹)" />
+              <Line yAxisId="right" type="monotone" dataKey="orders" stroke="#82ca9d" name="Orders" />
+            </ComposedChart>
           </ResponsiveContainer>
         </Box>
       </CardContent>

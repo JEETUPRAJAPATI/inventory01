@@ -441,7 +441,7 @@ export default function PackagingManagement() {
                 <MenuItem value="">All Status</MenuItem>
                 <MenuItem value="pending">Pending</MenuItem>
                 <MenuItem value="completed">Completed</MenuItem>
-                <MenuItem value="delivered">Delivered</MenuItem>
+                <MenuItem value="delivery">Delivery</MenuItem>
               </Select>
               <Button
                 variant="contained"
@@ -484,7 +484,7 @@ export default function PackagingManagement() {
                           color={
                             order.status === 'pending'
                               ? 'warning'
-                              : order.status === 'delivered'
+                              : order.status === 'delivery'
                                 ? 'success'
                                 : order.status === 'cancelled'
                                   ? 'error'
@@ -614,7 +614,7 @@ export default function PackagingManagement() {
               label="Status"
             >
               <MenuItem value="pending">Pending</MenuItem>
-              <MenuItem value="delivered">Delivered</MenuItem>
+              <MenuItem value="delivery">Delivery</MenuItem>
               <MenuItem value="cancelled">Cancelled</MenuItem>
             </Select>
           </FormControl>

@@ -80,7 +80,8 @@ export default function BagMakingOrderList({ status = 'pending', bagType }) {
       setShowScanner(false); // Close scanner dialog
       setSelectedOrderId(null); // Reset selected order ID
     } catch (error) {
-      toast.error('Failed to verify order');
+      const errorMessage = error?.message || 'Failed to verify order';
+      toast.error(errorMessage);
     }
   };
   const handleComplete = (orderId) => {

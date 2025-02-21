@@ -11,7 +11,7 @@ import {
   Typography,
   Chip,
 } from '@mui/material';
-import { Add, Edit, Delete, Visibility } from '@mui/icons-material';
+import { Add, Edit, Delete, Visibility, PictureAsPdf } from '@mui/icons-material';
 
 import FinishedProductForm from '../../components/inventory/forms/FinishedProductForm';
 import DeleteConfirmDialog from '../../components/common/DeleteConfirmDialog';
@@ -19,6 +19,7 @@ import toast from 'react-hot-toast';
 import productService from '../../services/productService';
 import FinishedProductModel from './FinishedProductModel';
 
+import { pdfFinishedProduct } from '../../utils/pdfFinishedProduct';
 export default function FinishedProducts() {
   const [products, setProducts] = useState([]);  // Holds the list of products
   const [formOpen, setFormOpen] = useState(false);
@@ -113,6 +114,17 @@ export default function FinishedProducts() {
     return <Typography variant="h6">Loading products...</Typography>;
   }
 
+  const handleDownloadPDF = async (id) => {
+    try {
+      const productDetails = await productService.getFullDetailById(id);
+      console.log('full details', productDetails);
+      pdfFinishedProduct(productDetails.data);
+      toast.success('Detail downloaded successfully');
+    } catch (error) {
+      toast.error('Failed to download Detail');
+    }
+  };
+
   return (
     <>
       <Card>
@@ -166,6 +178,13 @@ export default function FinishedProducts() {
                       onClick={() => handleView(product._id)}  // Open view modal
                     >
                       <Visibility />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      color="primary"
+                      onClick={() => handleDownloadPDF(product._id)}
+                    >
+                      <PictureAsPdf />
                     </IconButton>
                   </TableCell>
                 </TableRow>
