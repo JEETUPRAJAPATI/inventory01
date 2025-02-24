@@ -32,8 +32,7 @@ export default function OpsertDashboard() {
           setOrders([]);
           setNoOrdersFound(true);
         }
-      })
-      .catch((error) => {
+      }).catch((error) => {
         console.error(error);
         setOrders([]);
         setNoOrdersFound(true);

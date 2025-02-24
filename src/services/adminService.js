@@ -79,7 +79,9 @@ const adminService = {
         const { password, confirmPassword, ...dataWithoutPassword } = userData;
         userData = dataWithoutPassword;
       }
-
+      // console.log('user data', userData);
+      // console.log('user id is ', id);
+      // return false;
       const response = await api.put(`/admin/users/${id}`, userData);
       return response.data;
     } catch (error) {
@@ -87,6 +89,7 @@ const adminService = {
       throw new Error(error.response?.data?.message || 'Failed to update user');
     }
   },
+
 
   deleteUser: async (id) => {
     try {

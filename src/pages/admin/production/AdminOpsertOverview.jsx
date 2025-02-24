@@ -54,7 +54,7 @@ export default function AdminOpsertOverview() {
         />
       </Grid>
       <Grid item xs={12}>
-        <OpsertOrderList 
+        <OpsertOrderList
           orders={data.orders}
           onFilterChange={handleFilterChange}
           filters={filters}

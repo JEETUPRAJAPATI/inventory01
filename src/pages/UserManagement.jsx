@@ -15,8 +15,9 @@ import {
   MenuItem,
   TextField,
   Box,
+  DialogTitle, DialogContent, DialogActions, Dialog
 } from '@mui/material';
-import { Edit, Delete, Add, Search } from '@mui/icons-material';
+import { Edit, Delete, Add, Search, Key } from '@mui/icons-material';
 import UserForm from '../components/users/UserForm';
 import DeleteConfirmDialog from '../components/common/DeleteConfirmDialog';
 import { useAdminData } from '../hooks/useAdminData';
@@ -30,6 +31,12 @@ export default function UserManagement() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const [users, setUsers] = useState([]);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [error, setError] = useState("");
+
   const [filteredUsers, setFilteredUsers] = useState([]);
   // Pagination states
   const [page, setPage] = useState(0);
@@ -155,6 +162,34 @@ export default function UserManagement() {
     setPage(0); // Reset to first page
   };
 
+  const handlePasswordUpdate = async () => {
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match!");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await adminService.updateUser(selectedUserId, { password: newPassword }); // Use newPassword
+      toast.success('Password updated successfully');
+      handleClosePasswordModal(); // Close modal after success
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update password');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdatePassword = (userId) => {
+    setSelectedUserId(userId);
+    setPasswordModalOpen(true);
+  };
+  const handleClosePasswordModal = () => {
+    setPasswordModalOpen(false);
+    setNewPassword("");
+    setConfirmPassword("");
+    setError("");
+  };
   // Get paginated users
   const paginatedUsers = filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
@@ -235,6 +270,9 @@ export default function UserManagement() {
                     <IconButton size="small" color="error" onClick={() => handleDelete(user)}>
                       <Delete />
                     </IconButton>
+                    <IconButton size="small" color="secondary" onClick={() => handleUpdatePassword(user._id)}>
+                      <Key />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
@@ -258,7 +296,37 @@ export default function UserManagement() {
         onSubmit={handleFormSubmit}
         user={selectedUser}
       />
-
+      <Dialog open={passwordModalOpen} onClose={handleClosePasswordModal}>
+        <DialogTitle>Update Password</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="New Password"
+            type="password"
+            fullWidth
+            variant="outlined"
+            margin="dense"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+          <TextField
+            label="Confirm Password"
+            type="password"
+            fullWidth
+            variant="outlined"
+            margin="dense"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            error={!!error}
+            helperText={error}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClosePasswordModal} disabled={loading}>Cancel</Button>
+          <Button onClick={handlePasswordUpdate} color="primary" variant="contained" disabled={loading}>
+            {loading ? "Updating..." : "Update"}
+          </Button>
+        </DialogActions>
+      </Dialog>
       <DeleteConfirmDialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
