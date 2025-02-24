@@ -5,6 +5,10 @@ const flexoService = {
     const response = await api.get('wcut/flexo/production/records');
     return response.data;
   },
+  getFlexoCounter: async () => {
+    const response = await api.get('wcut/flexo/production/flexoCounter');
+    return response.data;
+  },
 
   // createRecord: async (data) => {
   //   const response = await api.post('/flexo/production/records', data);

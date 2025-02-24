@@ -95,6 +95,50 @@ const getDCutBagMaking = async (params) => {
 };
 
 
+
+// Counter List Production Manager
+const getFlexoCounter = async (params) => {
+    try {
+        const response = await api.get('production/manager/w-cut/flexo-counter', { params });
+        return response.data;
+    } catch (error) {
+        console.error('API Error:', error);
+        throw new Error(error.response?.data?.message || 'Failed to fetch W-Cut Flexo data');
+    }
+};
+
+
+const getWCutBagMakingCounter = async (params) => {
+    try {
+        const response = await api.get('production/manager/w-cut/bag-making-counter', { params });
+        return response.data;
+    } catch (error) {
+        console.error('API Error:', error);
+        throw new Error(error.response?.data?.message || 'Failed to fetch W-Cut Bag Making data');
+    }
+};
+
+// D-Cut Production Management
+const getDCutOpsertCounter = async (params) => {
+    try {
+        const response = await api.get('production/manager/d-cut/opsert-counter', { params });
+        return response.data;
+    } catch (error) {
+        console.error('API Error:', error);
+        throw new Error(error.response?.data?.message || 'Failed to fetch D-Cut Opsert data');
+    }
+};
+
+const getDCutBagMakingCounter = async (params) => {
+    try {
+        const response = await api.get('production/manager/d-cut/bag-making-counter', { params });
+        return response.data;
+    } catch (error) {
+        console.error('API Error:', error);
+        throw new Error(error.response?.data?.message || 'Failed to fetch D-Cut Bag Making data');
+    }
+};
+
 export default {
     getWcutOrders,
     getDcutOrders,
@@ -104,5 +148,9 @@ export default {
     getWCutBagMaking,
     getDCutOpsert,
     getDCutBagMaking,
-    getFullOrderDetails
+    getFullOrderDetails,
+    getFlexoCounter,
+    getWCutBagMakingCounter,
+    getDCutOpsertCounter,
+    getDCutBagMakingCounter
 };

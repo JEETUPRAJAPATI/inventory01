@@ -14,10 +14,10 @@ export default function ProductionOverview() {
   useEffect(() => {
     const fetchProductionData = async () => {
       try {
-        const flexo = await flexoService.getRecords();
-        const opsert = await OrderService.getDCutOpsert('');
-        const dcut = await OrderService.getDCutBagMaking('');
-        const wcut = await OrderService.getWCutBagMaking('');
+        const flexo = await OrderService.getFlexoCounter();
+        const opsert = await OrderService.getDCutOpsertCounter('');
+        const dcut = await OrderService.getDCutBagMakingCounter('');
+        const wcut = await OrderService.getWCutBagMakingCounter('');
 
         console.log('opsert', opsert.data);
         console.log('flexo', flexo.data);
@@ -28,11 +28,11 @@ export default function ProductionOverview() {
           {
             id: 1,
             type: 'Flexo',
-            pendingOrders: flexo.data.filter(order => order.status === 'pending').length || 0,
-            inProgress: flexo.data.filter(order => order.status === 'in_progress').length || 0,
-            completed: flexo.data.filter(order => order.status === 'completed').length || 0,
-            efficiency: flexo.data.length > 0
-              ? ((flexo.data.filter(order => order.status === 'completed').length / flexo.data.length) * 100).toFixed(2) + '%'
+            pendingOrders: (flexo?.data || []).filter(order => order.status === 'pending').length,
+            inProgress: (flexo?.data || []).filter(order => order.status === 'in_progress').length,
+            completed: (flexo?.data || []).filter(order => order.status === 'completed').length,
+            efficiency: (flexo?.data?.length ?? 0) > 0
+              ? (((flexo?.data || []).filter(order => order.status === 'completed').length / flexo?.data.length) * 100).toFixed(2) + '%'
               : 'N/A',
           },
           {
@@ -66,7 +66,7 @@ export default function ProductionOverview() {
               : 'N/A',
           },
         ];
-
+        console.log('production counter data', updatedData);
         setProductionData(updatedData);
       } catch (err) {
         setError('Failed to fetch production data');

@@ -48,7 +48,36 @@ export default function FullDetailsDialog({ open, onClose, record }) {
                             <strong>Address:</strong> {order.address || 'N/A'}
                         </Typography>
                     </Grid>
-
+                    <Grid item xs={12} sm={6}>
+                        <Typography tem xs={12} sm={6} variant="body1">
+                            <strong>Type:</strong> {order.bagDetails?.type || 'N/A'}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Typography tem xs={12} sm={6} variant="body1">
+                            <strong>Handle Color:</strong> {order.bagDetails?.handleColor || 'N/A'}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Typography tem xs={12} sm={6} variant="body1">
+                            <strong>Size:</strong> {order.bagDetails?.size || 'N/A'}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Typography tem xs={12} sm={6} variant="body1">
+                            <strong>Color:</strong> {order.bagDetails?.color || 'N/A'}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Typography tem xs={12} sm={6} variant="body1">
+                            <strong>Print Color:</strong> {order.bagDetails?.printColor || 'N/A'}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Typography tem xs={12} sm={6} variant="body1">
+                            <strong>GSM:</strong> {order.bagDetails?.gsm || 'N/A'}
+                        </Typography>
+                    </Grid>
                     <Grid item xs={12} sm={6}>
                         <Typography variant="body1">
                             <strong>Agent:</strong> {order.agent || 'N/A'}
