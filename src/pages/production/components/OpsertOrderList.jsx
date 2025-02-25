@@ -11,27 +11,49 @@ import {
   Card,
   Box,
   Typography,
+  Modal,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  TextField,
 } from '@mui/material';
 import { Print, Update, LocalShipping } from '@mui/icons-material';
 import toast from 'react-hot-toast';
 import OrderService from '../../../services/dcutOpsertService.js';
 
 export default function OpsertOrderList({ orders, status, noOrdersFound, onStatusUpdated }) {
+  const [updateStatusModalOpen, setUpdateStatusModalOpen] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [unitToUpdate, setUnitToUpdate] = useState('');
   const getStatusColor = (status) => ({
     pending: 'warning',
     in_progress: 'info',
     completed: 'success',
   }[status] || 'default');
 
-  const updateOrderStatus = (orderId, newStatus, remarks) => {
-    OrderService.updateOrderStatus(orderId, newStatus, remarks)
+  const updateOrderStatus = (orderId, newStatus, unitToUpdate, remarks) => {
+    OrderService.updateOrderStatus(orderId, newStatus, unitToUpdate, remarks)
       .then(() => {
         toast.success(`Order marked as ${newStatus.replace('_', ' ')}`);
+        setUpdateStatusModalOpen(false);
         onStatusUpdated();
       })
       .catch(() => {
         toast.error('Failed to update order status');
       });
+  };
+
+  const handleOpenModal = (orderId) => {
+    setSelectedOrderId(orderId);
+    setUpdateStatusModalOpen(true);
+  };
+  const handleStatusUpdate = () => {
+    if (!unitToUpdate) {
+      toast.error('Please select a unit number');
+      return;
+    }
+    updateOrderStatus(selectedOrderId, 'completed', unitToUpdate, 'order move to completed');
   };
   const handleMoveToPackaging = (orderId) => {
     OrderService.moveToPackaging(orderId)
@@ -106,7 +128,7 @@ export default function OpsertOrderList({ orders, status, noOrdersFound, onStatu
                           variant="contained"
                           color="success"
                           size="small"
-                          onClick={() => updateOrderStatus(order.orderId, 'completed', 'Order completed')}
+                          onClick={() => handleOpenModal(order.orderId)}
                         >
                           Complete Order
                         </Button>
@@ -129,7 +151,54 @@ export default function OpsertOrderList({ orders, status, noOrdersFound, onStatu
             </TableBody>
           </Table>
         </TableContainer>
+
+        {/* Unit Number & Remark Modal */}
+        <Modal
+          open={updateStatusModalOpen}
+          onClose={() => setUpdateStatusModalOpen(false)}
+        >
+          <Box sx={modalStyle}>
+            <Typography variant="h6" gutterBottom>
+              Complete Order - Add Details
+            </Typography>
+
+            {/* Unit Number Selection */}
+            <FormControl fullWidth sx={{ mt: 2 }}>
+              <InputLabel>Unit Number</InputLabel>
+              <Select
+                value={unitToUpdate}
+                onChange={(e) => setUnitToUpdate(e.target.value)}
+                label="Unit Number"
+              >
+                <MenuItem value="1">1</MenuItem>
+              </Select>
+            </FormControl>
+
+
+            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+              <Button onClick={() => setUpdateStatusModalOpen(false)} sx={{ mr: 1 }}>
+                Cancel
+              </Button>
+              <Button variant="contained" onClick={handleStatusUpdate}>
+                Submit
+              </Button>
+            </Box>
+          </Box>
+        </Modal>
       </Box>
     </Box>
   );
 }
+
+// Modal Styling
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  p: 4,
+  borderRadius: 2,
+};

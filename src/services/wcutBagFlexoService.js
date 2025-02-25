@@ -24,11 +24,12 @@ const OrderService = {
     },
 
     // 3. Status update API
-    updateOrderStatus: async (orderId, status, remarks) => {
+    updateOrderStatus: async (orderId, status, remarks, unitToUpdate) => {
         try {
             const response = await api.put(`${API_BASE_URL}/${orderId}`, {
                 status,
-                remarks
+                remarks,
+                unitToUpdate
             });
             return response.data;
         } catch (error) {

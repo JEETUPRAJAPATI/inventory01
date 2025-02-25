@@ -80,6 +80,18 @@ export default function FinishedProductModel({ open, production, onClose }) {
                                 {productionData.productionManagerDetails?.production_details?.progress || 'N/A'}
                             </Typography>
                         </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Typography variant="body2" color="text.secondary">
+                                CreatedAt
+                            </Typography>
+                            <Typography variant="body1" fontWeight="bold">
+                                {productionData.productionManagerDetails?.createdAt
+                                    ? new Date(productionData.productionManagerDetails.createdAt).toLocaleString()
+                                    : 'N/A'}
+                            </Typography>
+
+                        </Grid>
+
                     </Grid>
 
                     {/* Bag Details */}
@@ -173,7 +185,11 @@ export default function FinishedProductModel({ open, production, onClose }) {
                                 Delivery Status
                             </Typography>
                             <Chip
-                                label={productionData.deliveryDetails?.status || 'Unknown'}
+                                label={
+                                    productionData.deliveryDetails?.status
+                                        ? productionData.deliveryDetails.status.charAt(0).toUpperCase() + productionData.deliveryDetails.status.slice(1)
+                                        : 'Unknown'
+                                }
                                 color={getStatusColor(productionData.deliveryDetails?.status)}
                                 size="medium"
                             />

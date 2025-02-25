@@ -65,6 +65,7 @@ export default function PackagingManagement() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
+  const [unitNumbers, setUnitNumbers] = useState({});
   // Pagination states
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -199,9 +200,11 @@ export default function PackagingManagement() {
     setPackageListOpen(true);
 
     try {
-      const { packages } = await PackageService.fetchPackagesByOrderId(order.order_id); // Ensure the API call uses the correct field
+      const { packages, unitNumbers } = await PackageService.fetchPackagesByOrderId(order.order_id); // Ensure the API call uses the correct field
       console.log('Fetched order packages:', packages);
-      setPackages(packages);  // Set the packages state correctly
+      setPackages(packages || []);
+      setUnitNumbers(unitNumbers || {});
+
     } catch (error) {
       console.error('Error fetching packages:', error);
     }
@@ -272,9 +275,11 @@ export default function PackagingManagement() {
       // Call the service method with the prepared payload
       const response = await PackageService.createPackage(payload);
       console.log('Package added successfully:', response);
-      const { packages } = await PackageService.fetchPackagesByOrderId(selectedOrder.order_id);
+      const { packages, unitNumbers } = await PackageService.fetchPackagesByOrderId(selectedOrder.order_id);
       console.log('Refresh Data Fetched order list', packages);
-      setPackages(packages || []); // Update packages with the fetched data
+      setPackages(packages || []);
+      setUnitNumbers(unitNumbers || {});
+      fetchOrders();
       handleCloseDialog();  // Close the dialog on success
     } catch (error) {
       console.error('Failed to add package:', error);
@@ -303,113 +308,157 @@ export default function PackagingManagement() {
     setAddPackageOpen(false);
     setEditPackageOpen(false);
   };
-
-
-  const generatePackageLabel = (pkg, salesOrder) => {
-    console.log('pkg', pkg);
-    console.log('sales order', salesOrder);
-
-    if (!pkg || !salesOrder) {
-      toast.error('Invalid package or sales order data');
+  const generatePackageAllDetails = async (order) => {
+    if (!order) {
+      toast.error("Invalid order data");
       return;
     }
 
-    const doc = new jsPDF();
-    const marginLeft = 20;
-    const topMargin = 10;
-    const startY = topMargin + 30;
-    const lineHeight = 12;
-    const pageWidth = doc.internal.pageSize.getWidth();
+    try {
+      // Fetch package details
+      const { packages, unitNumbers } = await PackageService.fetchPackagesByOrderId(order.order_id);
+      if (!packages || packages.length === 0) {
+        toast.error("No packages found for this order");
+        return;
+      }
 
-    // Load company logo as Base64
-    const loadImageAsBase64 = (url, callback) => {
-      const img = new Image();
-      img.crossOrigin = "Anonymous";
-      img.onload = function () {
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-        callback(canvas.toDataURL("image/png"));
-      };
-      img.onerror = function () {
-        console.error("Error loading image:", url);
-        callback(null);
-      };
-      img.src = url;
-    };
-
-    // Generate Barcode
-    const generateBarcode = (text, callback) => {
-      const canvas = document.createElement("canvas");
-      JsBarcode(canvas, text, {
-        format: "CODE128",
-        displayValue: false,
-        width: 2,
-        height: 40, // Increased height for better visibility
+      // Loop through each package and generate label
+      packages.forEach((pkg) => {
+        generatePackageLabel(pkg, order, unitNumbers);
       });
-      callback(canvas.toDataURL("image/png"));
-    };
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      toast.error("Error generating order PDF");
+    }
+  };
+  const generatePackageLabel = async (pkg, salesOrder, unitNumbers) => {
+    return new Promise(async (resolve) => {
+      console.log("Package Data:", pkg);
+      console.log("Sales Order:", salesOrder);
 
-    loadImageAsBase64(COMPANY_LOGO, (logoBase64) => {
-      generateBarcode(pkg.rollNo || "000000", (barcodeBase64) => {
-        let currentY = topMargin;
+      if (!pkg || !salesOrder) {
+        toast.error("Invalid package or sales order data");
+        return resolve();
+      }
 
-        // Add company logo and details
-        if (logoBase64) {
-          doc.addImage(logoBase64, "PNG", marginLeft, currentY, 50, 25);
+      const doc = new jsPDF();
+      const marginLeft = 20;
+      const topMargin = 10;
+      const lineHeight = 12;
+      const pageWidth = doc.internal.pageSize.getWidth();
+
+      // Function to load image as base64
+      const loadImageAsBase64 = (url) => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.crossOrigin = "Anonymous";
+          img.onload = function () {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            canvas.getContext("2d").drawImage(img, 0, 0);
+            resolve(canvas.toDataURL("image/png"));
+          };
+          img.onerror = () => resolve(null);
+          img.src = url;
+        });
+      };
+
+      // Function to generate barcode as base64
+      const generateBarcode = (text) => {
+        return new Promise((resolve) => {
+          const uniqueId = `${text}-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+          const canvas = document.createElement("canvas");
+          JsBarcode(canvas, uniqueId, {
+            format: "CODE128",
+            displayValue: true,
+            width: 2,
+            height: 50,
+          });
+          resolve(canvas.toDataURL("image/png"));
+        });
+      };
+
+      // Load images and barcode
+      const logoBase64 = await loadImageAsBase64(COMPANY_LOGO);
+      const barcodeBase64 = await generateBarcode(pkg._id || "000000");
+
+      let currentY = topMargin;
+
+      if (logoBase64) doc.addImage(logoBase64, "PNG", marginLeft, currentY, 50, 25);
+
+      doc.setFontSize(12);
+      doc.text("Company Name", pageWidth - 90, currentY + 5);
+      doc.text("Address: 123 Business Street, City", pageWidth - 90, currentY + 15);
+      doc.text("GSM Email: info@company.com", pageWidth - 90, currentY + 25);
+      doc.text("Phone: +1-234-567-890", pageWidth - 90, currentY + 35);
+
+      currentY += 45;
+      doc.line(marginLeft, currentY, pageWidth - marginLeft, currentY);
+      currentY += 10;
+
+      // Order Details
+      const order = salesOrder.order || {};
+      const bagDetails = order.bagDetails || {};
+
+      doc.text(`Order ID    : ${order.order_id || "N/A"}`, marginLeft, currentY);
+      doc.text(`Customer   : ${order.customerName || "N/A"}`, marginLeft, currentY + lineHeight);
+      doc.text(`Email      : ${order.email || "N/A"}`, marginLeft, currentY + lineHeight * 2);
+      doc.text(`Mobile     : ${order.mobileNumber || "N/A"}`, marginLeft, currentY + lineHeight * 3);
+      doc.text(`Address    : ${order.address || "N/A"}`, marginLeft, currentY + lineHeight * 4);
+      doc.text(`Job Name   : ${order.jobName || "N/A"}`, marginLeft, currentY + lineHeight * 5);
+
+      currentY += lineHeight * 6;
+
+      // Package Details
+      doc.text(`TYPE OF FABRIC : ${bagDetails.type || "N/A"}`, marginLeft, currentY);
+      doc.text(`COLOR       : ${bagDetails.color || "N/A"}`, marginLeft, currentY + lineHeight);
+      doc.text(`GSM         : ${bagDetails.gsm || "N/A"}`, pageWidth / 2, currentY);
+      currentY += lineHeight * 2;
+
+      // Unit Numbers
+      doc.setFontSize(11);
+      Object.entries(unitNumbers).forEach(([key, value]) => {
+        if (value !== "N/A") {
+          doc.text(`${key.toUpperCase()} UNIT No. : ${value}`, marginLeft, currentY);
+          currentY += lineHeight;
         }
-        // Company info
-        doc.setFontSize(12);
-        doc.text("Company Name", pageWidth - 90, currentY + 5);
-        doc.text("Address: 123 Business Street, City", pageWidth - 90, currentY + 15);
-        doc.text("GSM Email: info@company.com", pageWidth - 90, currentY + 25);
-        doc.text("Phone: +1-234-567-890", pageWidth - 90, currentY + 35);
-
-        // Add separator line
-        currentY += 45;
-        doc.line(marginLeft, currentY, pageWidth - marginLeft, currentY);
-        currentY += 10;
-
-        // Add sales order details
-        doc.text(`Order ID    : ${salesOrder.order.orderId || 'N/A'}`, marginLeft, currentY);
-        doc.text(`Customer   : ${salesOrder.order.customerName || 'N/A'}`, marginLeft, currentY + lineHeight);
-        doc.text(`Email      : ${salesOrder.order.email || 'N/A'}`, marginLeft, currentY + lineHeight * 2);
-        doc.text(`Mobile     : ${salesOrder.order.mobileNumber || 'N/A'}`, marginLeft, currentY + lineHeight * 3);
-        doc.text(`Address    : ${salesOrder.order.address || 'N/A'}`, marginLeft, currentY + lineHeight * 4);
-        doc.text(`Job Name   : ${salesOrder.order.jobName || 'N/A'}`, marginLeft, currentY + lineHeight * 5);
-
-        currentY += lineHeight * 6;
-        doc.text(`Order Price: ${salesOrder.order.orderPrice || 'N/A'}`, marginLeft, currentY);
-
-        // Add package details in a structured format
-        currentY += 20;
-        // doc.text(`ROLL No.    : ${pkg.rollNo || 'N/A'}`, marginLeft, currentY);
-        doc.text(`TYPE OF FABRIC : ${salesOrder.order.bagDetails?.type || 'N/A'}`, marginLeft, currentY);
-        doc.text(`COLOR       : ${salesOrder.order.bagDetails?.color || 'N/A'}`, marginLeft, currentY + lineHeight);
-        doc.text(`UNIT No.    : 1`, marginLeft, currentY + lineHeight * 2);
-        doc.text(`CUST. Code  : SW350`, marginLeft, currentY + lineHeight * 3);
-        doc.text(`Rolls In bundle : 1`, marginLeft, currentY + lineHeight * 4);
-
-        doc.text(`GSM         : ${salesOrder.order.bagDetails?.gsm || 'N/A'}`, pageWidth / 2, currentY);
-        doc.text(`WIDTH       : ${pkg.width || 'N/A'}`, pageWidth / 2, currentY + lineHeight);
-        doc.text(`LENGTH      : ${pkg.length || 'N/A'}`, pageWidth / 2, currentY + lineHeight * 2);
-        doc.text(`GROSS WT.   : ${pkg.grossWeight || 'N/A'}`, pageWidth / 2, currentY + lineHeight * 3);
-        doc.text(`NET WT.     : ${pkg.netWeight || 'N/A'}`, pageWidth / 2, currentY + lineHeight * 4);
-
-        currentY += lineHeight * 6;
-
-        // Add barcode
-        currentY += 20;
-        if (barcodeBase64) {
-          doc.addImage(barcodeBase64, "PNG", marginLeft, currentY, 100, 30);
-        }
-
-        // Save the PDF
-        doc.save(`package-label-${pkg.gsm}.pdf`);
-        toast.success('Package label downloaded successfully');
       });
+      currentY += 10;
+
+      // Package Table
+      const headers = [["#", "Length (cm)", "Width (cm)", "Height (cm)", "Weight (kg)"]];
+      const packageData = pkg.package_details || [pkg];
+      const data = packageData.map((item, index) => [
+        index + 1,
+        item.length || "N/A",
+        item.width || "N/A",
+        item.height || "N/A",
+        item.weight || "N/A",
+      ]);
+
+      doc.autoTable({
+        startY: currentY,
+        head: headers,
+        body: data,
+        theme: "striped",
+        styles: { fontSize: 10, cellPadding: 3 },
+        headStyles: { fillColor: [22, 160, 133] },
+        alternateRowStyles: { fillColor: [240, 240, 240] },
+        margin: { left: marginLeft, right: 20 },
+      });
+
+      currentY = doc.autoTable.previous.finalY + 20;
+
+      // Add barcode
+      if (barcodeBase64) {
+        doc.addImage(barcodeBase64, "PNG", marginLeft, currentY, 100, 30);
+      }
+
+      // Save PDF
+      doc.save(`package-label-${pkg._id}.pdf`);
+      toast.success(`Package label downloaded: ${pkg._id}`);
+      resolve();
     });
   };
 
@@ -459,7 +508,7 @@ export default function PackagingManagement() {
                 <TableRow>
                   <TableCell>Order ID</TableCell>
                   <TableCell>Customer</TableCell>
-                  <TableCell>Dimensions (cm)</TableCell>
+                  <TableCell>Bag Size</TableCell>
                   <TableCell>Weight (kg)</TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Actions</TableCell>
@@ -476,7 +525,7 @@ export default function PackagingManagement() {
                         {order?.order?.bagDetails?.size || 'N/A'}
                       </TableCell>
                       <TableCell>
-                        {order?.order?.quantity || 'N/A'}
+                        {order?.totalWeight || 'N/A'}
                       </TableCell>
                       <TableCell>
                         <Chip
@@ -505,6 +554,12 @@ export default function PackagingManagement() {
                           onClick={() => handleViewPackages(order)}
                         >
                           <Visibility />
+                        </IconButton>
+                        <IconButton
+                          color="primary"
+                          onClick={() => generatePackageAllDetails(order)}
+                        >
+                          <PictureAsPdf />
                         </IconButton>
                       </TableCell>
                     </TableRow>
@@ -559,35 +614,38 @@ export default function PackagingManagement() {
               </TableHead>
               <TableBody>
                 {packages.length > 0 ? (
-                  packages[0].package_details.map((pkg) => (
-                    <TableRow key={pkg._id}>
-                      <TableCell>{pkg._id}</TableCell>
-                      <TableCell>{pkg.length}</TableCell>
-                      <TableCell>{pkg.width}</TableCell>
-                      <TableCell>{pkg.height}</TableCell>
-                      <TableCell>{pkg.weight}</TableCell>
-                      <TableCell>
-                        <IconButton
-                          color="primary"
-                          onClick={() => handleEditPackage(pkg)}
-                        >
-                          <Edit />
-                        </IconButton>
-                        <IconButton
-                          color="primary"
-                          onClick={() => generatePackageLabel(pkg, selectedOrder)}
-                        >
-                          <PictureAsPdf />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                  packages.map((pkg) =>
+                    pkg.package_details.map((pkgDetail) => (
+                      <TableRow key={pkgDetail._id}>
+                        <TableCell>{pkgDetail._id}</TableCell>
+                        <TableCell>{pkgDetail.length}</TableCell>
+                        <TableCell>{pkgDetail.width}</TableCell>
+                        <TableCell>{pkgDetail.height}</TableCell>
+                        <TableCell>{pkgDetail.weight}</TableCell>
+                        <TableCell>
+                          <IconButton
+                            color="primary"
+                            onClick={() => handleEditPackage(pkgDetail)}
+                          >
+                            <Edit />
+                          </IconButton>
+                          <IconButton
+                            color="primary"
+                            onClick={() => generatePackageLabel(pkgDetail, selectedOrder, unitNumbers)}
+                          >
+                            <PictureAsPdf />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )
                 ) : (
                   <TableRow>
                     <TableCell colSpan={6}>No packages found</TableCell>
                   </TableRow>
                 )}
               </TableBody>
+
             </Table>
           </TableContainer>
         </DialogContent>

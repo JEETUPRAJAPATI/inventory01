@@ -158,13 +158,7 @@ export default function FinishedProducts() {
                     />
                   </TableCell>
                   <TableCell>
-                    <IconButton
-                      size="small"
-                      color="primary"
-                      onClick={() => handleEdit(product)}
-                    >
-                      <Edit />
-                    </IconButton>
+
                     <IconButton
                       size="small"
                       color="error"

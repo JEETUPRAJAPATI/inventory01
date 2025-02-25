@@ -623,6 +623,7 @@ export default function RawMaterials() {
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell>ID</TableCell>
                 <TableCell>Fabric Color</TableCell>
                 <TableCell>Roll Size</TableCell>
                 <TableCell>GSM</TableCell>
@@ -636,6 +637,7 @@ export default function RawMaterials() {
             <TableBody>
               {subCategories.map((subcategory, subIndex) => (
                 <TableRow key={subIndex}>
+                  <TableCell>{subcategory._id}</TableCell>
                   <TableCell>{subcategory.fabricColor}</TableCell>
                   <TableCell>{subcategory.rollSize}</TableCell>
                   <TableCell>{subcategory.gsm}</TableCell>

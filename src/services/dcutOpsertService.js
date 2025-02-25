@@ -14,9 +14,9 @@ const OrderService = {
         }
     },
 
-    updateOrderStatus: async (orderId, status, remarks) => {
+    updateOrderStatus: async (orderId, status, unitToUpdate, remarks) => {
         try {
-            const response = await api.put(`${API_BASE_URL}/orders/${orderId}/status`, { status, remarks });
+            const response = await api.put(`${API_BASE_URL}/orders/${orderId}/status`, { status, unitToUpdate, remarks });
             return response.data;
         } catch (error) {
             throw new Error('Failed to update order status');

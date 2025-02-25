@@ -13,7 +13,13 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle
+  DialogTitle,
+  Modal,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  TablePagination,
 } from '@mui/material';
 
 import { QrCodeScanner, Update, LocalShipping, Receipt } from '@mui/icons-material';
@@ -22,12 +28,23 @@ import { useState, useEffect } from 'react';
 import OrderService from '../../../services/dcutBagMakingService';
 import QRCodeScanner from '../../../components/QRCodeScanner'; // Assuming this is your QRCodeScanner component
 
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  p: 4,
+};
 export default function BagMakingOrderList({ status = 'pending', bagType }) {
   const [orders, setOrders] = useState([]);
   const [noOrdersFound, setNoOrdersFound] = useState(false);
   const [showScanner, setShowScanner] = useState(false);  // State to control QR Code scanner dialog
   const [selectedOrderId, setSelectedOrderId] = useState(null);
-
+  const [unitToUpdate, setUnitToUpdate] = useState('');
+  const [updateStatusModalOpen, setUpdateStatusModalOpen] = useState(false);
   useEffect(() => {
     fetchOrders();
   }, [status]);
@@ -66,7 +83,10 @@ export default function BagMakingOrderList({ status = 'pending', bagType }) {
     }
   };
 
-
+  const handleOpenModal = (orderId) => {
+    setSelectedOrderId(orderId); // Store orderId
+    setUpdateStatusModalOpen(true); // Open modal
+  };
   const handleScanSuccess = async (scannedData) => {
     console.log('scannedData', scannedData);
     try {
@@ -84,15 +104,22 @@ export default function BagMakingOrderList({ status = 'pending', bagType }) {
       toast.error(errorMessage);
     }
   };
-  const handleComplete = (orderId) => {
-    const status = 'completed'; // Order status to be updated
-    const remarks = 'Updated status after inspection'; // Remarks for the order status update
 
-    // API call to mark the order as completed
-    OrderService.updateOrderStatus(orderId, status, remarks)
+  const handleStatusUpdate = () => {
+    if (!unitToUpdate) {
+      toast.error('Please select a unit number');
+      return;
+    }
+
+    const status = 'completed';
+    const remarks = `Updated status after inspection with Unit ${unitToUpdate}`;
+
+    OrderService.updateOrderStatus(selectedOrderId, status, unitToUpdate, remarks)
       .then(() => {
         toast.success('Order completed successfully');
         fetchOrders();
+        setUpdateStatusModalOpen(false); // Close modal
+        setUnitToUpdate(''); // Reset unit selection
       })
       .catch((error) => {
         toast.error('Failed to complete order');
@@ -145,7 +172,7 @@ export default function BagMakingOrderList({ status = 'pending', bagType }) {
             variant="contained"
             color="success"
             size="small"
-            onClick={() => handleComplete(order._id)}
+            onClick={() => handleOpenModal(order.orderId)}
           >
             Complete
           </Button>
@@ -184,7 +211,7 @@ export default function BagMakingOrderList({ status = 'pending', bagType }) {
             variant="contained"
             color="success"
             size="small"
-            onClick={() => handleComplete(order.orderId)}
+            onClick={() => handleOpenModal(order.orderId)}
           >
             Complete
           </Button>
@@ -299,6 +326,37 @@ export default function BagMakingOrderList({ status = 'pending', bagType }) {
         </TableContainer>
       </Card>
 
+
+      <Modal
+        open={updateStatusModalOpen}
+        onClose={() => setUpdateStatusModalOpen(false)}
+      >
+        <Box sx={modalStyle}>
+          <Typography variant="h6" gutterBottom>
+            Add Unit Number
+          </Typography>
+          <FormControl fullWidth sx={{ mt: 2 }}>
+            <InputLabel>Unit Number</InputLabel>
+            <Select
+              value={unitToUpdate}
+              onChange={(e) => setUnitToUpdate(e.target.value)}
+              label="Unit Number"
+            >
+              <MenuItem value="1">1</MenuItem>
+              <MenuItem value="2">2</MenuItem>
+              <MenuItem value="3">3</MenuItem>
+            </Select>
+          </FormControl>
+          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+            <Button onClick={() => setUpdateStatusModalOpen(false)} sx={{ mr: 1 }}>
+              Cancel
+            </Button>
+            <Button variant="contained" onClick={handleStatusUpdate}>
+              Add
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
       {/* QR Code Scanner Dialog */}
       <Dialog open={showScanner} onClose={() => setShowScanner(false)} maxWidth="md" fullWidth>
         <DialogTitle>QR Code Verification</DialogTitle>
