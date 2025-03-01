@@ -20,6 +20,8 @@ import {
   Select,
   MenuItem,
   TablePagination,
+  Grid,
+  TextField,
 } from '@mui/material';
 
 import { QrCodeScanner, Update, LocalShipping, Receipt } from '@mui/icons-material';
@@ -45,6 +47,14 @@ export default function BagMakingOrderList({ status = 'pending', bagType }) {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [unitToUpdate, setUnitToUpdate] = useState('');
   const [updateStatusModalOpen, setUpdateStatusModalOpen] = useState(false);
+  const [addSubcategoryDialogOpen, setAddSubcategoryDialogOpen] = useState(false);
+  const [selectedMaterialId, setSelectedMaterialId] = useState(false);
+
+  // Row matirial list
+  const [requiredMaterials, setRequiredMaterials] = useState([]);
+  const [totalQuantity, setTotalQuantity] = useState(0);
+  const [rollSize, setRollSize] = useState(0);
+
   useEffect(() => {
     fetchOrders();
   }, [status]);
@@ -67,17 +77,77 @@ export default function BagMakingOrderList({ status = 'pending', bagType }) {
       });
   };
 
+  const handleRowMaterialUpdate = (open) => {
+    setAddSubcategoryDialogOpen(open);
+  };
+  const handleVerifyOrder = async (orderId, materialId) => {
+    // try {
+    //   // Fetch row materials for the given order
+    //   const rowMaterials = await OrderService.listMaterials(orderId);
+    //   console.log("Row Materials Response:", rowMaterials);
+
+    //   // Check if requiredMaterials is empty
+    //   if (!rowMaterials.requiredMaterials || rowMaterials.requiredMaterials.length === 0) {
+    //     console.log("No raw materials found, checking in_progress orders...");
+
+    //     // Fetch active jobs in "in_progress" status
+    //     const response = await OrderService.listOrders("in_progress");
+
+    //     if (response.success && response.data.length > 0) {
+    //       toast.error('A job is already active. Please complete or deactivate it before starting a new one.');
+    //       return; // Exit the function
+    //     }
+    //   }
+    setSelectedMaterialId(materialId);
+    // No active job, proceed with verification
+    setShowScanner(true);
+
+    // } catch (error) {
+    //   toast.error('Error checking active jobs. Please try again.');
+    // }
+  };
+
+  // const handleVerify = async (orderId) => {
+  //   try {
+  //     const response = await OrderService.listOrders("in_progress");
+
+  //     if (response.success && response.data.length > 0) {
+  //       toast.error('A job is already active. Please complete or deactivate it before starting a new one.');
+  //       return;
+  //     }
+  //     // No active job, proceed with verification
+  //     setSelectedOrderId(orderId);
+  //     setShowScanner(true);
+  //   } catch (error) {
+  //     toast.error('Error checking active jobs. Please try again.');
+  //   }
+  // };
+
   const handleVerify = async (orderId) => {
     try {
-      const response = await OrderService.listOrders("in_progress");
+      const response = await OrderService.listMaterials(orderId);
+      console.log("Response Data:", response);
+      if (response.totalQuantity === 0) {
+        console.warn("No required materials found, resetting state...");
+        fetchOrders(); // Refresh orders
+        setSelectedOrderId(null); // Reset selected order ID
+        setAddSubcategoryDialogOpen(false);
+      } else {
+        console.log('response data is', response);
 
-      if (response.success && response.data.length > 0) {
-        toast.error('A job is already active. Please complete or deactivate it before starting a new one.');
-        return;
+        console.log('response.totalQuantity ', response.totalQuantity);
+        // No active job, proceed with verification
+        setSelectedOrderId(orderId);
+        setTotalQuantity(response.totalQuantity || 0);
+        setRollSize(response.rollSize || 0);
+        setRequiredMaterials(response.requiredMaterials || []);
+
+        setNoOrdersFound(response.requiredMaterials.length === 0);
+        setAddSubcategoryDialogOpen(true);
       }
-      // No active job, proceed with verification
-      setSelectedOrderId(orderId);
-      setShowScanner(true);
+
+      // setSelectedOrderId(orderId);
+      // setShowScanner(true);
     } catch (error) {
       toast.error('Error checking active jobs. Please try again.');
     }
@@ -94,11 +164,10 @@ export default function BagMakingOrderList({ status = 'pending', bagType }) {
         toast.error('No order selected for verification');
         return;
       }
-      await OrderService.verifyOrder(selectedOrderId, scannedData);
+      await OrderService.verifyOrder(selectedOrderId, selectedMaterialId, scannedData);
       toast.success('Order verified successfully');
-      fetchOrders(); // Refresh orders
+      handleVerify(selectedOrderId); // Refresh orders
       setShowScanner(false); // Close scanner dialog
-      setSelectedOrderId(null); // Reset selected order ID
     } catch (error) {
       const errorMessage = error?.message || 'Failed to verify order';
       toast.error(errorMessage);
@@ -255,6 +324,84 @@ export default function BagMakingOrderList({ status = 'pending', bagType }) {
     return colors[status] || 'default';
   };
 
+
+
+  const renderAddSubcategoryDialog = () => (
+    <Dialog
+      open={addSubcategoryDialogOpen}
+      onClose={() => setAddSubcategoryDialogOpen(false)}
+      maxWidth="xl"
+      fullWidth
+      sx={{ minHeight: "80vh" }}
+    >
+      <DialogTitle>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Typography>
+            Row Material - <strong>{rollSize}</strong> (Roll Size)
+          </Typography>
+          <Typography>
+            Total Quantity In Kg: <strong>{totalQuantity}</strong>
+          </Typography>
+        </Box>
+      </DialogTitle>
+      <DialogContent>
+        <Grid container spacing={2} sx={{ mt: 1 }}>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>ID</TableCell>
+                  <TableCell>Order ID</TableCell>
+                  <TableCell>GSM</TableCell>
+                  <TableCell>Fabric Color</TableCell>
+                  <TableCell>Roll Size</TableCell>
+                  <TableCell>Quantity(Kg)</TableCell>
+                  <TableCell>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {noOrdersFound ? (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">
+                      <Typography>No records found for this order.</Typography>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  requiredMaterials.map((material) => (
+                    <TableRow key={material._id}>
+                      <TableCell>{material._id}</TableCell>
+                      <TableCell>{selectedOrderId}</TableCell>
+                      <TableCell>{material.gsm}</TableCell>
+                      <TableCell style={{ filter: 'blur(5px)' }}>{material.fabricColor}</TableCell>
+                      <TableCell style={{ filter: 'blur(5px)' }}>{material.rollSize}</TableCell>
+                      <TableCell >{material.quantity}</TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          size="small"
+                          onClick={() => handleVerifyOrder(selectedOrderId, material._id)}
+                        >
+                          Scanner
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
+      </DialogContent>
+    </Dialog>
+  );
+
   return (
     <>
       <Card>
@@ -327,6 +474,7 @@ export default function BagMakingOrderList({ status = 'pending', bagType }) {
       </Card>
 
 
+      {renderAddSubcategoryDialog()}
       <Modal
         open={updateStatusModalOpen}
         onClose={() => setUpdateStatusModalOpen(false)}

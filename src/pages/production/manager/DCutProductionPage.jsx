@@ -217,7 +217,7 @@ export default function DCutProductionPage() {
 
         <UpdateDetailsDialog open={dialogOpen} onClose={() => setDialogOpen(false)} record={selectedRecord}
           type={type}
-          orderId={orderIdForDialog} />
+          orderId={orderIdForDialog} fetchRecords={fetchRecords} />
         <FullDetailsDialog open={fullDetailsDialogOpen} onClose={() => setFullDetailsDialogOpen(false)} record={selectedRecord} />
       </Box>
     );

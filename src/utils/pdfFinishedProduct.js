@@ -126,6 +126,39 @@ export const pdfFinishedProduct = (Details) => {
 
         finalY = doc.lastAutoTable.finalY + 10;
 
+        // === Subcategory Details Table ===
+        const subcategoryData = Details?.productionDetails?.subcategoryIds?.map(sub => ([
+            sub.fabricColor || 'N/A',
+            sub.rollSize || 'N/A',
+            sub.gsm || 'N/A',
+            sub.fabricQuality || 'N/A',
+            sub.quantity || 'N/A'
+        ])) || [['N/A', 'N/A', 'N/A', 'N/A', 'N/A']];
+
+        doc.autoTable({
+            startY: finalY,
+            head: [['Fabric Color', 'Roll Size', 'GSM', 'Fabric Quality', 'Quantity']],
+            body: subcategoryData,
+            theme: 'grid'
+        });
+
+        finalY = doc.lastAutoTable.finalY + 10;
+
+        // === Unit Numbers Table ===
+        doc.autoTable({
+            startY: finalY,
+            head: [['Flexo', 'W-Cut', 'D-Cut', 'Opsert']],
+            body: [[
+                Details?.unitNumbers?.flexo || 'N/A',
+                Details?.unitNumbers?.wcut || 'N/A',
+                Details?.unitNumbers?.dcut || 'N/A',
+                Details?.unitNumbers?.opsert || 'N/A'
+            ]],
+            theme: 'grid'
+        });
+
+        finalY = doc.lastAutoTable.finalY + 10;
+
         // === Invoice Total Table (with Highlighted Style) ===
         doc.autoTable({
             startY: finalY,

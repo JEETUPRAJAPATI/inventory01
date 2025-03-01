@@ -12,11 +12,18 @@ const OrderService = {
             throw error.response ? error.response.data : error;
         }
     },
-
-    // 2. Verification API
-    verifyOrder: async (orderId, scanData) => {
+    listMaterials: async (orderId) => {
         try {
-            const response = await api.post(`${API_BASE_URL}/${orderId}/verify`, scanData);
+            const response = await api.get(`${API_BASE_URL}/${orderId}/listMaterials`);
+            return response.data;
+        } catch (error) {
+            throw error.response ? error.response.data : error;
+        }
+    },
+    // 2. Verification API
+    verifyOrder: async (orderId, materialId, scanData) => {
+        try {
+            const response = await api.post(`${API_BASE_URL}/${orderId}/verify`, { materialId, scanData });
             return response.data;
         } catch (error) {
             throw error.response ? error.response.data : error;

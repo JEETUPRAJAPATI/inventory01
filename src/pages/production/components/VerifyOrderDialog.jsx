@@ -100,10 +100,10 @@ export default function VerifyOrderDialog({ open, onClose, order, onVerifyComple
   if (!order) return null;
 
   return (
-    <Dialog 
-      open={open} 
-      onClose={handleClose} 
-      maxWidth="md" 
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      maxWidth="md"
       fullWidth
       PaperProps={{
         sx: { minHeight: scanning ? '80vh' : 'auto' }
@@ -133,9 +133,9 @@ export default function VerifyOrderDialog({ open, onClose, order, onVerifyComple
                 <Typography variant="subtitle2" gutterBottom>
                   Scan QR Code
                 </Typography>
-                <Box 
-                  id="qr-reader" 
-                  sx={{ 
+                <Box
+                  id="qr-reader"
+                  sx={{
                     width: '100%',
                     '& video': {
                       width: '100% !important',

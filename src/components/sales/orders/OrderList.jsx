@@ -78,8 +78,8 @@ export default function OrderList({ orders, refreshOrders }) {
   // Handle form submission (for add/edit)
   const handleFormSubmit = async (formData) => {
     try {
-      const message = selectedOrder ? 'Order updated successfully' : 'Order created successfully';
-      toast.success(message);
+      // const message = selectedOrder ? 'Order updated successfully' : 'Order created successfully';
+      // toast.success(message);
       setFormOpen(false);
       // Refresh orders after submission
       await refreshOrders();

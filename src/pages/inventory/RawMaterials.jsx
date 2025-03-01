@@ -22,6 +22,8 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Modal,
+  TablePagination,
 } from "@mui/material";
 import {
   Add,
@@ -48,6 +50,18 @@ const categoryOptions = [
   { value: "dye", label: "Dye" },
 ];
 
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  p: 4,
+};
+
+
 export default function RawMaterials() {
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
@@ -56,8 +70,13 @@ export default function RawMaterials() {
   const [selectedQrOrder, setSelectedQrOrder] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [viewSubcategoriesOpen, setViewSubcategoriesOpen] = useState(false);
-  const [addSubcategoryDialogOpen, setAddSubcategoryDialogOpen] =
-    useState(false);
+  const [addSubcategoryDialogOpen, setAddSubcategoryDialogOpen] = useState(false);
+  const [updateStatusModalOpen, setUpdateStatusModalOpen] = useState(false);
+  const [updateQuantityModalOpen, setUpdateQuantityModalOpen] = useState(false);
+
+  const [unitToUpdate, setQuantityToUpdate] = useState('');
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+
   const [newCategory, setNewCategory] = useState({
     category: "",
     fabricColor: "",
@@ -205,6 +224,52 @@ export default function RawMaterials() {
     setSelectedCategory(category);
     setViewSubcategoriesOpen(true);
   };
+
+  const handleOpenModal = (category) => {
+    setSelectedOrderId(category._id);
+    console.log('category is', category)
+    setQuantityToUpdate(category.quantity_kgs);
+    setUpdateQuantityModalOpen(true);
+  };
+
+
+  const handleQuantityUpdate = async () => {
+    if (!unitToUpdate) {
+      toast.error('Please Enter Quantity');
+      return;
+    }
+
+    try {
+      const token = authService.getToken();
+      if (!token) {
+        throw new Error("Unauthorized: No token provided");
+      }
+
+      // Send PUT request to backend
+      const response = await axios.put(
+        `${API_BASE_URL}/inventory/raw-material/${selectedOrderId}`,
+        {
+          quantity_kgs: unitToUpdate,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      toast.success("Row Material Updated successfully");
+      setUpdateQuantityModalOpen(false); // Close modal
+      setQuantityToUpdate(''); // Reset input field
+      fetchCategories();
+    } catch (error) {
+      console.error("Error updating category:", error);
+      toast.error("Failed to update quantity");
+    }
+  };
+
+
 
   // Download category PDF file
   const handleDownloadData = async (category) => {
@@ -563,6 +628,13 @@ export default function RawMaterials() {
     <>
       <IconButton
         size="small"
+        color="primary"
+        onClick={() => handleOpenModal(category)}
+      >
+        <Edit />
+      </IconButton>
+      <IconButton
+        size="small"
         color="error"
         onClick={() => handleDeleteCategory(category)}
       >
@@ -827,6 +899,36 @@ export default function RawMaterials() {
           </Table>
         </TableContainer>
       </Card>
+
+      <Modal
+        open={updateQuantityModalOpen}
+        onClose={() => setUpdateQuantityModalOpen(false)}
+      >
+        <Box sx={modalStyle}>
+          <Typography variant="h6" gutterBottom>
+            Update Quantity (kg)
+          </Typography>
+          <FormControl fullWidth sx={{ mt: 2 }}>
+            <Grid item xs={12}>
+              <TextField
+                label="Quantity (kg)"
+                type="number"
+                fullWidth
+                value={unitToUpdate}
+                onChange={(e) => setQuantityToUpdate(e.target.value)}
+              />
+            </Grid>
+          </FormControl>
+          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+            <Button onClick={() => setUpdateQuantityModalOpen(false)} sx={{ mr: 1 }}>
+              Cancel
+            </Button>
+            <Button variant="contained" onClick={handleQuantityUpdate}>
+              Add
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
 
       {renderAddCategoryDialog()}
       {renderViewSubcategoriesDialog()}

@@ -11,6 +11,8 @@ import {
 import { QRCodeCanvas } from "qrcode.react";
 
 export default function QRCodeDialog({ open, onClose, orderData }) {
+
+  console.log('orderData', orderData);
   const qrRef = useRef(null);
 
   if (!orderData) return null;
@@ -20,6 +22,7 @@ export default function QRCodeDialog({ open, onClose, orderData }) {
     rollSize: orderData.rollSize,
     gsm: orderData.gsm,
     quantity: orderData.quantity,
+    id: orderData._id
   });
 
   const downloadQRCode = () => {
@@ -49,7 +52,8 @@ export default function QRCodeDialog({ open, onClose, orderData }) {
           }}
           ref={qrRef}
         >
-          <QRCodeCanvas value={qrData} size={300} level="H" includeMargin />
+          <QRCodeCanvas value={qrData} size={300} level="M" includeMargin={true} />
+
           <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
             Scan this QR code to get order details
           </Typography>

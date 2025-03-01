@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import productionService from '/src/services/productionManagerService.js';
 
-export default function UpdateDetailsDialog({ open, onClose, record, type, orderId }) {
+export default function UpdateDetailsDialog({ open, onClose, record, type, orderId, fetchRecords }) {
+
   const [formData, setFormData] = useState({
     type: type || '', // Initialize with type prop
     roll_size: '',
@@ -12,6 +13,7 @@ export default function UpdateDetailsDialog({ open, onClose, record, type, order
     quantity_rolls: '',
     remarks: '',
   });
+
 
   useEffect(() => {
     console.log('record list', record);
@@ -54,20 +56,28 @@ export default function UpdateDetailsDialog({ open, onClose, record, type, order
     console.log('order id', orderId);
 
     try {
-      // Send the updated record to the backend
       const updatedRecord = await productionService.updateProductionRecord(formData, orderId);
-
-      // Check if the production manager is null in the response
+      if (!updatedRecord || !updatedRecord.data) {
+        toast.error('Unexpected response from server. Please try again.');
+        return;
+      }
       if (updatedRecord.data.production_manager === null) {
         toast.error('Production Manager data is missing');
         return;
       }
-
       toast.success('Record updated successfully');
-      onClose(); // Close the dialog after success
+      onClose();
+      if (fetchRecords) {
+        fetchRecords(); // ✅ Call fetchRecords from parent
+      }
     } catch (error) {
       console.error('Error updating record:', error);
-      toast.error('Failed to update record');
+      if (error.response) {
+        const errorMessage = error.response.data?.message || 'Failed to update record';
+        toast.error(errorMessage);
+      } else {
+        toast.error('Oops! Something went wrong. Please try again.');
+      }
     }
   };
 

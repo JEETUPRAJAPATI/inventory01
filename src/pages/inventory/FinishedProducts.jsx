@@ -10,46 +10,42 @@ import {
   IconButton,
   Typography,
   Chip,
+  TextField,
+  MenuItem,
+  Button,
 } from '@mui/material';
-import { Add, Edit, Delete, Visibility, PictureAsPdf } from '@mui/icons-material';
+import { Delete, Visibility, PictureAsPdf } from '@mui/icons-material';
 
 import FinishedProductForm from '../../components/inventory/forms/FinishedProductForm';
 import DeleteConfirmDialog from '../../components/common/DeleteConfirmDialog';
 import toast from 'react-hot-toast';
 import productService from '../../services/productService';
 import FinishedProductModel from './FinishedProductModel';
-
 import { pdfFinishedProduct } from '../../utils/pdfFinishedProduct';
+
 export default function FinishedProducts() {
-  const [products, setProducts] = useState([]);  // Holds the list of products
-  const [formOpen, setFormOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
-  const [loading, setLoading] = useState(true);  // To track loading state
-
   const [selectedFinishedProduct, setSelectedFinishedProduct] = useState(null);
+  const [filters, setFilters] = useState({ status: '', search: '' });
 
-  // Fetch the list of products when the component mounts
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await productService.getProducts();
-        setProducts(response.data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        toast.error('Failed to load products');
-        setProducts([]);  // Fallback to an empty array on error
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchProducts();
   }, []);
 
-  const handleEdit = (product) => {
-    setSelectedProduct(product);
-    setFormOpen(true);
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const response = await productService.getProducts();
+      setProducts(response.data);
+    } catch (error) {
+      toast.error('Failed to load products');
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDelete = (product) => {
@@ -57,48 +53,35 @@ export default function FinishedProducts() {
     setDeleteDialogOpen(true);
   };
 
-  const handleFormSubmit = async (formData) => {
-    try {
-      if (selectedProduct) {
-        // Update product
-        await productService.updateProduct(formData._id, formData);
-        toast.success('Product updated successfully');
-      } else {
-        // Add new product
-        await productService.addProduct(formData);
-        toast.success('Product added successfully');
-      }
-      setFormOpen(false);
-      // Re-fetch products after update or add
-      const response = await productService.getProducts();
-      setProducts(response.data);
-    } catch (error) {
-      toast.error('Failed to save product');
-    }
-  };
-
   const handleDeleteConfirm = async () => {
     try {
       await productService.deleteProduct(productToDelete._id);
       toast.success('Product deleted successfully');
       setDeleteDialogOpen(false);
-      // Re-fetch products after deletion
-      const response = await productService.getProducts();
-      setProducts(response.data);
+      fetchProducts();
     } catch (error) {
       toast.error('Failed to delete product');
     }
   };
+
   const handleView = async (id) => {
     try {
       const productDetails = await productService.getFullDetailById(id);
-      console.log('productDetails', productDetails);
-      setSelectedFinishedProduct(productDetails);  // Set the product data for the modal
+      setSelectedFinishedProduct(productDetails);
     } catch (error) {
-      toast.error(error.message);
+      toast.error('Failed to fetch product details');
     }
   };
 
+  const handleDownloadPDF = async (id) => {
+    try {
+      const productDetails = await productService.getFullDetailById(id);
+      pdfFinishedProduct(productDetails.data);
+      toast.success('Detail downloaded successfully');
+    } catch (error) {
+      toast.error('Failed to download details');
+    }
+  };
 
   const getStatusColor = (status) => {
     const colors = {
@@ -110,26 +93,54 @@ export default function FinishedProducts() {
     return colors[status] || 'default';
   };
 
+  const handleFilterChange = (e) => {
+    setFilters({ ...filters, [e.target.name]: e.target.value });
+  };
+
+  const handleResetFilters = () => {
+    setFilters({ status: '', search: '' });
+  };
+
+  const filteredProducts = products.filter((product) => {
+    return (
+      (filters.status === '' || product.status === filters.status) &&
+      (filters.search === '' ||
+        product.order_id.includes(filters.search) ||
+        product.orderDetails?.customerName.toLowerCase().includes(filters.search.toLowerCase()))
+    );
+  });
+
   if (loading) {
     return <Typography variant="h6">Loading products...</Typography>;
   }
-
-  const handleDownloadPDF = async (id) => {
-    try {
-      const productDetails = await productService.getFullDetailById(id);
-      console.log('full details', productDetails);
-      pdfFinishedProduct(productDetails.data);
-      toast.success('Detail downloaded successfully');
-    } catch (error) {
-      toast.error('Failed to download Detail');
-    }
-  };
 
   return (
     <>
       <Card>
         <div className="flex justify-between items-center p-4">
           <Typography variant="h6">Finished Products</Typography>
+          <div className="flex gap-4">
+            <TextField
+              select
+              size="small"
+              name="status"
+              value={filters.status}
+              onChange={handleFilterChange}
+              sx={{ minWidth: 120 }}
+            >
+              <MenuItem value="">All Status</MenuItem>
+              <MenuItem value="pending">Pending</MenuItem>
+              <MenuItem value="delivered">Delivered</MenuItem>
+            </TextField>
+            <TextField
+              size="small"
+              name="search"
+              value={filters.search}
+              onChange={handleFilterChange}
+              placeholder="Search by Order ID or Name"
+            />
+            <Button variant="outlined" onClick={handleResetFilters}>Reset</Button>
+          </div>
         </div>
         <TableContainer>
           <Table>
@@ -144,40 +155,23 @@ export default function FinishedProducts() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <TableRow key={product._id}>
                   <TableCell>{product.order_id || 'N/A'}</TableCell>
                   <TableCell>{product.orderDetails?.customerName || 'N/A'}</TableCell>
                   <TableCell>{product.orderDetails?.quantity || 'N/A'}</TableCell>
                   <TableCell>₹{product.orderDetails?.orderPrice || 'N/A'}</TableCell>
                   <TableCell>
-                    <Chip
-                      label={product.status}
-                      color={getStatusColor(product.status)}
-                      size="small"
-                    />
+                    <Chip label={product.status} color={getStatusColor(product.status)} size="small" />
                   </TableCell>
                   <TableCell>
-
-                    <IconButton
-                      size="small"
-                      color="error"
-                      onClick={() => handleDelete(product)}
-                    >
+                    <IconButton size="small" color="error" onClick={() => handleDelete(product)}>
                       <Delete />
                     </IconButton>
-                    <IconButton
-                      size="small"
-                      color="primary"
-                      onClick={() => handleView(product._id)}  // Open view modal
-                    >
+                    <IconButton size="small" color="primary" onClick={() => handleView(product._id)}>
                       <Visibility />
                     </IconButton>
-                    <IconButton
-                      size="small"
-                      color="primary"
-                      onClick={() => handleDownloadPDF(product._id)}
-                    >
+                    <IconButton size="small" color="primary" onClick={() => handleDownloadPDF(product._id)}>
                       <PictureAsPdf />
                     </IconButton>
                   </TableCell>
@@ -188,20 +182,11 @@ export default function FinishedProducts() {
         </TableContainer>
       </Card>
 
-      <FinishedProductForm
-        open={formOpen}
-        onClose={() => setFormOpen(false)}
-        onSubmit={handleFormSubmit}
-        product={selectedProduct}
-      />
-
-      {/* Finished Product Model */}
       <FinishedProductModel
-        open={!!selectedFinishedProduct}  // Only show if product is selected
-        production={selectedFinishedProduct}  // Pass the product data
-        onClose={() => setSelectedFinishedProduct(null)}  // Close the modal
+        open={!!selectedFinishedProduct}
+        production={selectedFinishedProduct}
+        onClose={() => setSelectedFinishedProduct(null)}
       />
-
 
       <DeleteConfirmDialog
         open={deleteDialogOpen}

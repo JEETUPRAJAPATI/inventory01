@@ -201,6 +201,7 @@ export default function WCutProductionPage() {
           record={selectedRecord}
           type={type}
           orderId={orderIdForDialog}
+          fetchRecords={fetchRecords}
         />
 
         <FullDetailsDialog

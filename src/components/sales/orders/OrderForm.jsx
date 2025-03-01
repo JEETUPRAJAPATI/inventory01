@@ -149,7 +149,17 @@ export default function OrderForm({ open, onClose, onSubmit, order = null }) {
       onClose();
       setFormData(initialFormData);
     } catch (error) {
-      toast.error(error.message || 'Failed to create or update order');
+      // Check if error response is available from server
+      if (error.response) {
+        const errorMessage = error.response.data.message || 'Something went wrong';
+        toast.error(`Error: ${errorMessage}`);
+      } else if (error.request) {
+        // Request was made but no response was received
+        toast.error('No response from server. Please try again later.');
+      } else {
+        // Some other error occurred
+        toast.error(error.message || 'An unexpected error occurred');
+      }
     } finally {
       setLoading(false);
     }

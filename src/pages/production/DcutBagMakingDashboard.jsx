@@ -87,7 +87,6 @@ export default function DcutBagMakingDashboard({ type }) {
             </Grid>
           </Box>
         </Card>
-
         <DCutBagMakingOrderList orders={orders} status={activeStatus} noOrdersFound={noOrdersFound} bagType={bagType} />
       </Box>
     </Box>
