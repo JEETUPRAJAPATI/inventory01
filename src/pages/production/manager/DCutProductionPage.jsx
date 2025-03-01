@@ -35,6 +35,7 @@ export default function DCutProductionPage() {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
+    const [selectedQuantityKg, setSelectedQuantityKg] = useState(null);
 
     useEffect(() => {
       fetchRecords();
@@ -93,15 +94,19 @@ export default function DCutProductionPage() {
       setPage(newPage);
     };
 
-    const handleUpdate = (orderId) => {
+    const handleUpdate = (orderId, quantity) => {
       // Set the orderId immediately for dialog
       setOrderIdForDialog(orderId);
 
       // Fetch the production record before opening the dialog
       orderService.getProductionRecord(orderId)
         .then((record) => {
-          setSelectedRecord(record); // Set the record from API response
-          setDialogOpen(true); // Open the update dialog
+          console.log('listing is', record)
+          setSelectedRecord(record);
+
+          setSelectedQuantityKg(quantity);
+
+          setDialogOpen(true);
         })
         .catch((error) => {
           console.error('Error fetching production record:', error);
@@ -164,8 +169,8 @@ export default function DCutProductionPage() {
                   <TableCell>Bag Size</TableCell>
                   <TableCell>GSM</TableCell>
                   <TableCell>Quantity</TableCell>
-                  <TableCell>Print Colour</TableCell>
-                  <TableCell>Fabric Colour</TableCell>
+                  <TableCell>Print Color</TableCell>
+                  <TableCell>Fabric Color</TableCell>
                   <TableCell>Production Status</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
@@ -192,7 +197,7 @@ export default function DCutProductionPage() {
                       />
                     </TableCell>
                     <TableCell>
-                      <IconButton color="primary" size="small" onClick={() => handleUpdate(record.orderId)}>
+                      <IconButton color="primary" size="small" onClick={() => handleUpdate(record.orderId, record.quantity)}>
                         <Edit />
                       </IconButton>
                       <IconButton color="secondary" size="small" onClick={() => handleViewFullDetails(record.orderId)}>
@@ -215,7 +220,7 @@ export default function DCutProductionPage() {
           </TableContainer>
         )}
 
-        <UpdateDetailsDialog open={dialogOpen} onClose={() => setDialogOpen(false)} record={selectedRecord}
+        <UpdateDetailsDialog open={dialogOpen} onClose={() => setDialogOpen(false)} record={selectedRecord} quantityKg={selectedQuantityKg}
           type={type}
           orderId={orderIdForDialog} fetchRecords={fetchRecords} />
         <FullDetailsDialog open={fullDetailsDialogOpen} onClose={() => setFullDetailsDialogOpen(false)} record={selectedRecord} />

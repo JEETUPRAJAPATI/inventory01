@@ -15,6 +15,7 @@ export default function WCutProductionPage() {
     const [records, setRecords] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedRecord, setSelectedRecord] = useState(null);
+    const [selectedQuantityKg, setSelectedQuantityKg] = useState(null);
     const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
     const [fullDetailsDialogOpen, setFullDetailsDialogOpen] = useState(false);
     const [orderIdForDialog, setOrderIdForDialog] = useState(null);
@@ -39,11 +40,13 @@ export default function WCutProductionPage() {
       }
     };
 
-    const handleUpdate = (orderId) => {
+    const handleUpdate = (orderId, quantity) => {
+      console.log('orderId', orderId)
       setOrderIdForDialog(orderId);
       orderService.getProductionRecord(orderId)
         .then((record) => {
           setSelectedRecord(record);
+          setSelectedQuantityKg(quantity);
           setUpdateDialogOpen(true);
         })
         .catch((error) => {
@@ -135,8 +138,8 @@ export default function WCutProductionPage() {
                     <TableCell>Bag Size</TableCell>
                     <TableCell>GSM</TableCell>
                     <TableCell>Quantity</TableCell>
-                    <TableCell>Print Colour</TableCell>
-                    <TableCell>Fabric Colour</TableCell>
+                    <TableCell>Print Color</TableCell>
+                    <TableCell>Fabric Color</TableCell>
                     <TableCell>Fabric Quality</TableCell>
                     <TableCell>Production Status</TableCell>
                     <TableCell>Actions</TableCell>
@@ -169,7 +172,7 @@ export default function WCutProductionPage() {
                           />
                         </TableCell>
                         <TableCell>
-                          <IconButton color="primary" size="small" onClick={() => handleUpdate(record.orderId)}>
+                          <IconButton color="primary" size="small" onClick={() => handleUpdate(record.orderId, record.quantity)}>
                             <Edit />
                           </IconButton>
                           <IconButton color="secondary" size="small" onClick={() => handleViewFullDetails(record.orderId)}>
@@ -199,6 +202,7 @@ export default function WCutProductionPage() {
           open={updateDialogOpen}
           onClose={() => setUpdateDialogOpen(false)}
           record={selectedRecord}
+          quantityKg={selectedQuantityKg}
           type={type}
           orderId={orderIdForDialog}
           fetchRecords={fetchRecords}

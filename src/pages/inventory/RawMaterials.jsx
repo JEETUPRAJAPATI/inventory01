@@ -221,6 +221,7 @@ export default function RawMaterials() {
   }, []);
 
   const handleViewSubcategories = (category) => {
+    console.log('category', category);
     setSelectedCategory(category);
     setViewSubcategoriesOpen(true);
   };
@@ -439,17 +440,6 @@ export default function RawMaterials() {
     }
 
     // Ensure all required fields are filled
-    if (
-      !newSubcategory.fabricColor ||
-      !newSubcategory.rollSize ||
-      !newSubcategory.gsm ||
-      !newSubcategory.fabricQuality ||
-      !newSubcategory.quantity
-    ) {
-      toast.error("All fields are required to add a subcategory.");
-      return;
-    }
-
     try {
       const token = authService.getToken();
       if (!token) {
@@ -457,12 +447,16 @@ export default function RawMaterials() {
         throw new Error("Unauthorized: No token provided");
       }
 
+
       // Attach category ID to subcategory data
       const requestData = {
-        ...newSubcategory,
-        category: selectedCategory._id,
+        fabricColor: selectedCategory.fabric_color,  // 🔹 Use selectedCategory
+        rollSize: selectedCategory.roll_size,        // 🔹 Use selectedCategory
+        gsm: selectedCategory.gsm,                  // 🔹 Use selectedCategory
+        fabricQuality: selectedCategory.fabric_quality, // 🔹 Use selectedCategory
+        quantity: newSubcategory.quantity, // ✅ Allow user input for quantity
+        category: selectedCategory._id, // ✅ Attach category ID
       };
-
       // Send POST request to add subcategory
       const response = await axios.post(
         `${API_BASE_URL}/inventory/raw-material/sub-category`,
@@ -756,30 +750,20 @@ export default function RawMaterials() {
       <DialogTitle>Add New Subcategory</DialogTitle>
       <DialogContent>
         <Grid container spacing={2} sx={{ mt: 1 }}>
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <TextField
               label="Fabric Color"
               fullWidth
-              value={newSubcategory.fabricColor}
-              onChange={(e) =>
-                setNewSubcategory({
-                  ...newSubcategory,
-                  fabricColor: e.target.value,
-                })
-              }
+              value={selectedCategory?.fabric_color || ""}
+              InputProps={{ readOnly: true }} // 🔹 Read-only
             />
           </Grid>
           <Grid item xs={12}>
             <TextField
               label="Roll Size"
               fullWidth
-              value={newSubcategory.rollSize}
-              onChange={(e) =>
-                setNewSubcategory({
-                  ...newSubcategory,
-                  rollSize: e.target.value,
-                })
-              }
+              value={selectedCategory?.roll_size || ""}
+              InputProps={{ readOnly: true }} // 🔹 Read-only
             />
           </Grid>
           <Grid item xs={12}>
@@ -787,25 +771,18 @@ export default function RawMaterials() {
               label="GSM"
               type="number"
               fullWidth
-              value={newSubcategory.gsm}
-              onChange={(e) =>
-                setNewSubcategory({ ...newSubcategory, gsm: e.target.value })
-              }
+              value={selectedCategory?.gsm || ""}
+              InputProps={{ readOnly: true }} // 🔹 Read-only
             />
           </Grid>
           <Grid item xs={12}>
             <TextField
               label="Fabric Quality"
               fullWidth
-              value={newSubcategory.fabricQuality}
-              onChange={(e) =>
-                setNewSubcategory({
-                  ...newSubcategory,
-                  fabricQuality: e.target.value,
-                })
-              }
+              value={selectedCategory?.fabric_quality || ""}
+              InputProps={{ readOnly: true }} // 🔹 Read-only
             />
-          </Grid>
+          </Grid> */}
           <Grid item xs={12}>
             <TextField
               label="Quantity (kg)"
@@ -836,6 +813,7 @@ export default function RawMaterials() {
       </DialogActions>
     </Dialog>
   );
+
 
   // handle qr open
   const handleShowQR = (order) => {
