@@ -117,6 +117,15 @@ export default function AdminSalesOverview() {
     setPage(0);
   };
 
+  const getStatusColor = (status) => {
+    const colors = {
+      'pending': 'warning',
+      'cancelled': 'info',
+      'completed': 'success'
+    };
+    return colors[status] || 'default';
+  };
+
   const totalOrders = orders.length;
   const pendingOrders = orders.filter((order) => order.status === 'pending').length;
   const completedOrders = orders.filter((order) => order.status === 'completed').length;
@@ -186,16 +195,11 @@ export default function AdminSalesOverview() {
                     <TableCell>{order.jobName || 'N/A'}</TableCell>
                     <TableCell>{order.bagDetails?.type || 'N/A'}</TableCell>
                     <TableCell>{order.quantity || '0'}</TableCell>
+
                     <TableCell>
                       <Chip
-                        label={order.status?.toUpperCase() || 'UNKNOWN'}
-                        color={
-                          order.status === 'completed'
-                            ? 'success'
-                            : order.status === 'in_progress'
-                              ? 'warning'
-                              : 'default'
-                        }
+                        label={order.status}
+                        color={getStatusColor(order.status)}
                         size="small"
                       />
                     </TableCell>

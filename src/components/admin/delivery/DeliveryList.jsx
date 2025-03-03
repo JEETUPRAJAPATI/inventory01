@@ -16,6 +16,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  MenuItem,
+  TablePagination
 } from '@mui/material';
 import toast from 'react-hot-toast';
 import deliveryService from '/src/services/adminService.js'; // Make sure the service is correctly imported
@@ -24,11 +26,13 @@ export default function DeliveryList() {
   const [deliveries, setDeliveries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDelivery, setSelectedDelivery] = useState(null);
-  const [filters, setFilters] = useState({
-    search: '',
-    status: 'all',
-  });
 
+  const [filters, setFilters] = useState({ search: '', status: 'all' });
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
   // State for Edit Form Dialog
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [editForm, setEditForm] = useState({
@@ -84,6 +88,31 @@ export default function DeliveryList() {
     }));
   };
 
+  const handleFilterChange = (e) => {
+    setFilters({ ...filters, [e.target.name]: e.target.value });
+  };
+
+  const handleResetFilters = () => {
+    setFilters({ search: '', status: 'all' });
+  };
+
+  const handleChangePage = (event, newPage) => setPage(newPage);
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const filteredDeliveries = deliveries.filter((delivery) => {
+    console.log('delivery is a', delivery);
+    const searchLower = filters.search.toLowerCase();
+    const matchesSearch =
+      delivery.orderDetails?.orderId.toLowerCase().includes(searchLower) ||
+      delivery.orderDetails?.customerName.toLowerCase().includes(searchLower) ||
+      delivery.orderDetails?.jobName.toLowerCase().includes(searchLower);
+    const matchesStatus = filters.status === 'all' || delivery.status === filters.status;
+    return matchesSearch && matchesStatus;
+  });
+
   const handleSaveEdit = async () => {
     try {
       const response = await deliveryService.updateDelivery(selectedDelivery._id, editForm);
@@ -104,6 +133,14 @@ export default function DeliveryList() {
       toast.error('Error deleting delivery');
     }
   };
+  const getStatusColor = (status) => {
+    const colors = {
+      'pending': 'warning',
+      'in_transit': 'info',
+      'done': 'success'
+    };
+    return colors[status] || 'default';
+  };
 
   const filterOptions = {
     status: ['Pending', 'In Transit', 'Delivered'],
@@ -112,6 +149,31 @@ export default function DeliveryList() {
   return (
     <>
       <Card>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mb: 3, p: 2 }}>
+          <TextField
+            size="small"
+            placeholder="Search..."
+            name="search"
+            value={filters.search}
+            onChange={handleFilterChange}
+            InputProps={{ startAdornment: <Search sx={{ color: 'text.secondary', mr: 1 }} /> }}
+          />
+          <TextField
+            select
+            size="small"
+            name="status"
+            value={filters.status}
+            onChange={handleFilterChange}
+            sx={{ minWidth: 120 }}
+          >
+            <MenuItem value="all">All Status</MenuItem>
+            <MenuItem value="pending">Pending</MenuItem>
+            <MenuItem value="in_transit">In Transit</MenuItem>
+            <MenuItem value="done">Done</MenuItem>
+          </TextField>
+          <Button variant="outlined" onClick={handleResetFilters}>Reset</Button>
+        </Box>
+
         <TableContainer>
           <Table>
             <TableHead>
@@ -125,26 +187,20 @@ export default function DeliveryList() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {deliveries.map((record) => (
+              {filteredDeliveries.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((record) => (
                 <TableRow key={record._id}>
                   <TableCell>{record.orderId || 'N/A'}</TableCell>
                   <TableCell>{record.orderDetails?.customerName || 'N/A'}</TableCell>
                   <TableCell>{record.orderDetails?.jobName || 'N/A'}</TableCell>
                   <TableCell>{record.deliveryDate ? new Date(record.deliveryDate).toLocaleDateString() : 'N/A'}</TableCell>
+
                   <TableCell>
                     <Chip
-                      label={record.status || 'N/A'}
-                      color={
-                        record.status === 'Delivered'
-                          ? 'success'
-                          : record.status === 'In Transit'
-                            ? 'warning'
-                            : 'default'
-                      }
+                      label={record.status}
+                      color={getStatusColor(record.status)}
                       size="small"
                     />
                   </TableCell>
-
 
                   <TableCell>
                     <IconButton
@@ -169,6 +225,16 @@ export default function DeliveryList() {
             </TableBody>
           </Table>
         </TableContainer>
+        {/* Pagination */}
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredDeliveries.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </Card>
 
       {/* Edit Form Dialog */}

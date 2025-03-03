@@ -26,7 +26,7 @@ export default function DeliveryList() {
         try {
             setLoading(true);
             const response = await deliveryService.getDeliveries();
-            setDeliveries(response.data);
+            setDeliveries(response.data.slice(0, 5));
         } catch (error) {
             toast.error(error.message);
         } finally {
@@ -42,9 +42,9 @@ export default function DeliveryList() {
 
     const getStatusColor = (status) => {
         const colors = {
-            'Pending': 'warning',
-            'In Transit': 'info',
-            'Delivered': 'success'
+            'pending': 'warning',
+            'in_transit': 'info',
+            'done': 'success'
         };
         return colors[status] || 'default';
     };
