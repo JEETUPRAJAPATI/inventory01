@@ -245,9 +245,11 @@ export default function PackagingManagement() {
 
     try {
       await PackageService.updatePackage(selectedOrder.order_id, selectedPackage._id, updatedPackage);
-      const fetchedPackages = await PackageService.fetchPackagesByOrderId(selectedOrder.order_id);
-      console.log('Refresh Data Fetched order list', fetchedPackages);
-      setPackages(fetchedPackages || []);
+      const { packages, unitNumbers } = await PackageService.fetchPackagesByOrderId(selectedOrder.order_id);
+      console.log('Refresh Data Fetched order list', packages);
+      setPackages(packages || []);
+      setUnitNumbers(unitNumbers || {});
+      fetchOrders();
       toast.success('Package updated successfully');
       setEditPackageOpen(false);
     } catch (error) {
@@ -331,6 +333,9 @@ export default function PackagingManagement() {
       toast.error("Error generating order PDF");
     }
   };
+
+
+
   const generatePackageLabel = async (pkg, salesOrder, unitNumbers) => {
     return new Promise(async (resolve) => {
       console.log("Package Data:", pkg);
@@ -363,25 +368,44 @@ export default function PackagingManagement() {
           img.src = url;
         });
       };
+      const generateBarcode = async (pkg, order) => {
+        return new Promise((resolve, reject) => {
+          if (!pkg || !order) return resolve(null);
 
-      // Function to generate barcode as base64
-      const generateBarcode = (text) => {
-        return new Promise((resolve) => {
-          const uniqueId = `${text}-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
           const canvas = document.createElement("canvas");
-          JsBarcode(canvas, uniqueId, {
-            format: "CODE128",
-            displayValue: true,
-            width: 2,
-            height: 50,
-          });
-          resolve(canvas.toDataURL("image/png"));
+
+          try {
+            // Construct data string for barcode (Only essential fields)
+            const barcodeData = `${order.orderId}|${order.customerName}|${pkg.weight}kg|${order.type}|${order.color}`;
+            // Generate barcode
+            JsBarcode(canvas, barcodeData, {
+              format: "CODE128",   // Best format for scanning
+              width: 3,            // Proper bar width for readability
+              height: 80,          // Good height for scanner visibility
+              displayValue: true,
+              fontSize: 14,        // Readable text below barcode
+              margin: 10,          // Avoids cropping issues
+              background: "#FFFFFF", // White background for high contrast
+              lineColor: "#000000"  // Black bars
+            });
+
+            // Convert canvas to PNG image
+            resolve(canvas.toDataURL("image/png"));
+          } catch (error) {
+            console.error("Barcode generation error:", error);
+            reject(error);
+          }
         });
       };
 
+
+
+
+
       // Load images and barcode
       const logoBase64 = await loadImageAsBase64(COMPANY_LOGO);
-      const barcodeBase64 = await generateBarcode(pkg._id || "000000");
+      const barcodeBase64 = await generateBarcode(pkg, salesOrder.order);
+
 
       let currentY = topMargin;
 
@@ -401,7 +425,7 @@ export default function PackagingManagement() {
       const order = salesOrder.order || {};
       const bagDetails = order.bagDetails || {};
 
-      doc.text(`Order ID    : ${order.order_id || "N/A"}`, marginLeft, currentY);
+      doc.text(`Order ID    : ${order.orderId || "N/A"}`, marginLeft, currentY);
       doc.text(`Customer   : ${order.customerName || "N/A"}`, marginLeft, currentY + lineHeight);
       doc.text(`Email      : ${order.email || "N/A"}`, marginLeft, currentY + lineHeight * 2);
       doc.text(`Mobile     : ${order.mobileNumber || "N/A"}`, marginLeft, currentY + lineHeight * 3);
@@ -447,14 +471,13 @@ export default function PackagingManagement() {
         alternateRowStyles: { fillColor: [240, 240, 240] },
         margin: { left: marginLeft, right: 20 },
       });
-
       currentY = doc.autoTable.previous.finalY + 20;
-
-      // Add barcode
       if (barcodeBase64) {
-        doc.addImage(barcodeBase64, "PNG", marginLeft, currentY, 100, 30);
+        currentY += 5; // Add space before barcode
+        doc.addImage(barcodeBase64, "PNG", marginLeft, currentY, 180, 60); // Proper size for better scanning
+        currentY += 60; // Move below barcode
+        doc.text("", marginLeft, currentY); // Empty text to maintain spacing
       }
-
       // Save PDF
       doc.save(`package-label-${pkg._id}.pdf`);
       toast.success(`Package label downloaded: ${pkg._id}`);

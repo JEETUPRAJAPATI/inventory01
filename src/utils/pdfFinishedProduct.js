@@ -59,7 +59,7 @@ export const pdfFinishedProduct = (Details) => {
             ]],
             theme: 'grid',
             headStyles: { fillColor: [41, 128, 185], textColor: 255, fontSize: 10, fontStyle: 'bold' },
-            bodyStyles: { fontSize: 9, halign: 'center' }
+            bodyStyles: { fontSize: 9, halign: 'left' }
         });
 
         let finalY = doc.lastAutoTable.finalY + 10;

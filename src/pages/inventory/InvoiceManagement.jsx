@@ -11,6 +11,10 @@ import {
   Chip,
   IconButton,
   Box,
+  TablePagination,
+  TextField,
+  Select,
+  MenuItem
 } from '@mui/material';
 import { PictureAsPdf, Print } from '@mui/icons-material';
 import toast from 'react-hot-toast';
@@ -25,6 +29,11 @@ const InvoiceManagement = () => {
   const [formOpen, setFormOpen] = useState(false);
   const [invoiceToDelete, setInvoiceToDelete] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   // Fetch invoices on component mount
   useEffect(() => {
@@ -54,6 +63,26 @@ const InvoiceManagement = () => {
       toast.error('Failed to download invoice');
     }
   };
+
+  // Apply filters
+  const searchLower = searchQuery.toLowerCase();
+
+  const filteredInvoices = invoices
+    .filter((invoice) => {
+      const invoiceId = invoice?.invoice_id || '';
+      const orderId = invoice?.orderDetails?.orderId || '';// Ensuring order_id is a string
+      const customerName = invoice?.orderDetails?.customerName?.toLowerCase() || '';
+
+      return (
+        invoiceId.toLowerCase().includes(searchLower) ||
+        orderId.toLowerCase().includes(searchLower) ||
+        customerName.includes(searchLower)
+      );
+    })
+    .filter((invoice) =>
+      statusFilter ? invoice.status.toLowerCase() === statusFilter.toLowerCase() : true
+    );
+
 
 
   // Handle adding new invoice
@@ -130,19 +159,43 @@ const InvoiceManagement = () => {
   // Get status color for the chip
   const getStatusColor = (status) => {
     const colors = {
-      Paid: 'success',
-      Pending: 'warning',
-      Cancelled: 'error',
+      sending: 'success',
+      pending: 'warning',
+      paid: 'error',
     };
     return colors[status.toLowerCase()] || 'default';
   };
 
+  const paginatedInvoices = filteredInvoices.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   return (
     <Card>
       <Box sx={{ p: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Invoice Management
-        </Typography>
+        <div className="flex justify-between items-center p-4">
+          <Typography variant="h6"> Invoice Management</Typography>
+          <div className="flex gap-3">
+            {/* Search Box */}
+            <TextField
+              label="Search Orders"
+              variant="outlined"
+              size="small"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+            />
+
+            {/* Status Filter */}
+            <Select
+              value={statusFilter}
+              onChange={e => setStatusFilter(e.target.value)}
+              displayEmpty
+              size="small"
+            >
+              <MenuItem value="">All Status</MenuItem>
+              <MenuItem value="pending">Pending</MenuItem>
+              <MenuItem value="done">Completed</MenuItem>
+            </Select>
+          </div>
+        </div>
+
         <TableContainer>
           <Table>
             <TableHead>
@@ -157,7 +210,7 @@ const InvoiceManagement = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {invoices.map((invoice) => (
+              {paginatedInvoices.map((invoice) => (
                 <TableRow key={invoice._id}>
                   <TableCell>{invoice.invoice_id}</TableCell>
                   <TableCell>{invoice.order_id}</TableCell>
@@ -219,6 +272,19 @@ const InvoiceManagement = () => {
           </Table>
         </TableContainer>
       </Box>
+      {/* Pagination */}
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={filteredInvoices.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={(event, newPage) => setPage(newPage)}
+        onRowsPerPageChange={(event) => {
+          setRowsPerPage(parseInt(event.target.value, 10));
+          setPage(0);
+        }}
+      />
     </Card>
   );
 };

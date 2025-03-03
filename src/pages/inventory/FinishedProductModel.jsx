@@ -95,6 +95,55 @@ export default function FinishedProductModel({ open, production, onClose }) {
                         </CardContent>
                     </Card>
 
+                    {/* Customer Information */}
+                    <Card sx={{ mb: 3 }}>
+                        <CardHeader
+                            avatar={
+                                <Avatar sx={{ bgcolor: 'info.main' }}>
+                                    <Person />
+                                </Avatar>
+                            }
+                            title="Customer Information"
+                        />
+                        <CardContent>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} sm={6}>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Customer Name
+                                    </Typography>
+                                    <Typography variant="body1" fontWeight="bold">
+                                        {productionData.orderDetails?.customerName || 'N/A'}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Customer Email
+                                    </Typography>
+                                    <Typography variant="body1" fontWeight="bold">
+                                        {productionData.orderDetails?.email || 'N/A'}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Customer Mobile
+                                    </Typography>
+                                    <Typography variant="body1" fontWeight="bold">
+                                        {productionData.orderDetails?.mobileNumber || 'N/A'}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Address
+                                    </Typography>
+                                    <Typography variant="body1" fontWeight="bold">
+                                        {productionData.orderDetails?.address || 'N/A'}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+
+
                     {/* Production Manager Information */}
                     <Card sx={{ mb: 3 }}>
                         <CardHeader
@@ -162,32 +211,37 @@ export default function FinishedProductModel({ open, production, onClose }) {
                         />
                         <CardContent>
                             <Grid container spacing={2}>
-                                {productionData.productionDetails?.subcategoryIds?.map((subcategory, index) => (
-                                    <Grid item xs={12} key={subcategory._id}>
-                                        <TableContainer component={Paper}>
-                                            <Table>
-                                                <TableHead>
-                                                    <TableRow>
-                                                        <TableCell>ID</TableCell>
-                                                        <TableCell>Fabric Color</TableCell>
-                                                        <TableCell>Roll Size</TableCell>
-                                                        <TableCell>GSM</TableCell>
-                                                        <TableCell>Fabric Quality</TableCell>
-                                                    </TableRow>
-                                                </TableHead>
-                                                <TableBody>
-                                                    <TableRow>
+
+                                <Grid item xs={12}>
+                                    <TableContainer component={Paper}>
+                                        <Table>
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell>ID</TableCell>
+                                                    <TableCell>Fabric Color</TableCell>
+                                                    <TableCell>Roll Size</TableCell>
+                                                    <TableCell>GSM</TableCell>
+                                                    <TableCell>Fabric Quality</TableCell>
+                                                    <TableCell>Quantity</TableCell>
+
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {productionData.productionDetails?.subcategoryIds?.map((subcategory, index) => (
+                                                    <TableRow key={subcategory._id}>
                                                         <TableCell>{subcategory._id}</TableCell>
                                                         <TableCell>{subcategory.fabricColor}</TableCell>
                                                         <TableCell>{subcategory.rollSize}</TableCell>
                                                         <TableCell>{subcategory.gsm}</TableCell>
                                                         <TableCell>{subcategory.fabricQuality}</TableCell>
+                                                        <TableCell>{subcategory.quantity}</TableCell>
                                                     </TableRow>
-                                                </TableBody>
-                                            </Table>
-                                        </TableContainer>
-                                    </Grid>
-                                ))}
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </Grid>
+
                             </Grid>
                         </CardContent>
                     </Card>
@@ -240,53 +294,6 @@ export default function FinishedProductModel({ open, production, onClose }) {
                         </CardContent>
                     </Card>
 
-                    {/* Customer Information */}
-                    <Card sx={{ mb: 3 }}>
-                        <CardHeader
-                            avatar={
-                                <Avatar sx={{ bgcolor: 'info.main' }}>
-                                    <Person />
-                                </Avatar>
-                            }
-                            title="Customer Information"
-                        />
-                        <CardContent>
-                            <Grid container spacing={2}>
-                                <Grid item xs={12} sm={6}>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Customer Name
-                                    </Typography>
-                                    <Typography variant="body1" fontWeight="bold">
-                                        {productionData.orderDetails?.customerName || 'N/A'}
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Customer Email
-                                    </Typography>
-                                    <Typography variant="body1" fontWeight="bold">
-                                        {productionData.orderDetails?.email || 'N/A'}
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Customer Mobile
-                                    </Typography>
-                                    <Typography variant="body1" fontWeight="bold">
-                                        {productionData.orderDetails?.mobileNumber || 'N/A'}
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Address
-                                    </Typography>
-                                    <Typography variant="body1" fontWeight="bold">
-                                        {productionData.orderDetails?.address || 'N/A'}
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                        </CardContent>
-                    </Card>
 
                     {/* Delivery Information */}
                     <Card sx={{ mb: 3 }}>
@@ -300,30 +307,6 @@ export default function FinishedProductModel({ open, production, onClose }) {
                         />
                         <CardContent>
                             <Grid container spacing={2}>
-                                <Grid item xs={12} sm={6}>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Delivery Status
-                                    </Typography>
-                                    <Chip
-                                        label={
-                                            productionData.deliveryDetails?.status
-                                                ? productionData.deliveryDetails.status.charAt(0).toUpperCase() + productionData.deliveryDetails.status.slice(1)
-                                                : 'Unknown'
-                                        }
-                                        color={getStatusColor(productionData.deliveryDetails?.status)}
-                                        size="medium"
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Delivery Date
-                                    </Typography>
-                                    <Typography variant="body1" fontWeight="bold">
-                                        {productionData.deliveryDetails?.deliveryDate
-                                            ? new Date(productionData.deliveryDetails.deliveryDate).toLocaleDateString()
-                                            : 'N/A'}
-                                    </Typography>
-                                </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <Typography variant="body2" color="text.secondary">
                                         Driver Name
@@ -348,6 +331,31 @@ export default function FinishedProductModel({ open, production, onClose }) {
                                         {productionData.deliveryDetails?.vehicleNo || 'N/A'}
                                     </Typography>
                                 </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Delivery Status
+                                    </Typography>
+                                    <Chip
+                                        label={
+                                            productionData.deliveryDetails?.status
+                                                ? productionData.deliveryDetails.status.charAt(0).toUpperCase() + productionData.deliveryDetails.status.slice(1)
+                                                : 'Unknown'
+                                        }
+                                        color={getStatusColor(productionData.deliveryDetails?.status)}
+                                        size="medium"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Delivery Date
+                                    </Typography>
+                                    <Typography variant="body1" fontWeight="bold">
+                                        {productionData.deliveryDetails?.deliveryDate
+                                            ? new Date(productionData.deliveryDetails.deliveryDate).toLocaleDateString()
+                                            : 'N/A'}
+                                    </Typography>
+                                </Grid>
+
                             </Grid>
                         </CardContent>
                     </Card>

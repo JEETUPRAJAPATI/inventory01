@@ -158,15 +158,16 @@ export default function WCutProductionPage() {
                         <TableCell>{record.bagDetails?.printColor || 'N/A'}</TableCell>
                         <TableCell>{record.bagDetails?.color || 'N/A'}</TableCell>
                         <TableCell>{record.fabricQuality || 'N/A'}</TableCell>
+
                         <TableCell>
                           <Chip
-                            label={record.productionManager?.status || "N/A"}
+                            label={record?.productionManager?.status || 'N/A'}
                             color={
-                              record.productionManager?.status === "Completed"
-                                ? "success"
-                                : record.productionManager?.status === "Pending"
-                                  ? "warning"
-                                  : "default"
+                              record?.productionManager?.status === 'completed' ? 'success' :
+                                record?.productionManager?.status === 'pending' ? 'warning' :
+                                  record?.productionManager?.status === 'in_progress' ? 'info' :
+                                    record?.productionManager?.status === 'cancelled' ? 'error' :
+                                      'default'
                             }
                             size="small"
                           />

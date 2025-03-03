@@ -20,6 +20,7 @@ import {
   CircularProgress,
   MenuItem,
   Select,
+  TablePagination,
   FormControl,
   InputLabel
 } from '@mui/material';
@@ -38,6 +39,10 @@ export default function DeliveryManagement() {
   });
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   // Fetch deliveries from API
   const fetchDeliveries = async () => {
@@ -68,6 +73,28 @@ export default function DeliveryManagement() {
       deliveryDate: delivery.deliveryDate || '',
       status: delivery.status || '' // Ensure the status is also set
     });
+  };
+
+  // Apply filters
+  const filteredOrders = deliveries
+    .filter((delivery) => {
+      const customerName = delivery?.orderDetails?.customerName || '';
+      const mobileNumber = delivery?.orderDetails?.mobileNumber || '';
+      const agent = delivery?.orderDetails?.agent || '';
+      const orderId = delivery?.orderId?.toString() || '';
+      return (
+        customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        orderId.includes(searchQuery) ||
+        mobileNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        agent.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    })
+    .filter((delivery) => (statusFilter ? delivery.status === statusFilter : true));
+
+  const handleChangePage = (event, newPage) => setPage(newPage);
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   const handleChange = (e) => {
@@ -102,19 +129,44 @@ export default function DeliveryManagement() {
       setSelectedDelivery(null);
       fetchDeliveries(); // Refetch deliveries after update
     } catch (error) {
-      toast.error('Error updating delivery: ' + error.message);
+      console.log('errors', error)
+      const errorMessage = error?.response?.data?.message || 'Failed to updated';
+      toast.error(errorMessage);
     } finally {
       setSaving(false);
     }
   };
+  const paginatedOrders = filteredOrders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <>
       <Card>
         <Box sx={{ p: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            Delivery Management
-          </Typography>
+          <div className="flex justify-between items-center p-4">
+            <Typography variant="h6">Delivery Management</Typography>
+            <div className="flex gap-3">
+              {/* Search Box */}
+              <TextField
+                label="Search Orders"
+                variant="outlined"
+                size="small"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+              />
+
+              {/* Status Filter */}
+              <Select
+                value={statusFilter}
+                onChange={e => setStatusFilter(e.target.value)}
+                displayEmpty
+                size="small"
+              >
+                <MenuItem value="">All Status</MenuItem>
+                <MenuItem value="pending">Pending</MenuItem>
+                <MenuItem value="done">Completed</MenuItem>
+              </Select>
+            </div>
+          </div>
           {loading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 5 }}>
               <CircularProgress />
@@ -139,18 +191,29 @@ export default function DeliveryManagement() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {deliveries.map((delivery) => (
+                  {paginatedOrders.map((delivery) => (
                     <TableRow key={delivery._id}>
                       <TableCell>{delivery.orderId || 'N/A'}</TableCell>
                       <TableCell>{delivery.orderDetails?.agent || 'N/A'}</TableCell>
                       <TableCell>{delivery.orderDetails?.customerName || 'N/A'}</TableCell>
                       <TableCell>{delivery.orderDetails?.address || 'N/A'}</TableCell>
                       <TableCell>{delivery.orderDetails?.mobileNumber || 'N/A'}</TableCell>
-                      <TableCell>{delivery.deliveryDate || 'N/A'}</TableCell>
+                      <TableCell>{delivery?.deliveryDate
+                        ? new Date(delivery.deliveryDate).toLocaleString()
+                        : 'N/A'}</TableCell>
+
                       <TableCell>
                         <Chip
                           label={delivery.status?.toUpperCase() || 'UNKNOWN'}
-                          color={delivery.status === 'delivered' ? 'success' : 'warning'}
+                          color={
+                            delivery.status === 'done'
+                              ? 'success'
+                              : delivery.status === 'pending'
+                                ? 'warning'
+                                : delivery.status === 'cancelled'
+                                  ? 'error'
+                                  : 'default'
+                          }
                           size="small"
                         />
                       </TableCell>
@@ -170,6 +233,19 @@ export default function DeliveryManagement() {
             </TableContainer>
           )}
         </Box>
+        {/* Pagination */}
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredOrders.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={(event, newPage) => setPage(newPage)}
+          onRowsPerPageChange={(event) => {
+            setRowsPerPage(parseInt(event.target.value, 10));
+            setPage(0);
+          }}
+        />
       </Card>
 
       <Dialog
