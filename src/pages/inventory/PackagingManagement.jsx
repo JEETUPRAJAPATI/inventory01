@@ -368,28 +368,47 @@ export default function PackagingManagement() {
           img.src = url;
         });
       };
-      const generateBarcode = async (pkg, order) => {
+
+
+      const generateBarcode = async (packages, order) => {
+
+
+        console.log('packages', packages)
         return new Promise((resolve, reject) => {
-          if (!pkg || !order) return resolve(null);
+          if (!order || !packages) return resolve(null);
 
           const canvas = document.createElement("canvas");
 
           try {
-            // Construct data string for barcode (Only essential fields)
-            const barcodeData = `${order.orderId}|${order.customerName}|${pkg.weight}kg|${order.type}|${order.color}`;
+            let barcodeData = `OrderId:${order.orderId}|JobName:${order.jobName}|CustomerName:${order.customerName}|BagColor:${order.bagDetails.color}`;
+
+            // If there are multiple packages, include package details
+            if (packages.package_details && packages.package_details.length > 0) {
+              const packageDetails = packages.package_details.map(pkg =>
+                `L:${pkg.length}, W:${pkg.width}, H:${pkg.height}, WT:${pkg.weight}`
+              ).join(" | ");
+              barcodeData += ` | ${packageDetails}`;
+            } else {
+              const packageDetails = `L:${packages.length}, W:${packages.width}, H:${packages.height}, WT:${packages.weight}`;
+              barcodeData += ` | ${packageDetails}`;
+            }
+
+
+            console.log('barcodeData', barcodeData)
+
             // Generate barcode
             JsBarcode(canvas, barcodeData, {
-              format: "CODE128",   // Best format for scanning
-              width: 3,            // Proper bar width for readability
-              height: 80,          // Good height for scanner visibility
+              format: "CODE128",
+              width: 3,
+              height: 80,
               displayValue: true,
-              fontSize: 14,        // Readable text below barcode
-              margin: 10,          // Avoids cropping issues
-              background: "#FFFFFF", // White background for high contrast
-              lineColor: "#000000"  // Black bars
+              fontSize: 16,
+              margin: 15,
+              background: "#FFFFFF",
+              lineColor: "#000000"
             });
 
-            // Convert canvas to PNG image
+            // Convert barcode to PNG image
             resolve(canvas.toDataURL("image/png"));
           } catch (error) {
             console.error("Barcode generation error:", error);
