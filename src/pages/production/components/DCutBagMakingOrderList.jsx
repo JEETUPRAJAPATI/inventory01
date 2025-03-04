@@ -149,7 +149,9 @@ export default function BagMakingOrderList({ status = 'pending', bagType }) {
       // setSelectedOrderId(orderId);
       // setShowScanner(true);
     } catch (error) {
-      toast.error('Error checking active jobs. Please try again.');
+      console.log('error is', error)
+      const errorMessage = error?.message || 'Error checking active jobs. Please try again.';
+      toast.error(errorMessage);
     }
   };
 
@@ -380,7 +382,7 @@ export default function BagMakingOrderList({ status = 'pending', bagType }) {
                       <TableCell>{material.gsm}</TableCell>
                       <TableCell style={{ filter: 'blur(5px)' }}>{material.fabricColor}</TableCell>
                       <TableCell style={{ filter: 'blur(5px)' }}>{material.rollSize}</TableCell>
-                      <TableCell >{material.quantity}</TableCell>
+                      <TableCell style={{ filter: 'blur(5px)' }}>{material.quantity}</TableCell>
                       <TableCell>
                         <Button
                           variant="outlined"
@@ -457,8 +459,8 @@ export default function BagMakingOrderList({ status = 'pending', bagType }) {
 
                     <TableCell>
                       <Chip
-                        label={order.status.replace('_', ' ').toUpperCase()}
-                        color={getStatusColor(order.status)}
+                        label={order.dcutbagmakingDetails?.[0]?.status}
+                        color={getStatusColor(order.dcutbagmakingDetails?.[0]?.status)}
                         size="small"
                       />
                     </TableCell>
@@ -506,17 +508,33 @@ export default function BagMakingOrderList({ status = 'pending', bagType }) {
         </Box>
       </Modal>
       {/* QR Code Scanner Dialog */}
-      <Dialog open={showScanner} onClose={() => setShowScanner(false)} maxWidth="md" fullWidth>
-        <DialogTitle>QR Code Verification</DialogTitle>
+      <Dialog
+        open={showScanner}
+        onClose={() => setShowScanner(false)}
+        fullWidth
+        sx={{
+          '& .MuiDialog-paper': {
+            minHeight: '600px', // Ensure enough height
+            padding: '20px',
+            borderRadius: '10px',
+            overflow: 'hidden' // Prevent unwanted scrolling
+          }
+        }}
+      >
+        <DialogTitle sx={{ textAlign: 'center' }}>QR Code Verification</DialogTitle>
         <DialogContent>
-          <QRCodeScanner onScanSuccess={handleScanSuccess} />
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '150px' }}>
+            <QRCodeScanner onScanSuccess={handleScanSuccess} />
+          </Box>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ justifyContent: 'center' }}>
           <Button onClick={() => setShowScanner(false)} color="secondary">
             Cancel
           </Button>
         </DialogActions>
       </Dialog>
+
+
     </>
   );
 }

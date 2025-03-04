@@ -41,28 +41,29 @@ export default function WcutBagMakingDashboard({ type }) {
     const handleStatusUpdated = () => {
         fetchOrders(activeStatus);
     };
+
     return (
-        <Box sx={{ pb: 7 }}>
+        <Box sx={{ pb: 7, px: { xs: 2, sm: 3 } }}> {/* Padding for better spacing on small screens */}
             <Box sx={{ mt: 2 }}>
                 <Grid container spacing={2} sx={{ mb: 3 }}>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} sm={6}> {/* Full width on mobile, half on larger screens */}
                         <Button
                             variant="contained"
                             fullWidth
                             startIcon={<Dashboard />}
                             onClick={() => navigate(`${basePath}/dashboard`)}
-                            sx={{ height: '60px' }}
+                            sx={{ height: { xs: '50px', sm: '60px' } }}
                         >
                             Dashboard
                         </Button>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} sm={6}>
                         <Button
                             variant="contained"
                             fullWidth
                             startIcon={<Assessment />}
                             onClick={() => navigate(`${basePath}/reports`)}
-                            sx={{ height: '60px' }}
+                            sx={{ height: { xs: '50px', sm: '60px' } }}
                         >
                             Reports
                         </Button>
@@ -75,13 +76,14 @@ export default function WcutBagMakingDashboard({ type }) {
                             Production Orders
                         </Typography>
                         <Divider sx={{ mb: 2 }} />
-                        <Grid container spacing={2}>
+                        <Grid container spacing={1}> {/* Adjust spacing for smaller screens */}
                             {['pending', 'in_progress', 'completed'].map((status) => (
-                                <Grid item xs={4} key={status}>
+                                <Grid item xs={12} sm={4} key={status}> {/* Full width on mobile, third on larger screens */}
                                     <Button
                                         variant={activeStatus === status ? 'contained' : 'outlined'}
                                         onClick={() => setActiveStatus(status)}
                                         fullWidth
+                                        sx={{ fontSize: { xs: '12px', sm: '14px' } }}
                                     >
                                         {status.charAt(0).toUpperCase() + status.slice(1)}
                                     </Button>
@@ -91,8 +93,13 @@ export default function WcutBagMakingDashboard({ type }) {
                     </Box>
                 </Card>
 
-                <WcutBagMakingOrderList orders={orders} status={activeStatus} noOrdersFound={noOrdersFound}
-                    onStatusUpdated={handleStatusUpdated} bagType={bagType} />
+                <WcutBagMakingOrderList
+                    orders={orders}
+                    status={activeStatus}
+                    noOrdersFound={noOrdersFound}
+                    onStatusUpdated={handleStatusUpdated}
+                    bagType={bagType}
+                />
             </Box>
         </Box>
     );

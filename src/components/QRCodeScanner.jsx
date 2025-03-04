@@ -6,14 +6,7 @@ import { CloudDownload, Upload } from '@mui/icons-material';
 import toast from 'react-hot-toast';
 
 // Test data for QR code
-const testData = {
-  rollSize: '15x20',
-  gsm: '100',
-  fabricColor: 'Green',
-  bagType: 'W-Cut',
-  printColor: 'Black',
-  cylinderSize: '30x40'
-};
+
 
 export default function QRCodeScanner({ onScanSuccess }) {
   const [scanning, setScanning] = useState(true); // Start scanning by default
@@ -25,7 +18,7 @@ export default function QRCodeScanner({ onScanSuccess }) {
     if (scanning) {
       const config = {
         fps: 10,
-        qrbox: { width: 300, height: 300 },
+        qrbox: { width: 250, height: 250 },
         rememberLastUsedCamera: true,
         disableFlip: false
       };
@@ -47,6 +40,21 @@ export default function QRCodeScanner({ onScanSuccess }) {
       };
 
       scannerRef.current.render(handleScanSuccess, console.warn);
+
+      setTimeout(() => {
+        const scanRegion = document.getElementById('qr-reader__scan_region');
+        if (scanRegion) {
+          scanRegion.style.display = 'block';
+        }
+      }, 500);
+
+      return () => {
+        if (scannerRef.current) {
+          scannerRef.current.clear().catch(() => {
+            console.log('Scanner cleanup completed');
+          });
+        }
+      };
     }
 
     return () => {
@@ -72,27 +80,9 @@ export default function QRCodeScanner({ onScanSuccess }) {
     }
   };
 
-  const downloadTestQR = () => {
-    const svg = document.querySelector('#test-qr-code');
-    const svgData = new XMLSerializer().serializeToString(svg);
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-    img.onload = () => {
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
-      const pngFile = canvas.toDataURL('image/png');
-      const downloadLink = document.createElement('a');
-      downloadLink.download = 'test-qr-code.png';
-      downloadLink.href = pngFile;
-      downloadLink.click();
-    };
-    img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
-  };
 
   return (
-    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
       {/* Top Bar */}
       <Box
         sx={{
@@ -118,58 +108,24 @@ export default function QRCodeScanner({ onScanSuccess }) {
       </Box>
 
       {/* Scanner Area */}
-      <Box sx={{ flex: 1, position: 'relative' }}>
-        <Box
-          id="qr-reader"
-          sx={{
-            width: '100%',
-            height: '100%',
-            '& video': {
-              width: '100% !important',
-              height: '100% !important',
-              objectFit: 'cover',
-              borderRadius: 0
-            }
-          }}
-        />
+      <Box
+        id="qr-reader"
+        sx={{
+          width: 500,
+          marginTop: '16em',
+          height: '424',
+          display: 'block',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '10px',
+          overflowY: 'hidden',
+          background: '#fff'
+        }}
+      />
+      <Box id="MuiDialogContent-root" sx={{ overflowY: 'hidden' }} />
 
-        {/* Test QR Overlay */}
-        {showTestQR && (
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              bgcolor: 'rgba(0,0,0,0.9)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              p: 3
-            }}
-          >
-            <QRCodeSVG
-              id="test-qr-code"
-              value={JSON.stringify(testData)}
-              size={300}
-              level="H"
-              includeMargin
-            />
-            <Typography variant="caption" sx={{ color: 'white', mt: 2 }}>
-              Save this QR code to test file upload
-            </Typography>
-            <Button
-              variant="contained"
-              onClick={() => setShowTestQR(false)}
-              sx={{ mt: 2 }}
-            >
-              Close
-            </Button>
-          </Box>
-        )}
-      </Box>
+
+
     </Box>
   );
 }

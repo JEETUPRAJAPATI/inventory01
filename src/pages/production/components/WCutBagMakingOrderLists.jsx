@@ -71,16 +71,16 @@ export default function WCutBagMakingOrderLists({ orders, noOrdersFound, onStatu
 
     return (
         <Box>
-            <TableContainer component={Card}>
+            <TableContainer component={Card} sx={{ overflowX: 'auto' }}>
                 <Table>
                     <TableHead>
                         <TableRow>
                             <TableCell>Order ID</TableCell>
                             <TableCell>Job Name</TableCell>
-                            <TableCell>Bag Type</TableCell>
-                            <TableCell>Bag Colour</TableCell>
-                            <TableCell>Print Colour</TableCell>
-                            <TableCell>Bag Size</TableCell>
+                            <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Bag Type</TableCell>
+                            <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Bag Color</TableCell>
+                            <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Print Color</TableCell>
+                            <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Bag Size</TableCell>
                             <TableCell>Quantity</TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell>Actions</TableCell>
@@ -100,10 +100,10 @@ export default function WCutBagMakingOrderLists({ orders, noOrdersFound, onStatu
                                 <TableRow key={order._id}>
                                     <TableCell>{order.orderId}</TableCell>
                                     <TableCell>{order.jobName}</TableCell>
-                                    <TableCell>{order.bagDetails.type}</TableCell>
-                                    <TableCell>{order.bagDetails.color}</TableCell>
-                                    <TableCell>{order.bagDetails.printColor}</TableCell>
-                                    <TableCell>{order.bagDetails.size}</TableCell>
+                                    <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{order.bagDetails.type}</TableCell>
+                                    <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{order.bagDetails.color}</TableCell>
+                                    <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{order.bagDetails.printColor}</TableCell>
+                                    <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{order.bagDetails.size}</TableCell>
                                     <TableCell>{order.quantity}</TableCell>
                                     <TableCell>
                                         <Chip
@@ -113,39 +113,44 @@ export default function WCutBagMakingOrderLists({ orders, noOrdersFound, onStatu
                                         />
                                     </TableCell>
                                     <TableCell>
-                                        {order.opsertDetails[0].status === 'pending' && (
-                                            <Button
-                                                startIcon={<Print />}
-                                                variant="contained"
-                                                color="primary"
-                                                size="small"
-                                                onClick={() => updateOrderStatus(order.orderId, 'in_progress', '', 'Printing started')}
-                                            >
-                                                Start Bag Making
-                                            </Button>
-                                        )}
-                                        {order.opsertDetails[0].status === 'in_progress' && (
-                                            <Button
-                                                startIcon={<Update />}
-                                                variant="contained"
-                                                color="success"
-                                                size="small"
-                                                onClick={() => handleOpenModal(order.orderId)}
-                                            >
-                                                Complete Order
-                                            </Button>
-                                        )}
-                                        {order.opsertDetails[0].status === 'completed' && (
-                                            <Button
-                                                startIcon={<LocalShipping />}
-                                                variant="contained"
-                                                color="primary"
-                                                size="small"
-                                                onClick={() => handleMoveToDelivery(order.orderId)}
-                                            >
-                                                Move to Packaging
-                                            </Button>
-                                        )}
+                                        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 1 }}>
+                                            {order.opsertDetails[0].status === 'pending' && (
+                                                <Button
+                                                    startIcon={<Print />}
+                                                    variant="contained"
+                                                    color="primary"
+                                                    size="small"
+                                                    fullWidth
+                                                    onClick={() => updateOrderStatus(order.orderId, 'in_progress', '', 'Printing started')}
+                                                >
+                                                    Start
+                                                </Button>
+                                            )}
+                                            {order.opsertDetails[0].status === 'in_progress' && (
+                                                <Button
+                                                    startIcon={<Update />}
+                                                    variant="contained"
+                                                    color="success"
+                                                    size="small"
+                                                    fullWidth
+                                                    onClick={() => handleOpenModal(order.orderId)}
+                                                >
+                                                    Complete
+                                                </Button>
+                                            )}
+                                            {order.opsertDetails[0].status === 'completed' && (
+                                                <Button
+                                                    startIcon={<LocalShipping />}
+                                                    variant="contained"
+                                                    color="primary"
+                                                    size="small"
+                                                    fullWidth
+                                                    onClick={() => handleMoveToDelivery(order.orderId)}
+                                                >
+                                                    Package
+                                                </Button>
+                                            )}
+                                        </Box>
                                     </TableCell>
                                 </TableRow>
                             ))

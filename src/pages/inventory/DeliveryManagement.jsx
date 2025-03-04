@@ -319,7 +319,7 @@ export default function DeliveryManagement() {
                   label="Status"
                 >
                   <MenuItem value="pending">Pending</MenuItem>
-                  <MenuItem value="in transit">In Transit</MenuItem>
+                  <MenuItem value="in_transit">In Transit</MenuItem>
                   <MenuItem value="delivered">Delivered</MenuItem>
                   <MenuItem value="cancelled">Cancelled</MenuItem>
                 </Select>

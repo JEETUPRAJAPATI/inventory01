@@ -131,7 +131,8 @@ export default function FlexoOrderList({ status = 'pending', bagType }) {
       // setSelectedOrderId(orderId);
       // setShowScanner(true);
     } catch (error) {
-      toast.error('Error checking active jobs. Please try again.');
+      const errorMessage = error?.message || 'Error checking active jobs. Please try again.';
+      toast.error(errorMessage);
     }
   };
 
@@ -185,11 +186,11 @@ export default function FlexoOrderList({ status = 'pending', bagType }) {
   const handleMoveToBagMaking = (orderId) => {
     OrderService.moveToBagMaking(orderId)
       .then(() => {
-        toast.success('Order moved to packaging');
+        toast.success('Order moved to W-Cut Bag making successfully');
         fetchOrders();
       })
       .catch((error) => {
-        toast.error('Failed to move to packaging');
+        toast.error(' Order moved to W-Cut Bag making Failed');
       });
   };
 
@@ -487,17 +488,33 @@ export default function FlexoOrderList({ status = 'pending', bagType }) {
       </Modal>
 
       {/* QR Code Scanner Dialog */}
-      <Dialog open={showScanner} onClose={() => setShowScanner(false)} maxWidth="md" fullWidth>
-        <DialogTitle>QR Code Verification</DialogTitle>
+      <Dialog
+        open={showScanner}
+        onClose={() => setShowScanner(false)}
+        fullWidth
+        sx={{
+          '& .MuiDialog-paper': {
+            minHeight: '600px', // Ensure enough height
+            padding: '20px',
+            borderRadius: '10px',
+            overflow: 'hidden' // Prevent unwanted scrolling
+          }
+        }}
+      >
+        <DialogTitle sx={{ textAlign: 'center' }}>QR Code Verification</DialogTitle>
         <DialogContent>
-          <QRCodeScanner onScanSuccess={handleScanSuccess} />
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '150px' }}>
+            <QRCodeScanner onScanSuccess={handleScanSuccess} />
+          </Box>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ justifyContent: 'center' }}>
           <Button onClick={() => setShowScanner(false)} color="secondary">
             Cancel
           </Button>
         </DialogActions>
       </Dialog>
+
+
     </>
   );
 }

@@ -35,7 +35,7 @@ export const pdfFinishedProduct = (Details) => {
         doc.text(`Order Date: ${Details?.orderDetails?.createdAt
             ? new Date(Details.orderDetails.createdAt).toLocaleString("en-GB", {
                 day: "2-digit", month: "2-digit", year: "numeric",
-                hour: "2-digit", minute: "2-digit", second: "2-digit"
+                hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true
             })
             : "N/A"
             }`, pageWidth - 80, currentY);
@@ -43,18 +43,16 @@ export const pdfFinishedProduct = (Details) => {
         // === Order Details Table ===
         currentY += 15;
         const quantity = Number(Details?.orderDetails?.quantity) || 0;
-        const orderPrice = Number(Details?.orderDetails?.orderPrice) || 0;
-        const subtotal = quantity * orderPrice;
+        const subtotal = Number(Details?.orderDetails?.orderPrice) || 0;
         const gst = subtotal * 0.18;
         const total = subtotal + gst;
 
         doc.autoTable({
             startY: currentY,
-            head: [['Description', 'Quantity', 'Unit Price', 'Total Price']],
+            head: [['Job Name', 'Quantity', 'Order Price']],
             body: [[
                 Details?.orderDetails?.jobName || 'N/A',
                 quantity || 'N/A',
-                `${orderPrice.toFixed(2)}`,
                 `${subtotal.toFixed(2)}`
             ]],
             theme: 'grid',

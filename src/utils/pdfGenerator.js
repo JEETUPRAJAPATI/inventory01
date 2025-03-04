@@ -4,6 +4,10 @@ import COMPANY_LOGO from '../assets/logo.jpg';
 
 export const generateInvoicePDF = (invoiceData) => {
   try {
+
+
+    // console.log('invoice data is', invoiceData);
+    // return false;
     const doc = new jsPDF();
 
     const marginLeft = 20;
@@ -51,13 +55,12 @@ export const generateInvoicePDF = (invoiceData) => {
 
     // Order Details Table
     currentY += 50;
-    const tableColumns = ['Description', 'Quantity', 'Unit Price', 'Amount'];
+    const tableColumns = ['Job Name', 'Quantity', 'Order Price'];
     const tableData = [
       [
         invoiceData?.orderDetails?.jobName || 'N/A',
         invoiceData?.orderDetails?.quantity || 'N/A',
         `${invoiceData?.orderDetails?.orderPrice || 'N/A'}`,
-        `${(invoiceData?.orderDetails?.quantity * invoiceData?.orderDetails?.orderPrice) || 'N/A'}`
       ]
     ];
 
@@ -82,7 +85,7 @@ export const generateInvoicePDF = (invoiceData) => {
     ], marginLeft, finalY + 10);
 
     // Add Totals
-    const subtotal = invoiceData?.orderDetails?.quantity * invoiceData?.orderDetails?.orderPrice || 0;
+    const subtotal = Number(invoiceData?.orderDetails?.orderPrice) || 0;
     const gst = subtotal * 0.18;
     const total = subtotal + gst;
 
