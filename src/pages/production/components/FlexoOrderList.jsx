@@ -109,7 +109,7 @@ export default function FlexoOrderList({ status = 'pending', bagType }) {
     try {
       const response = await OrderService.listMaterials(orderId);
       console.log("Response Data:", response);
-      if (response.totalQuantity === 0) {
+      if (response.totalQuantity === 0 && response.requiredMaterials?.length === 0) {
         console.warn("No required materials found, resetting state...");
         fetchOrders(); // Refresh orders
         setSelectedOrderId(null); // Reset selected order ID
