@@ -380,19 +380,18 @@ export default function PackagingManagement() {
           const canvas = document.createElement("canvas");
 
           try {
-            let barcodeData = `OrderId:${order.orderId}|JobName:${order.jobName}|CustomerName:${order.customerName}|BagColor:${order.bagDetails.color}`;
+            let barcodeData = `OrderId-${order.orderId},JobName-${order.jobName},BagColor-${order.bagDetails.color}`;
 
-            // If there are multiple packages, include package details
-            if (packages.package_details && packages.package_details.length > 0) {
-              const packageDetails = packages.package_details.map(pkg =>
-                `L:${pkg.length}, W:${pkg.width}, H:${pkg.height}, WT:${pkg.weight}`
-              ).join(" | ");
-              barcodeData += ` | ${packageDetails}`;
-            } else {
-              const packageDetails = `L:${packages.length}, W:${packages.width}, H:${packages.height}, WT:${packages.weight}`;
-              barcodeData += ` | ${packageDetails}`;
-            }
+            // if (packages.package_details && packages.package_details.length > 0) {
+            //   const packageDetails = packages.package_details.map(pkg =>
+            //     `L-${pkg.length},W-${pkg.width},H-${pkg.height},WT-${pkg.weight}`
+            //   ).join(", "); // Use a comma instead of " | "
 
+            //   barcodeData += `,${packageDetails}`;
+            // } else {
+            //   const packageDetails = `L-${packages.length},W-${packages.width},H-${packages.height},WT-${packages.weight}`;
+            //   barcodeData += `,${packageDetails}`;  // Use a comma instead of " | "
+            // }
 
             console.log('barcodeData', barcodeData)
 
@@ -401,7 +400,7 @@ export default function PackagingManagement() {
               format: "CODE128",
               width: 3,
               height: 80,
-              displayValue: true,
+              displayValue: true, // Hide text under barcode
               fontSize: 16,
               margin: 15,
               background: "#FFFFFF",
