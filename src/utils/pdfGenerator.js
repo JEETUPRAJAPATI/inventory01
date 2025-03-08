@@ -54,7 +54,7 @@ export const generateInvoicePDF = (invoiceData) => {
     ], pageWidth - 80, currentY + 10);
 
     // Order Details Table
-    currentY += 50;
+    currentY += 30;
     const tableColumns = ['Job Name', 'Quantity', 'Order Price'];
     const tableData = [
       [
@@ -89,7 +89,7 @@ export const generateInvoicePDF = (invoiceData) => {
     const gst = subtotal * 0.18;
     const total = subtotal + gst;
 
-    finalY += 40;
+    finalY += 20;
     doc.setFont('helvetica', 'bold');
     doc.text('Subtotal:', pageWidth - 80, finalY);
     doc.setFont('helvetica', 'normal');

@@ -335,7 +335,6 @@ export default function PackagingManagement() {
   };
 
 
-
   const generatePackageLabel = async (pkg, salesOrder, unitNumbers) => {
     return new Promise(async (resolve) => {
       console.log("Package Data:", pkg);
@@ -348,8 +347,8 @@ export default function PackagingManagement() {
 
       const doc = new jsPDF();
       const marginLeft = 20;
+      const marginRight = 20;
       const topMargin = 10;
-      const lineHeight = 12;
       const pageWidth = doc.internal.pageSize.getWidth();
 
       // Function to load image as base64
@@ -369,45 +368,26 @@ export default function PackagingManagement() {
         });
       };
 
-
-      const generateBarcode = async (packages, order) => {
-
-
-        console.log('packages', packages)
+      // Generate barcode
+      const generateBarcode = async (order) => {
         return new Promise((resolve, reject) => {
-          if (!order || !packages) return resolve(null);
+          if (!order) return resolve(null);
 
           const canvas = document.createElement("canvas");
 
           try {
-            let barcodeData = `OrderId-${order.orderId},JobName-${order.jobName},BagColor-${order.bagDetails.color}`;
+            let barcodeData = `OrderId-${order.orderId}, JobName-${order.jobName}, BagColor-${order.bagDetails.color}`;
+            console.log("Barcode Data:", barcodeData);
 
-            // if (packages.package_details && packages.package_details.length > 0) {
-            //   const packageDetails = packages.package_details.map(pkg =>
-            //     `L-${pkg.length},W-${pkg.width},H-${pkg.height},WT-${pkg.weight}`
-            //   ).join(", "); // Use a comma instead of " | "
-
-            //   barcodeData += `,${packageDetails}`;
-            // } else {
-            //   const packageDetails = `L-${packages.length},W-${packages.width},H-${packages.height},WT-${packages.weight}`;
-            //   barcodeData += `,${packageDetails}`;  // Use a comma instead of " | "
-            // }
-
-            console.log('barcodeData', barcodeData)
-
-            // Generate barcode
             JsBarcode(canvas, barcodeData, {
               format: "CODE128",
-              width: 3,
-              height: 80,
-              displayValue: true, // Hide text under barcode
-              fontSize: 16,
-              margin: 15,
+              width: 1.5,
+              height: 40,
+              displayValue: false,
               background: "#FFFFFF",
-              lineColor: "#000000"
+              lineColor: "#000000",
             });
 
-            // Convert barcode to PNG image
             resolve(canvas.toDataURL("image/png"));
           } catch (error) {
             console.error("Barcode generation error:", error);
@@ -416,87 +396,66 @@ export default function PackagingManagement() {
         });
       };
 
-
-
-
-
       // Load images and barcode
       const logoBase64 = await loadImageAsBase64(COMPANY_LOGO);
-      const barcodeBase64 = await generateBarcode(pkg, salesOrder.order);
-
+      const barcodeBase64 = await generateBarcode(salesOrder.order);
 
       let currentY = topMargin;
 
-      if (logoBase64) doc.addImage(logoBase64, "PNG", marginLeft, currentY, 50, 25);
+      // Add Company Logo
+      if (logoBase64) {
+        doc.addImage(logoBase64, "PNG", marginLeft, currentY, 50, 25);
+        currentY += 30;
+      }
 
-      doc.setFontSize(12);
-      doc.text("Company Name", pageWidth - 90, currentY + 5);
-      doc.text("Address: 123 Business Street, City", pageWidth - 90, currentY + 15);
-      doc.text("GSM Email: info@company.com", pageWidth - 90, currentY + 25);
-      doc.text("Phone: +1-234-567-890", pageWidth - 90, currentY + 35);
+      // Align company details to the right
+      const textX = pageWidth - marginRight - 80; // Adjust margin
+      doc.setFontSize(12).setFont("helvetica", "bold");
+      doc.text("Company Name", textX, topMargin + 10);
+      doc.setFontSize(10).setFont("helvetica", "normal");
+      doc.text("123 Business Street, City", textX, topMargin + 20);
+      doc.text("Email: info@company.com", textX, topMargin + 30);
+      doc.text("Phone: +1-234-567-890", textX, topMargin + 40);
 
-      currentY += 45;
-      doc.line(marginLeft, currentY, pageWidth - marginLeft, currentY);
+      currentY += 13;
+      doc.line(marginLeft, currentY, pageWidth - marginRight, currentY);
       currentY += 10;
 
       // Order Details
       const order = salesOrder.order || {};
       const bagDetails = order.bagDetails || {};
 
-      doc.text(`Order ID    : ${order.orderId || "N/A"}`, marginLeft, currentY);
-      doc.text(`Customer   : ${order.customerName || "N/A"}`, marginLeft, currentY + lineHeight);
-      doc.text(`Email      : ${order.email || "N/A"}`, marginLeft, currentY + lineHeight * 2);
-      doc.text(`Mobile     : ${order.mobileNumber || "N/A"}`, marginLeft, currentY + lineHeight * 3);
-      doc.text(`Address    : ${order.address || "N/A"}`, marginLeft, currentY + lineHeight * 4);
-      doc.text(`Job Name   : ${order.jobName || "N/A"}`, marginLeft, currentY + lineHeight * 5);
-
-      currentY += lineHeight * 6;
-
-      // Package Details
-      doc.text(`TYPE OF FABRIC : ${bagDetails.type || "N/A"}`, marginLeft, currentY);
-      doc.text(`COLOR       : ${bagDetails.color || "N/A"}`, marginLeft, currentY + lineHeight);
-      doc.text(`GSM         : ${bagDetails.gsm || "N/A"}`, pageWidth / 2, currentY);
-      currentY += lineHeight * 2;
-
-      // Unit Numbers
-      doc.setFontSize(11);
-      Object.entries(unitNumbers).forEach(([key, value]) => {
-        if (value !== "N/A") {
-          doc.text(`${key.toUpperCase()} UNIT No. : ${value}`, marginLeft, currentY);
-          currentY += lineHeight;
-        }
-      });
-      currentY += 10;
-
-      // Package Table
-      const headers = [["#", "Length (cm)", "Width (cm)", "Height (cm)", "Weight (kg)"]];
-      const packageData = pkg.package_details || [pkg];
-      const data = packageData.map((item, index) => [
-        index + 1,
-        item.length || "N/A",
-        item.width || "N/A",
-        item.height || "N/A",
-        item.weight || "N/A",
-      ]);
+      const orderDetails = [
+        ["Order ID:", order.orderId || "N/A", "Job Name:", order.jobName || "N/A"],
+        ["Customer:", order.customerName || "N/A", "Fabric:", bagDetails.type || "N/A"],
+        ["Email:", order.email || "N/A", "GSM:", bagDetails.gsm || "N/A"],
+        ["Mobile:", order.mobileNumber || "N/A", "Color:", bagDetails.color || "N/A"],
+        ["Address:", order.address || "N/A", "DCUT Unit No:", unitNumbers.dcut || "N/A"],
+        ["", "", "Opsert Unit No:", unitNumbers.opsert || "N/A"],
+        ["Length (cm):", pkg.length || "N/A", "Width (cm):", pkg.width || "N/A"],
+        ["Height (cm):", pkg.height || "N/A", "Weight (kg):", pkg.weight || "N/A"],
+      ];
 
       doc.autoTable({
         startY: currentY,
-        head: headers,
-        body: data,
-        theme: "striped",
-        styles: { fontSize: 10, cellPadding: 3 },
-        headStyles: { fillColor: [22, 160, 133] },
-        alternateRowStyles: { fillColor: [240, 240, 240] },
-        margin: { left: marginLeft, right: 20 },
+        body: orderDetails,
+        styles: { fontSize: 9, cellPadding: 3 },
+        columnStyles: {
+          0: { fontStyle: "bold", cellWidth: "25%" },
+          1: { cellWidth: "25%" },
+          2: { fontStyle: "bold", cellWidth: "25%" },
+          3: { cellWidth: "25%" },
+        },
+        theme: "grid",
       });
-      currentY = doc.autoTable.previous.finalY + 20;
+
+      currentY = doc.autoTable.previous.finalY + 5;
+
       if (barcodeBase64) {
-        currentY += 5; // Add space before barcode
-        doc.addImage(barcodeBase64, "PNG", marginLeft, currentY, 180, 60); // Proper size for better scanning
-        currentY += 60; // Move below barcode
-        doc.text("", marginLeft, currentY); // Empty text to maintain spacing
+        doc.addImage(barcodeBase64, "PNG", marginLeft, currentY, 100, 40);
+        currentY += 50;
       }
-      // Save PDF
+
       doc.save(`package-label-${pkg._id}.pdf`);
       toast.success(`Package label downloaded: ${pkg._id}`);
       resolve();

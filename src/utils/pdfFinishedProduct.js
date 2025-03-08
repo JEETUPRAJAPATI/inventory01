@@ -158,18 +158,20 @@ export const pdfFinishedProduct = (Details) => {
         finalY = doc.lastAutoTable.finalY + 10;
 
         // === Invoice Total Table (with Highlighted Style) ===
+
+        // Invoice Table
         doc.autoTable({
             startY: finalY,
-            head: [['Subtotal', 'GST (18%)', 'Total']],
+            head: [['Subtotal', 'GST (18%)', 'Total (R)']],
             body: [[
                 `${subtotal.toFixed(2)}`,
                 `${gst.toFixed(2)}`,
                 `${total.toFixed(2)}`
             ]],
             theme: 'grid',
-            headStyles: { fillColor: [255, 87, 51], textColor: 255, fontSize: 10, fontStyle: 'bold' },
-            bodyStyles: { fontSize: 10, fontStyle: 'bold', halign: 'center' }
+            headStyles: { fillColor: [255, 87, 51], textColor: 255, fontSize: 10, fontStyle: 'bold' }
         });
+
 
         // === Footer Section ===
         doc.setFontSize(10);

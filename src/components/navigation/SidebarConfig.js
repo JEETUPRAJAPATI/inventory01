@@ -39,11 +39,11 @@ export const menuConfigs = {
   inventory: [
     { title: 'Dashboard', path: '/inventory/dashboard', icon: 'Dashboard' },
     { title: 'Raw Materials', path: '/inventory/raw-materials', icon: 'Inventory' },
-    { title: 'Finished Products', path: '/inventory/finished-products', icon: 'Category' },
     { title: 'Purchase Orders', path: '/inventory/purchase-orders', icon: 'ShoppingCart' },
     { title: 'Invoices', path: '/inventory/invoices', icon: 'Receipt' },
     { title: 'Packaging', path: '/inventory/packaging', icon: 'Inventory' },
-    { title: 'Delivery', path: '/inventory/delivery', icon: 'LocalShipping' }
+    { title: 'Delivery', path: '/inventory/delivery', icon: 'LocalShipping' },
+    { title: 'Finished Products', path: '/inventory/finished-products', icon: 'Category' }
   ],
 
   sales: [

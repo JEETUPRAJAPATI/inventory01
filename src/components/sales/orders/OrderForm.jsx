@@ -178,15 +178,24 @@ export default function OrderForm({ open, onClose, onSubmit, order = null }) {
           <Grid container spacing={2} sx={{ mt: 1 }}>
             {/* Customer Information */}
             <Grid item xs={12} md={6}>
-              <FormInput
-                label="Customer Name"
+              <label className="text-sm">
+                Customer Name <span className="text-red-500">*</span>
+              </label>
+              <TextField
                 name="customerName"
                 value={formData.customerName}
                 onChange={handleChange}
+                fullWidth
                 required
+
+                className="text-sm"
+                placeholder="Enter customer name"
               />
             </Grid>
             <Grid item xs={12} md={6}>
+              <label className="text-sm">
+                Mobile Number <span className="text-red-500">*</span>
+              </label>
               <Autocomplete
                 value={formData.mobileNumber}
                 onChange={handleMobileNumberSearch}
@@ -202,7 +211,7 @@ export default function OrderForm({ open, onClose, onSubmit, order = null }) {
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Search or enter mobile number"
+                    placeholder="Search or enter mobile number"
                     variant="outlined"
                     fullWidth
                     required
@@ -211,142 +220,196 @@ export default function OrderForm({ open, onClose, onSubmit, order = null }) {
               />
             </Grid>
             <Grid item xs={12}>
+              <label className="text-sm">
+                Address <span className="text-red-500">*</span>
+              </label>
               <FormInput
-                label="Address"
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
                 required
                 multiline
                 rows={3}
+                className="text-sm"
+                placeholder="Enter address"
               />
             </Grid>
             <Grid item xs={12} md={6}>
+              <label className="text-sm">
+                Email <span className="text-red-500">*</span>
+              </label>
               <FormInput
-                label="Email"
                 name="email"
                 type="email"
                 value={formData.email}
                 onChange={handleChange}
                 required
+                className="text-sm"
+                placeholder="Enter email"
               />
             </Grid>
 
             {/* Bag Specifications */}
             <Grid item xs={12} md={6}>
+              <label className="text-sm">
+                Bag Type <span className="text-red-500">*</span>
+              </label>
               <FormSelect
-                label="Bag Type"
                 name="bagDetails.type"
                 value={formData.bagDetails.type}
                 onChange={handleChange}
                 options={bagTypes}
                 required
+                className="text-sm"
               />
             </Grid>
             <Grid item xs={12} md={6}>
+              <label className="text-sm">
+                Handle Color <span className="text-red-500">*</span>
+              </label>
               <FormInput
-                label="Handle Color"
                 name="bagDetails.handleColor"
                 value={formData.bagDetails.handleColor}
                 onChange={handleChange}
+                className="text-sm"
+                placeholder="Handle Color"
               />
             </Grid>
             <Grid item xs={12} md={6}>
+              <label className="text-sm">
+                Size <span className="text-red-500">*</span>
+              </label>
               <FormInput
-                label="Size"
                 name="bagDetails.size"
                 value={formData.bagDetails.size}
                 onChange={handleChange}
                 required
+                className="text-sm"
                 placeholder="e.g., 12x15x4 inches"
               />
             </Grid>
             <Grid item xs={12} md={6}>
+              <label className="text-sm">
+                Job Name <span className="text-red-500">*</span>
+              </label>
               <FormInput
-                label="Job Name"
                 name="jobName"
                 value={formData.jobName}
                 onChange={handleChange}
                 required
+                className="text-sm"
+                placeholder="Job Name"
               />
             </Grid>
             <Grid item xs={12} md={6}>
+              <label className="text-sm">
+                Bag Color <span className="text-red-500">*</span>
+              </label>
               <FormInput
-                label="Bag Color"
                 name="bagDetails.color"
                 value={formData.bagDetails.color}
                 onChange={handleChange}
                 required
+                className="text-sm"
+                placeholder="Bag Color"
               />
             </Grid>
 
             {/* Print and Material Details */}
             <Grid item xs={12} md={6}>
+              <label className="text-sm">
+                Print Color <span className="text-red-500">*</span>
+              </label>
               <FormInput
-                label="Print Color"
                 name="bagDetails.printColor"
                 value={formData.bagDetails.printColor}
                 onChange={handleChange}
                 required
+                className="text-sm"
+                placeholder="Print Color"
               />
             </Grid>
             <Grid item xs={12} md={6}>
+              <label className="text-sm">
+                GSM <span className="text-red-500">*</span>
+              </label>
               <FormInput
-                label="GSM"
                 name="bagDetails.gsm"
                 type="number"
                 value={formData.bagDetails.gsm}
                 onChange={handleChange}
                 required
+                className="text-sm"
+                placeholder="GSM"
               />
             </Grid>
             <Grid item xs={12} md={6}>
+              <label className="text-sm">
+                Fabric Quality <span className="text-red-500">*</span>
+              </label>
               <FormInput
-                label="Fabric Quality"
                 name="fabricQuality"
                 value={formData.fabricQuality}
                 onChange={handleChange}
                 required
+                className="text-sm"
+                placeholder="e.g., cotton"
               />
             </Grid>
 
             {/* Order Details */}
             <Grid item xs={12} md={6}>
+              <label className="text-sm">
+                Quantity (Kg) <span className="text-red-500">*</span>
+              </label>
               <FormInput
-                label="Quantity"
                 name="quantity"
                 type="number"
                 value={formData.quantity}
                 onChange={handleChange}
                 required
+                className="text-sm"
+                placeholder="Quantity"
               />
             </Grid>
             <Grid item xs={12} md={6}>
+              <label className="text-sm">
+                Agent <span className="text-red-500">*</span>
+              </label>
               <FormInput
-                label="Agent"
                 name="agent"
                 value={formData.agent}
                 onChange={handleChange}
                 required
+                className="text-sm"
+                placeholder="Agent"
               />
             </Grid>
             <Grid item xs={12} md={6}>
+              <label className="text-sm">
+                Order Value <span className="text-red-500">*</span>
+              </label>
               <FormInput
-                label="Order Value"
                 name="orderPrice"
                 value={formData.orderPrice}
                 onChange={handleChange}
                 required
+                className="text-sm"
+                placeholder="Order Value"
               />
             </Grid>
             <Grid item xs={12} md={6}>
+              <label className="text-sm">
+                Status <span className="text-red-500">*</span>
+              </label>
               <FormSelect
-                label="Status"
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
                 options={orderStatuses}
                 required
+                className="text-sm"
+                placeholder="Status"
               />
             </Grid>
           </Grid>
