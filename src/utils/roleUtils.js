@@ -7,7 +7,7 @@ export const getRoleBasedRoute = (registrationType, bagType, operatorType = null
       }
       return '/production/flexo/dashboard';
     }
-    
+
     if (bagType === 'd_cut') {
       if (operatorType === 'bag_making') {
         return '/production/dcut/bagmaking/dashboard';

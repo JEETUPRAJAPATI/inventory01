@@ -201,11 +201,11 @@ export default function BagMakingOrderList({ status = 'pending', bagType }) {
     // API call to move order to delivery
     OrderService.handleMoveToOpsert(orderId, bagType)
       .then(() => {
-        toast.success('Order moved to Opsert');
+        toast.success('Order moved to Offset');
         fetchOrders();
       })
       .catch((error) => {
-        toast.error('Failed to move to Opsert');
+        toast.error('Failed to move to Offset');
       });
   };
 
@@ -307,7 +307,7 @@ export default function BagMakingOrderList({ status = 'pending', bagType }) {
               size="small"
               onClick={() => handleMoveToOpsert(order.orderId)}
             >
-              Move to Opsert
+              Move to Offset
             </Button>
           </Box>
         );

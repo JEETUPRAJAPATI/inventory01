@@ -150,7 +150,7 @@ export const pdfFinishedProduct = (Details) => {
         // === Unit Numbers Table ===
         doc.autoTable({
             startY: finalY,
-            head: [['Flexo', 'W-Cut', 'D-Cut', 'Opsert']],
+            head: [['Flexo', 'W-Cut', 'D-Cut', 'Offset']],
             body: [[
                 Details?.unitNumbers?.flexo || 'N/A',
                 Details?.unitNumbers?.wcut || 'N/A',

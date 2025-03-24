@@ -10,7 +10,7 @@ export const operatorTypesByBag = {
   ],
   'd_cut': [
     { value: 'bag_making', label: 'D-Cut Bag Making' },
-    { value: 'opsert_printing', label: 'Opsert Printing' },
+    { value: 'opsert_printing', label: 'Offset  Printing' },
   ],
 };
 
