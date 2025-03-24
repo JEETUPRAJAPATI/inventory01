@@ -70,7 +70,7 @@ export default function InvoiceList() {
   const handleDownloadPDF = (invoice) => {
     try {
       const { subtotal, gst, total } = calculateTotals(invoice);
-      
+
       const invoiceData = {
         invoiceNumber: invoice.id,
         customerName: invoice.customerName,
@@ -106,11 +106,11 @@ export default function InvoiceList() {
   const handlePrintConfirm = () => {
     const printContent = document.getElementById('printable-invoice');
     const originalContents = document.body.innerHTML;
-    
+
     document.body.innerHTML = printContent.innerHTML;
     window.print();
     document.body.innerHTML = originalContents;
-    
+
     setPrintDialogOpen(false);
     window.location.reload(); // Reload to restore React app state
   };
@@ -122,13 +122,13 @@ export default function InvoiceList() {
 
   const PrintableInvoice = ({ invoice }) => {
     const { subtotal, gst, total } = calculateTotals(invoice);
-    
+
     return (
       <div id="printable-invoice" style={{ padding: '20px', fontFamily: 'Arial' }}>
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-          <h2 style={{ margin: '0' }}>COMPANY NAME</h2>
-          <p style={{ margin: '5px 0' }}>123 Business Street, City, State, ZIP</p>
-          <p style={{ margin: '5px 0' }}>Phone: (123) 456-7890 | Email: info@company.com</p>
+          <h2 style={{ margin: '0' }}>Thailiwale</h2>
+          <p style={{ margin: '5px 0' }}>201/1/4, SR Compound, Dewas Naka, Lasudia Mori, Indore, Madhya Pradesh 452016</p>
+          <p style={{ margin: '5px 0' }}>Phone: +91 7999857050 | Email: info@thailiwale.com</p>
         </div>
 
         <h3 style={{ textAlign: 'center', marginBottom: '20px' }}>INVOICE</h3>

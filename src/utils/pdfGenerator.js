@@ -9,25 +9,40 @@ export const generateInvoicePDF = (invoiceData) => {
     // console.log('invoice data is', invoiceData);
     // return false;
     const doc = new jsPDF();
-
     const marginLeft = 20;
     let currentY = 20;
     const pageWidth = doc.internal.pageSize.getWidth();
 
-    // Company Header
-    doc.addImage(COMPANY_LOGO, 'PNG', marginLeft, currentY, 40, 20);
-    doc.setFontSize(12);
-    doc.text('Company Name', pageWidth - 80, currentY + 5);
-    doc.text('Address: 123 Business Street, City', pageWidth - 80, currentY + 12);
-    doc.text('Email: info@company.com', pageWidth - 80, currentY + 19);
-    doc.text('Phone: +1-234-567-890', pageWidth - 80, currentY + 26);
-    doc.line(marginLeft, currentY + 35, pageWidth - marginLeft, currentY + 35);
+    // Define a consistent X position for right-aligned text
+    const textX = pageWidth - 140; // Shifted left for better alignment
 
-    // Invoice Title
-    currentY += 50;
+    // **Company Header**
+    const logoSize = 30; // Set smaller size
+    const marginTop = 15;
+    currentY = marginTop;
+    doc.addImage(COMPANY_LOGO, "PNG", marginLeft, currentY, logoSize, logoSize);
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Thailiwale", textX, currentY + 5);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+
+    // Properly spaced address & contact details
+    doc.text("Address: A201/1/4, SR Compound, Dewas Naka,", textX, currentY + 12);
+    doc.text("Lasudia Mori, Indore, Madhya Pradesh 452016", textX, currentY + 19);
+    doc.text("Email: info@thailiwale.com", textX, currentY + 26);
+    doc.text("Phone: +91 7999857050", textX, currentY + 33);
+
+    // Line Separator
+    currentY += 40;
+    doc.line(marginLeft, currentY, pageWidth - marginLeft, currentY);
+    currentY += 10; // Move down slightly
+
+    // **Invoice Title**
     doc.setFontSize(20);
-    doc.setFont('helvetica', 'bold');
-    doc.text('INVOICE', pageWidth / 2, currentY, { align: 'center' });
+    doc.setFont("helvetica", "bold");
+    doc.text("INVOICE", pageWidth / 2, currentY, { align: "center" });
+
 
     // Invoice Details (Dynamic)
     currentY += 20;

@@ -9,12 +9,11 @@ import {
   Typography,
 } from "@mui/material";
 import { QRCodeCanvas } from "qrcode.react";
+import html2canvas from "html2canvas";
 
 export default function QRCodeDialog({ open, onClose, orderData }) {
-
-  console.log('orderData', orderData);
   const qrRef = useRef(null);
-
+  console.log('order data is', orderData)
   if (!orderData) return null;
 
   const qrData = JSON.stringify({
@@ -22,21 +21,22 @@ export default function QRCodeDialog({ open, onClose, orderData }) {
     rollSize: orderData.rollSize,
     gsm: orderData.gsm,
     quantity: orderData.quantity,
-    id: orderData._id
+    id: orderData._id,
   });
 
-  const downloadQRCode = () => {
-    const canvas = qrRef.current?.querySelector("canvas");
-    if (!canvas) {
-      console.error("QR Code canvas element not found.");
+  const downloadQRCode = async () => {
+    if (!qrRef.current) {
+      console.error("QR Code section not found.");
       return;
     }
 
-    const pngFile = canvas.toDataURL("image/png");
-    const downloadLink = document.createElement("a");
-    downloadLink.download = `order-${orderData._id}-qr.png`;
-    downloadLink.href = pngFile;
-    downloadLink.click();
+    const canvas = await html2canvas(qrRef.current, { backgroundColor: "#fff" });
+    const image = canvas.toDataURL("image/png");
+
+    const link = document.createElement("a");
+    link.href = image;
+    link.download = `order-${orderData._id}-qr.png`;
+    link.click();
   };
 
   return (
@@ -44,13 +44,15 @@ export default function QRCodeDialog({ open, onClose, orderData }) {
       <DialogTitle>Order QR Code</DialogTitle>
       <DialogContent>
         <Box
+          ref={qrRef}
           sx={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             py: 3,
+            bgcolor: "#fff",
+            p: 2,
           }}
-          ref={qrRef}
         >
           <QRCodeCanvas value={qrData} size={300} level="M" includeMargin={true} />
 
@@ -58,6 +60,9 @@ export default function QRCodeDialog({ open, onClose, orderData }) {
             Scan this QR code to get order details
           </Typography>
           <Box sx={{ mt: 2 }}>
+            <Typography variant="body2">
+              <strong>Row material id:</strong> {orderData._id}
+            </Typography>
             <Typography variant="body2">
               <strong>Fabric Color:</strong> {orderData.fabricColor}
             </Typography>

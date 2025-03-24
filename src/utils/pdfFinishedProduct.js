@@ -12,16 +12,22 @@ export const pdfFinishedProduct = (Details) => {
         const pageWidth = doc.internal.pageSize.getWidth();
 
         // === Header Section ===
-        doc.addImage(COMPANY_LOGO, 'PNG', marginLeft, currentY, 40, 20);
+        const logoSize = 30;
+        const marginTop = 15;
+        currentY = marginTop;
+        doc.addImage(COMPANY_LOGO, "PNG", marginLeft, currentY, logoSize, logoSize);
+
         doc.setFontSize(14);
         doc.setFont('helvetica', 'bold');
-        doc.text('Company Name', pageWidth - 90, currentY + 5);
+        doc.text('Thailiwale', pageWidth - 90, currentY + 5);
         doc.setFontSize(10);
         doc.setFont('helvetica', 'normal');
-        doc.text('123 Business Street, City', pageWidth - 90, currentY + 15);
-        doc.text('Email: info@company.com', pageWidth - 90, currentY + 22);
-        doc.text('Phone: +1-234-567-890', pageWidth - 90, currentY + 29);
-        doc.line(marginLeft, currentY + 40, pageWidth - marginLeft, currentY + 40); // Line Break
+        doc.text('201/1/4, SR Compound, Dewas Naka,', pageWidth - 90, currentY + 15);
+        doc.text('Lasudia Mori, Indore, Madhya Pradesh 452016', pageWidth - 90, currentY + 22);
+
+        doc.text('Email: info@thailiwale.com', pageWidth - 90, currentY + 32);
+        doc.text('Phone: +91 7999857050', pageWidth - 90, currentY + 40);
+        doc.line(marginLeft, currentY + 45, pageWidth - marginLeft, currentY + 45); // Line Break
 
         // === Customer & Order Details ===
         currentY += 50;
@@ -81,12 +87,11 @@ export const pdfFinishedProduct = (Details) => {
         // === Production Details Table ===
         doc.autoTable({
             startY: finalY,
-            head: [['Roll Size', 'Cylinder Size', 'Quantity (Kgs)', 'Remarks', 'Progress']],
+            head: [['Roll Size', 'Cylinder Size', 'Quantity (Kgs)', 'Progress']],
             body: [[
                 Details?.productionManagerDetails?.production_details?.roll_size || 'N/A',
                 Details?.productionManagerDetails?.production_details?.cylinder_size || 'N/A',
                 Details?.productionManagerDetails?.production_details?.quantity_kgs || 'N/A',
-                Details?.productionManagerDetails?.production_details?.remarks || 'N/A',
                 Details?.productionManagerDetails?.production_details?.progress || 'N/A'
             ]],
             theme: 'grid'

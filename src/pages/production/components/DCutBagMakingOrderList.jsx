@@ -382,7 +382,7 @@ export default function BagMakingOrderList({ status = 'pending', bagType }) {
                       <TableCell>{material.gsm}</TableCell>
                       <TableCell style={{ filter: 'blur(5px)' }}>{material.fabricColor}</TableCell>
                       <TableCell style={{ filter: 'blur(5px)' }}>{material.rollSize}</TableCell>
-                      <TableCell style={{ filter: 'blur(5px)' }}>{material.quantity}</TableCell>
+                      <TableCell >{material.quantity}</TableCell>
                       <TableCell>
                         <Button
                           variant="outlined"

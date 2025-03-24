@@ -29,10 +29,11 @@ import { Add, Edit, Visibility } from '@mui/icons-material';
 import toast from 'react-hot-toast';
 import PackageService from '../../services/packageService';
 import { PictureAsPdf } from '@mui/icons-material';
-
+import QRCode from "qrcode";
 import COMPANY_LOGO from '../../assets/logo.jpg';
 import { jsPDF } from 'jspdf';
 import JsBarcode from "jsbarcode";
+import html2canvas from "html2canvas";
 const initialPackageState = {
   length: '',
   width: '',
@@ -340,6 +341,7 @@ export default function PackagingManagement() {
       console.log("Package Data:", pkg);
       console.log("Sales Order:", salesOrder);
 
+      console.log("Unit Number", unitNumbers);
       if (!pkg || !salesOrder) {
         toast.error("Invalid package or sales order data");
         return resolve();
@@ -367,55 +369,55 @@ export default function PackagingManagement() {
           img.src = url;
         });
       };
-
       // Generate barcode
-      const generateBarcode = async (order) => {
+      const generateQRCode = async (order) => {
         return new Promise((resolve, reject) => {
           if (!order) return resolve(null);
 
           const canvas = document.createElement("canvas");
 
           try {
-            let barcodeData = `OrderId-${order.orderId}, JobName-${order.jobName}, BagColor-${order.bagDetails.color}`;
-            console.log("Barcode Data:", barcodeData);
+            let qrData = `OrderId-${order.orderId}, JobName-${order.jobName}, BagColor-${order.bagDetails.color},GSM-${order.bagDetails.gsm},Quantity-${order.quantity}`;
 
-            JsBarcode(canvas, barcodeData, {
-              format: "CODE128",
-              width: 1.5,
-              height: 40,
-              displayValue: false,
-              background: "#FFFFFF",
-              lineColor: "#000000",
+            QRCode.toCanvas(canvas, qrData, {
+              width: 150, // Decrease size
+              margin: 2,
+              color: {
+                dark: "#000000",
+                light: "#ffffff",
+              },
             });
 
             resolve(canvas.toDataURL("image/png"));
           } catch (error) {
-            console.error("Barcode generation error:", error);
+            console.error("QR Code generation error:", error);
             reject(error);
           }
         });
       };
 
-      // Load images and barcode
-      const logoBase64 = await loadImageAsBase64(COMPANY_LOGO);
-      const barcodeBase64 = await generateBarcode(salesOrder.order);
-
       let currentY = topMargin;
+
+      const logoBase64 = await loadImageAsBase64(COMPANY_LOGO);
 
       // Add Company Logo
       if (logoBase64) {
-        doc.addImage(logoBase64, "PNG", marginLeft, currentY, 50, 25);
+        const logoSize = 30; // Set smaller size
+        const marginTop = 15;
+        currentY = marginTop;
+        doc.addImage(logoBase64, "PNG", marginLeft, currentY, logoSize, logoSize);
         currentY += 30;
       }
-
       // Align company details to the right
       const textX = pageWidth - marginRight - 80; // Adjust margin
       doc.setFontSize(12).setFont("helvetica", "bold");
-      doc.text("Company Name", textX, topMargin + 10);
+      doc.text("Thailiwale", textX, topMargin + 10);
       doc.setFontSize(10).setFont("helvetica", "normal");
-      doc.text("123 Business Street, City", textX, topMargin + 20);
-      doc.text("Email: info@company.com", textX, topMargin + 30);
-      doc.text("Phone: +1-234-567-890", textX, topMargin + 40);
+      // Split the address into two lines
+      doc.text("201/1/4, SR Compound, Dewas Naka,", textX, topMargin + 20);
+      doc.text("Lasudia Mori, Indore, Madhya Pradesh 452016", textX, topMargin + 27);
+      doc.text("Email: info@thailiwale.com", textX, topMargin + 32); // Adjusted
+      doc.text("Phone: +91 7999857050", textX, topMargin + 37); // Moved down
 
       currentY += 13;
       doc.line(marginLeft, currentY, pageWidth - marginRight, currentY);
@@ -430,11 +432,20 @@ export default function PackagingManagement() {
         ["Customer:", order.customerName || "N/A", "Fabric:", bagDetails.type || "N/A"],
         ["Email:", order.email || "N/A", "GSM:", bagDetails.gsm || "N/A"],
         ["Mobile:", order.mobileNumber || "N/A", "Color:", bagDetails.color || "N/A"],
-        ["Address:", order.address || "N/A", "DCUT Unit No:", unitNumbers.dcut || "N/A"],
-        ["", "", "Opsert Unit No:", unitNumbers.opsert || "N/A"],
         ["Length (cm):", pkg.length || "N/A", "Width (cm):", pkg.width || "N/A"],
         ["Height (cm):", pkg.height || "N/A", "Weight (kg):", pkg.weight || "N/A"],
       ];
+
+      // Add conditional entries
+      if (unitNumbers.flexo !== "N/A" && unitNumbers.wcut !== "N/A") {
+        orderDetails.push(
+          ["WCut Flexo Unit No:", unitNumbers.flexo || "N/A", "Wcut bagmaking Unit No:", unitNumbers.wcut || "N/A"],
+        );
+      } else if (unitNumbers.dcut !== "N/A" && unitNumbers.opsert !== "N/A") {
+        orderDetails.push(
+          ["DCUT Unit No:", unitNumbers.dcut || "N/A", "Offset Unit No:", unitNumbers.opsert || "N/A"],
+        );
+      }
 
       doc.autoTable({
         startY: currentY,
@@ -451,11 +462,15 @@ export default function PackagingManagement() {
 
       currentY = doc.autoTable.previous.finalY + 5;
 
+      const barcodeBase64 = await generateQRCode(salesOrder.order);
       if (barcodeBase64) {
-        doc.addImage(barcodeBase64, "PNG", marginLeft, currentY, 100, 40);
-        currentY += 50;
-      }
+        const barcodeWidth = 40;
+        const barcodeHeight = 40;
+        const marginTop = 5;
 
+        doc.addImage(barcodeBase64, "PNG", marginLeft, currentY + marginTop, barcodeWidth, barcodeHeight);
+        currentY += barcodeHeight + 10;
+      }
       doc.save(`package-label-${pkg._id}.pdf`);
       toast.success(`Package label downloaded: ${pkg._id}`);
       resolve();
@@ -555,12 +570,12 @@ export default function PackagingManagement() {
                         >
                           <Visibility />
                         </IconButton>
-                        <IconButton
+                        {/* <IconButton
                           color="primary"
                           onClick={() => generatePackageAllDetails(order)}
                         >
                           <PictureAsPdf />
-                        </IconButton>
+                        </IconButton> */}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -588,10 +603,8 @@ export default function PackagingManagement() {
         maxWidth="md"
         fullWidth
       >
-
         <DialogTitle>
           Packages for Order {selectedOrder?.id}
-
         </DialogTitle>
         <TableCell>
           <Button size="small" variant="outlined" onClick={handleOpenDialog}>

@@ -360,7 +360,7 @@ export default function FlexoOrderList({ status = 'pending', bagType }) {
                       <TableCell>{material.gsm}</TableCell>
                       <TableCell style={{ filter: 'blur(5px)' }}>{material.fabricColor}</TableCell>
                       <TableCell style={{ filter: 'blur(5px)' }}>{material.rollSize}</TableCell>
-                      <TableCell style={{ filter: 'blur(5px)' }}>{material.quantity}</TableCell>
+                      <TableCell >{material.quantity}</TableCell>
                       <TableCell>
                         <Button
                           variant="outlined"
@@ -502,7 +502,7 @@ export default function FlexoOrderList({ status = 'pending', bagType }) {
         }}
       >
         <DialogTitle sx={{ textAlign: 'center' }}>QR Code Verification</DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ overflowY: "hidden" }}>
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '150px' }}>
             <QRCodeScanner onScanSuccess={handleScanSuccess} />
           </Box>

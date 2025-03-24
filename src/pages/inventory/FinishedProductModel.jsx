@@ -187,11 +187,11 @@ export default function FinishedProductModel({ open, production, onClose }) {
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <Typography variant="body2" color="text.secondary">
-                                        Created At
+                                        Updated At
                                     </Typography>
                                     <Typography variant="body1" fontWeight="bold">
-                                        {productionData.productionManagerDetails?.createdAt
-                                            ? new Date(productionData.productionManagerDetails.createdAt).toLocaleString()
+                                        {productionData.productionManagerDetails?.updatedAt
+                                            ? new Date(productionData.productionManagerDetails.updatedAt).toLocaleString()
                                             : 'N/A'}
                                     </Typography>
                                 </Grid>
@@ -290,6 +290,20 @@ export default function FinishedProductModel({ open, production, onClose }) {
                                         {productionData.orderDetails?.bagDetails?.color || 'N/A'}
                                     </Typography>
                                 </Grid>
+                                {productionData.operatorCompleteDate &&
+                                    Object.entries(productionData.operatorCompleteDate)
+                                        .filter(([key, value]) => value !== "N/A")
+                                        .map(([key, value]) => (
+                                            <Grid item xs={12} sm={6} key={key}>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    {key.charAt(0).toUpperCase() + key.slice(1)} Completed Date
+                                                </Typography>
+                                                <Typography variant="body1" fontWeight="bold">
+                                                    {value ? new Date(value).toLocaleString() : 'N/A'}
+                                                </Typography>
+                                            </Grid>
+                                        ))}
+
                             </Grid>
                         </CardContent>
                     </Card>
@@ -351,9 +365,10 @@ export default function FinishedProductModel({ open, production, onClose }) {
                                     </Typography>
                                     <Typography variant="body1" fontWeight="bold">
                                         {productionData.deliveryDetails?.deliveryDate
-                                            ? new Date(productionData.deliveryDetails.deliveryDate).toLocaleDateString()
+                                            ? new Date(productionData.deliveryDetails.deliveryDate).toLocaleString()
                                             : 'N/A'}
                                     </Typography>
+
                                 </Grid>
 
                             </Grid>

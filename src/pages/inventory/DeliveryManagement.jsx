@@ -289,6 +289,7 @@ export default function DeliveryManagement() {
               />
             </Grid>
 
+
             <Grid item xs={12}>
               <TextField
                 label="Delivery Date"
@@ -296,14 +297,17 @@ export default function DeliveryManagement() {
                 type="date"
                 value={
                   deliveryDetails.deliveryDate
-                    ? new Date(deliveryDetails.deliveryDate).toLocaleDateString('en-CA') // 'en-CA' ensures the format is YYYY-MM-DD
-                    : ''
+                    ? new Date(deliveryDetails.deliveryDate).toISOString().split('T')[0]
+                    : new Date().toISOString().split('T')[0]
                 }
                 onChange={handleChange}
                 fullWidth
                 required
                 InputLabelProps={{
                   shrink: true
+                }}
+                inputProps={{
+                  min: new Date().toISOString().split('T')[0]
                 }}
               />
             </Grid>

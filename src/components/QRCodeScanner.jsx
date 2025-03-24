@@ -22,7 +22,14 @@ export default function QRCodeScanner({ onScanSuccess }) {
         rememberLastUsedCamera: true,
         disableFlip: false
       };
+      const hideScanFileOption = () => {
+        const element = document.getElementById('html5-qrcode-anchor-scan-type-change');
+        if (element) {
+          element.style.display = 'none';
+        }
+      };
 
+      setTimeout(hideScanFileOption, 100); // Wait for the scanner to render
 
       scannerRef.current = new Html5QrcodeScanner('qr-reader', config);
 
@@ -105,6 +112,7 @@ export default function QRCodeScanner({ onScanSuccess }) {
           type="file"
           onChange={handleFileUpload}
         />
+
       </Box>
 
       {/* Scanner Area */}

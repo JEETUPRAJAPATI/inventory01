@@ -13,6 +13,8 @@ import {
   TextField,
   MenuItem,
   Button,
+  Select,
+  TablePagination,
 } from '@mui/material';
 import { Delete, Visibility, PictureAsPdf } from '@mui/icons-material';
 
@@ -30,6 +32,12 @@ export default function FinishedProducts() {
   const [productToDelete, setProductToDelete] = useState(null);
   const [selectedFinishedProduct, setSelectedFinishedProduct] = useState(null);
   const [filters, setFilters] = useState({ status: '', search: '' });
+
+  // Pagination & Filters
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     fetchProducts();
@@ -93,22 +101,33 @@ export default function FinishedProducts() {
     return colors[status] || 'default';
   };
 
-  const handleFilterChange = (e) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
-  };
-
   const handleResetFilters = () => {
-    setFilters({ status: '', search: '' });
+    setSearchQuery('');
+    setStatusFilter('');
+    setPage(0);
   };
 
-  const filteredProducts = products.filter((product) => {
-    return (
-      (filters.status === '' || product.status === filters.status) &&
-      (filters.search === '' ||
-        product.order_id.includes(filters.search) ||
-        product.orderDetails?.customerName.toLowerCase().includes(filters.search.toLowerCase()))
-    );
-  });
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+  };
+  const handleRowsPerPageChange = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+
+  // Apply Filters & Pagination
+  const filteredProducts = products
+    .filter((product) => {
+      const customerName = product?.orderDetails?.customerName || '';
+      const orderId = product?.order_id?.toString() || '';
+      return (
+        customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        orderId.includes(searchQuery)
+      );
+    })
+    .filter((product) => (statusFilter ? product.status === statusFilter : true))
+    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage); // Pagination
 
   if (loading) {
     return <Typography variant="h6">Loading products...</Typography>;
@@ -119,26 +138,29 @@ export default function FinishedProducts() {
       <Card>
         <div className="flex justify-between items-center p-4">
           <Typography variant="h6">Finished Products</Typography>
-          <div className="flex gap-4">
+
+          <div className="flex gap-3">
+            {/* Search Box */}
             <TextField
-              select
+              label="Search Orders"
+              variant="outlined"
               size="small"
-              name="status"
-              value={filters.status}
-              onChange={handleFilterChange}
-              sx={{ minWidth: 120 }}
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+            />
+
+            {/* Status Filter */}
+            <Select
+              value={statusFilter}
+              onChange={e => setStatusFilter(e.target.value)}
+              displayEmpty
+              size="small"
             >
               <MenuItem value="">All Status</MenuItem>
+
               <MenuItem value="pending">Pending</MenuItem>
               <MenuItem value="delivered">Delivered</MenuItem>
-            </TextField>
-            <TextField
-              size="small"
-              name="search"
-              value={filters.search}
-              onChange={handleFilterChange}
-              placeholder="Search by Order ID or Name"
-            />
+            </Select>
             <Button variant="outlined" onClick={handleResetFilters}>Reset</Button>
           </div>
         </div>
@@ -180,6 +202,17 @@ export default function FinishedProducts() {
             </TableBody>
           </Table>
         </TableContainer>
+
+        {/* Pagination Controls */}
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={products.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handlePageChange}
+          onRowsPerPageChange={handleRowsPerPageChange}
+        />
       </Card>
 
       <FinishedProductModel

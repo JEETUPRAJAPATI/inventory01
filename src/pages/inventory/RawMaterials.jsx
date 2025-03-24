@@ -290,17 +290,31 @@ export default function RawMaterials() {
       const doc = new jsPDF();
       const pageWidth = doc.internal.pageSize.getWidth();
       const marginLeft = 14;
-      let currentY = 10; // Track current Y position
+      let currentY = 10;
+
+      const textX = marginLeft + 90;
 
       // **Company Header Section**
-      doc.addImage(COMPANY_LOGO, "PNG", marginLeft, currentY, 40, 20);
+      const logoSize = 30; // Set smaller size
+      const marginTop = 15;
+      currentY = marginTop;
+      doc.addImage(COMPANY_LOGO, "PNG", marginLeft, currentY, logoSize, logoSize);
       doc.setFontSize(12);
-      doc.text("Company Name", pageWidth - 80, currentY + 5);
-      doc.text("Address: 123 Business Street, City", pageWidth - 80, currentY + 12);
-      doc.text("Email: info@company.com", pageWidth - 80, currentY + 19);
-      doc.text("Phone: +1-234-567-890", pageWidth - 80, currentY + 26);
-      doc.line(marginLeft, currentY + 30, pageWidth - marginLeft, currentY + 30);
-      currentY += 40; // Move down
+      doc.setFont("helvetica", "bold");
+      doc.text("Thailiwale", textX, currentY + 5);
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+
+      // Address (properly spaced)
+      doc.text("Address: 201/1/4, SR Compound, Dewas Naka,", textX, currentY + 12);
+      doc.text("Lasudia Mori, Indore, Madhya Pradesh 452016", textX, currentY + 19);
+      doc.text("Email: info@thailiwale.com", textX, currentY + 26);
+      doc.text("Phone: +91 7999857050", textX, currentY + 33);
+
+      // Line Separator
+      currentY += 40;
+      doc.line(marginLeft, currentY, pageWidth - marginLeft, currentY);
+      currentY += 10; // Move down slightly
 
       // **Category Title**
       doc.setFontSize(14);

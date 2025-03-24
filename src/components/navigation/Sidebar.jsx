@@ -84,18 +84,24 @@ export default function Sidebar({ open, onClose }) {
         },
       }}
     >
-      {/* Logo and Company Name */}
       <Box
         sx={{
           p: 2,
-          display: 'block', // Ensures block layout
+          display: 'block',
           gap: 2,
-          bgcolor: 'background.default', // Optional: Sets a theme-friendly background
-          borderRadius: 1, // Optional: Adds a slight border radius for better visuals
+          bgcolor: 'background.default',
+          borderRadius: 1,
         }}
       >
         <Box sx={{ display: 'block', alignItems: 'center', gap: 2, }}>
-          <img src={logo} alt="Company Logo" style={{ height: '50px', objectFit: 'contain' }}
+          <img
+            src={logo}
+            alt="Company Logo"
+            style={{
+              height: "102px",
+              objectFit: "contain",
+              borderRadius: "100%"
+            }}
           />
           <Typography
             variant="subtitle2"
