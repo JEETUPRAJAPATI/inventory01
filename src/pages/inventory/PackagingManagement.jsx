@@ -341,143 +341,102 @@ export default function PackagingManagement() {
       console.log("Package Data:", pkg);
       console.log("Sales Order:", salesOrder);
 
-      console.log("Unit Number", unitNumbers);
       if (!pkg || !salesOrder) {
         toast.error("Invalid package or sales order data");
         return resolve();
       }
 
-      const doc = new jsPDF();
-      const marginLeft = 20;
-      const marginRight = 20;
-      const topMargin = 10;
-      const pageWidth = doc.internal.pageSize.getWidth();
-
-      // Function to load image as base64
-      const loadImageAsBase64 = (url) => {
-        return new Promise((resolve) => {
-          const img = new Image();
-          img.crossOrigin = "Anonymous";
-          img.onload = function () {
-            const canvas = document.createElement("canvas");
-            canvas.width = img.width;
-            canvas.height = img.height;
-            canvas.getContext("2d").drawImage(img, 0, 0);
-            resolve(canvas.toDataURL("image/png"));
-          };
-          img.onerror = () => resolve(null);
-          img.src = url;
-        });
-      };
-      // Generate barcode
+      // Create a 2" x 3" PDF
+      const doc = new jsPDF({
+        orientation: "portrait",
+        unit: "in",
+        format: [2, 4], // 2 inches wide, 3 inches tall
+      });
+      // Load QR Code
       const generateQRCode = async (order) => {
         return new Promise((resolve, reject) => {
           if (!order) return resolve(null);
-
           const canvas = document.createElement("canvas");
-
           try {
-            let qrData = `OrderId-${order.orderId}, JobName-${order.jobName}, BagColor-${order.bagDetails.color},GSM-${order.bagDetails.gsm},Quantity-${order.quantity}`;
-
-            QRCode.toCanvas(canvas, qrData, {
-              width: 150, // Decrease size
-              margin: 2,
-              color: {
-                dark: "#000000",
-                light: "#ffffff",
-              },
-            });
-
+            let qrData = `Order ID: ${order.orderId}, Job Name: ${order.jobName}`;
+            QRCode.toCanvas(canvas, qrData, { width: 150, margin: 1 });
             resolve(canvas.toDataURL("image/png"));
           } catch (error) {
-            console.error("QR Code generation error:", error);
+            console.error("QR Code error:", error);
             reject(error);
           }
         });
       };
+      const marginLeft = 0.15;
+      const pageWidth = doc.internal.pageSize.getWidth();
+      let currentY = 0.2; // Initial start position
 
-      let currentY = topMargin;
+      // 1️⃣ **Company Details**
+      doc.setFontSize(6);
+      doc.text("Thailiwale", marginLeft, currentY);
+      doc.text("Phone: +91 7999857050", marginLeft, currentY + 0.2);
+      currentY += 0.3;
 
-      const logoBase64 = await loadImageAsBase64(COMPANY_LOGO);
+      // 2️⃣ **Line Separator**
+      doc.setLineWidth(0.01);
+      doc.line(marginLeft, currentY, pageWidth - marginLeft, currentY);
+      currentY += 0.2;
 
-      // Add Company Logo
-      if (logoBase64) {
-        const logoSize = 30; // Set smaller size
-        const marginTop = 15;
-        currentY = marginTop;
-        doc.addImage(logoBase64, "PNG", marginLeft, currentY, logoSize, logoSize);
-        currentY += 30;
-      }
-      // Align company details to the right
-      const textX = pageWidth - marginRight - 80; // Adjust margin
-      doc.setFontSize(12).setFont("helvetica", "bold");
-      doc.text("Thailiwale", textX, topMargin + 10);
-      doc.setFontSize(10).setFont("helvetica", "normal");
-      // Split the address into two lines
-      doc.text("201/1/4, SR Compound, Dewas Naka,", textX, topMargin + 20);
-      doc.text("Lasudia Mori, Indore, Madhya Pradesh 452016", textX, topMargin + 27);
-      doc.text("Email: info@thailiwale.com", textX, topMargin + 32); // Adjusted
-      doc.text("Phone: +91 7999857050", textX, topMargin + 37); // Moved down
-
-      currentY += 13;
-      doc.line(marginLeft, currentY, pageWidth - marginRight, currentY);
-      currentY += 10;
-
-      // Order Details
+      // 3️⃣ **Order Details (Formatted as Key-Value Pairs)**
+      doc.setFontSize(5.5);
       const order = salesOrder.order || {};
       const bagDetails = order.bagDetails || {};
 
       const orderDetails = [
-        ["Order ID:", order.orderId || "N/A", "Job Name:", order.jobName || "N/A"],
-        ["Customer:", order.customerName || "N/A", "Fabric:", bagDetails.type || "N/A"],
-        ["Email:", order.email || "N/A", "GSM:", bagDetails.gsm || "N/A"],
-        ["Mobile:", order.mobileNumber || "N/A", "Color:", bagDetails.color || "N/A"],
-        ["Length (cm):", pkg.length || "N/A", "Width (cm):", pkg.width || "N/A"],
-        ["Height (cm):", pkg.height || "N/A", "Weight (kg):", pkg.weight || "N/A"],
+        ["Order ID:", order.orderId || "N/A"],
+        ["Customer:", order.customerName || "N/A"],
+        ["Email:", order.email || "N/A"],
+        ["Mobile:", order.mobileNumber || "N/A"],
+        ["Job Name:", order.jobName || "N/A"],
+        ["Fabric:", bagDetails.type || "N/A"],
+        ["GSM:", bagDetails.gsm || "N/A"],
+        ["Color:", bagDetails.color || "N/A"],
+        ["Length (cm):", pkg.length || "N/A"],
+        ["Width (cm):", pkg.width || "N/A"],
+        ["Height (cm):", pkg.height || "N/A"],
+        ["Weight (kg):", pkg.weight || "N/A"],
       ];
 
-      // Add conditional entries
+      // Add conditional unit numbers
       if (unitNumbers.flexo !== "N/A" && unitNumbers.wcut !== "N/A") {
         orderDetails.push(
-          ["WCut Flexo Unit No:", unitNumbers.flexo || "N/A", "Wcut bagmaking Unit No:", unitNumbers.wcut || "N/A"],
+          ["WCut Flexo Unit No:", unitNumbers.flexo || "N/A"],
+          ["Wcut Bagmaking Unit No:", unitNumbers.wcut || "N/A"]
         );
       } else if (unitNumbers.dcut !== "N/A" && unitNumbers.opsert !== "N/A") {
         orderDetails.push(
-          ["DCUT Unit No:", unitNumbers.dcut || "N/A", "Offset Unit No:", unitNumbers.opsert || "N/A"],
+          ["DCUT Unit No:", unitNumbers.dcut || "N/A"],
+          ["Offset Unit No:", unitNumbers.opsert || "N/A"]
         );
       }
 
-      doc.autoTable({
-        startY: currentY,
-        body: orderDetails,
-        styles: { fontSize: 9, cellPadding: 3 },
-        columnStyles: {
-          0: { fontStyle: "bold", cellWidth: "25%" },
-          1: { cellWidth: "25%" },
-          2: { fontStyle: "bold", cellWidth: "25%" },
-          3: { cellWidth: "25%" },
-        },
-        theme: "grid",
+      const maxWidth = pageWidth - 0.3;
+      // Display order details in PDF
+      orderDetails.forEach(([label, value]) => {
+        doc.text(`${label} ${value}`, marginLeft, currentY, { maxWidth });
+        currentY += 0.18;
       });
 
-      currentY = doc.autoTable.previous.finalY + 5;
 
-      const barcodeBase64 = await generateQRCode(salesOrder.order);
-      if (barcodeBase64) {
-        const barcodeWidth = 40;
-        const barcodeHeight = 40;
-        const marginTop = 5;
-
-        doc.addImage(barcodeBase64, "PNG", marginLeft, currentY + marginTop, barcodeWidth, barcodeHeight);
-        currentY += barcodeHeight + 10;
+      // Generate and Add QR Code
+      const qrBase64 = await generateQRCode(salesOrder.order);
+      if (qrBase64) {
+        const qrSize = 0.7;
+        doc.addImage(qrBase64, "PNG", marginLeft + 0.5, currentY, qrSize, qrSize);
+        currentY += qrSize + 0.1;
       }
+
+      // Save PDF
       doc.save(`package-label-${pkg._id}.pdf`);
       toast.success(`Package label downloaded: ${pkg._id}`);
       resolve();
     });
   };
-
-
 
   return (
     <>
