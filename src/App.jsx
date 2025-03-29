@@ -4,6 +4,8 @@ import AdminLayout from './layouts/AdminLayout';
 import AdminRoutes from './pages/admin/AdminRoutes';
 import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
+import NotfoundPage from './components/Notfound';
+
 import Unauthorized from './pages/Unauthorized';
 import PrivateRoute from './components/PrivateRoute';
 import ManagerDashboard from './pages/production/manager/ManagerDashboard';
@@ -43,7 +45,9 @@ export default function App() {
     <>
       <Toaster position="top-right" />
       <Routes>
-        <Route path="/" element={<LoginForm />} />
+        {/* <Route path="/" element={<LoginForm />} /> */}
+        <Route path="/" element={<NotfoundPage />} />
+
         <Route path="/register" element={<RegisterForm />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
