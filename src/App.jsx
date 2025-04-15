@@ -45,8 +45,8 @@ export default function App() {
     <>
       <Toaster position="top-right" />
       <Routes>
-        {/* <Route path="/" element={<LoginForm />} /> */}
-        <Route path="/" element={<NotfoundPage />} />
+        <Route path="/" element={<LoginForm />} />
+{/*         <Route path="/" element={<NotfoundPage />} /> */}
 
         <Route path="/register" element={<RegisterForm />} />
         <Route path="/login" element={<LoginForm />} />
