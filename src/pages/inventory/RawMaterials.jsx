@@ -705,7 +705,7 @@ export default function RawMaterials() {
               <TableRow>
                 <TableCell>ID</TableCell>
                 <TableCell>Fabric Color</TableCell>
-                <TableCell>Roll Size</TableCell>
+                <TableCell>Roll Size (Inch)</TableCell>
                 <TableCell>GSM</TableCell>
                 <TableCell>Fabric Quality</TableCell>
                 <TableCell>Quantity (kg)</TableCell>
