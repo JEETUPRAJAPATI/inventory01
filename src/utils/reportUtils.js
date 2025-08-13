@@ -6,12 +6,12 @@ import {
   startOfYear,
   endOfYear,
   parseISO,
-  isWithinInterval
-} from 'date-fns';
-import { formatDate } from './dateUtils';
+  isWithinInterval,
+} from "date-fns";
+import { formatDate } from "./dateUtils";
 
 export const filterRecords = (records, filters) => {
-  return records.filter(record => {
+  return records.filter((record) => {
     // Filter by status
     // if (filters.status !== 'all' && record.status !== filters.status) {
     //   return false;
@@ -59,7 +59,7 @@ export const groupRecordsByDate = (records) => {
       acc[date] = { total: 0, completed: 0 };
     }
     acc[date].total++;
-    if (record.status === 'completed') {
+    if (record.status === "completed") {
       acc[date].completed++;
     }
     return acc;
@@ -68,7 +68,7 @@ export const groupRecordsByDate = (records) => {
   return Object.entries(grouped)
     .map(([date, data]) => ({
       date,
-      ...data
+      ...data,
     }))
     .sort((a, b) => new Date(a.date) - new Date(b.date));
 };

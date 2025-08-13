@@ -19,6 +19,7 @@ import { Visibility, CheckCircle, Cancel } from "@mui/icons-material";
 import toast from "react-hot-toast";
 import deliveryService from "../../services/deliveryService";
 import { formatSnakeCase } from "../../utils/formatSnakeCase";
+import { formatDate } from "../../utils/dateUtils";
 
 export default function DeliveryList() {
   const [deliveries, setDeliveries] = useState([]);
@@ -96,9 +97,7 @@ export default function DeliveryList() {
                       {delivery.orderDetails?.mobileNumber || "N/A"}
                     </TableCell>
                     <TableCell>
-                      {delivery.deliveryDate
-                        ? new Date(delivery.deliveryDate).toLocaleDateString()
-                        : "N/A"}
+                      {formatDate(delivery.deliveryDate) || "N/A"}
                     </TableCell>
                     <TableCell>
                       <Chip

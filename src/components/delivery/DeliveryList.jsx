@@ -25,6 +25,7 @@ import deliveryService from "../../services/deliveryService";
 import DeliveryDetailsModal from "./DeliveryDetailsModal";
 import DeliveryFilters from "./DeliveryFilters";
 import { formatSnakeCase } from "../../utils/formatSnakeCase";
+import { formatDate } from "../../utils/dateUtils";
 
 // Modal style
 const modalStyle = {
@@ -156,9 +157,7 @@ export default function DeliveryList() {
                       {delivery.orderDetails?.mobileNumber || "N/A"}
                     </TableCell>
                     <TableCell>
-                      {delivery.deliveryDate
-                        ? new Date(delivery.deliveryDate).toLocaleDateString()
-                        : "N/A"}
+                      {formatDate(delivery.deliveryDate) || "N/A"}
                     </TableCell>
                     <TableCell>
                       <Chip

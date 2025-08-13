@@ -18,6 +18,7 @@ import {
   MenuItem,
   TextField,
   Tooltip,
+  IconButton,
 } from "@mui/material";
 import { Print, Update, LocalShipping } from "@mui/icons-material";
 import toast from "react-hot-toast";
@@ -146,52 +147,52 @@ export default function OpsertOrderList({
                     </TableCell>
                     <TableCell>
                       <Chip
-                        label={order.opsertDetails[0].status
-                          .replace("_", " ")
-                          .toUpperCase()}
+                        label={formatSnakeCase(order.opsertDetails[0].status)}
                         color={getStatusColor(order.opsertDetails[0].status)}
                         size="small"
                       />
                     </TableCell>
+
                     <TableCell>
                       {order.opsertDetails[0].status === "pending" && (
-                        <Button
-                          startIcon={<Print />}
-                          variant="contained"
-                          color="primary"
-                          size="small"
-                          onClick={() =>
-                            updateOrderStatus(
-                              order.orderId,
-                              "in_progress",
-                              "Printing started"
-                            )
-                          }
-                        >
-                          Start Printing
-                        </Button>
+                        <Tooltip title="Start Printing" arrow>
+                          <IconButton
+                            color="primary"
+                            size="small"
+                            onClick={() =>
+                              updateOrderStatus(
+                                order.orderId,
+                                "in_progress",
+                                "Printing started"
+                              )
+                            }
+                          >
+                            <Print />
+                          </IconButton>
+                        </Tooltip>
                       )}
+
                       {order.opsertDetails[0].status === "in_progress" && (
-                        <Button
-                          startIcon={<Update />}
-                          variant="contained"
-                          color="success"
-                          size="small"
-                          onClick={() => handleOpenModal(order.orderId)}
-                        >
-                          Complete Order
-                        </Button>
+                        <Tooltip title="Complete Order" arrow>
+                          <IconButton
+                            color="success"
+                            size="small"
+                            onClick={() => handleOpenModal(order.orderId)}
+                          >
+                            <Update />
+                          </IconButton>
+                        </Tooltip>
                       )}
+
                       {order.opsertDetails[0].status === "completed" && (
                         <Tooltip title="Move to Packaging" arrow>
-                          <Button
-                            variant="contained"
+                          <IconButton
                             color="info"
-                            onClick={() => handleMoveToPackaging(order.orderId)}
                             size="small"
+                            onClick={() => handleMoveToPackaging(order.orderId)}
                           >
-                            <LocalShipping color="white" />
-                          </Button>
+                            <LocalShipping />
+                          </IconButton>
                         </Tooltip>
                       )}
                     </TableCell>

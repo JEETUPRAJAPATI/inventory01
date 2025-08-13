@@ -59,7 +59,7 @@ export default function AdminDashboard() {
       </Grid>
       <Grid item xs={12} md={3}>
         <SummaryCard
-          title="Total Active Users"
+          title="Active Users"
           value={dashboardData.totalActiveUsers}
           increase="+10%"
           color="info"
@@ -69,15 +69,16 @@ export default function AdminDashboard() {
       <Grid item xs={12} md={6}>
         <RecentOrders adminView />
       </Grid>
-      <Grid item xs={12} md={6}>
-        <ProductionOverview />
-      </Grid>
+
       <Grid item xs={12} md={6}>
         <DeliveryList adminView />
       </Grid>
-      <Grid item xs={12} md={6}>
-        <InventoryOverview />
+      <Grid item xs={12} md={12}>
+        <ProductionOverview />
       </Grid>
+      {/* <Grid item xs={12} md={6}>
+        <InventoryOverview />
+      </Grid> */}
     </Grid>
   );
 }

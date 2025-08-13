@@ -1,24 +1,40 @@
-import api from './api';
+import api from "./api";
 
 const adminService = {
   // Sales Management
   getSales: async (params) => {
     try {
-      const response = await api.get('/admin/sales', { params });
+      const response = await api.get("/admin/sales", { params });
       return response.data;
     } catch (error) {
-      console.error('API Error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to fetch sales data');
+      console.error("API Error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch sales data"
+      );
     }
   },
-
-  getDashboardOverview: async () => {
+  getProductionStats: async (params) => {
     try {
-      const response = await api.get('/admin/dashboardOverview');
+      const response = await api.get("production/manager/production-stats", {
+        params,
+      });
       return response.data;
     } catch (error) {
-      console.error('API Error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to fetch sales data');
+      console.error("API Error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch production stats"
+      );
+    }
+  },
+  getDashboardOverview: async () => {
+    try {
+      const response = await api.get("/admin/dashboardOverview");
+      return response.data;
+    } catch (error) {
+      console.error("API Error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch sales data"
+      );
     }
   },
 
@@ -27,7 +43,9 @@ const adminService = {
       const response = await api.put(`/admin/sales/${orderId}`, updatedData);
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Error updating sales order');
+      throw new Error(
+        error.response?.data?.message || "Error updating sales order"
+      );
     }
   },
 
@@ -37,18 +55,20 @@ const adminService = {
       const response = await api.delete(`/admin/sales/${orderId}`);
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Error deleting sales order');
+      throw new Error(
+        error.response?.data?.message || "Error deleting sales order"
+      );
     }
   },
 
   // User Management
   getUsers: async (params) => {
     try {
-      const response = await api.get('/admin/users', { params });
+      const response = await api.get("/admin/users", { params });
       return response.data;
     } catch (error) {
-      console.error('API Error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to fetch users');
+      console.error("API Error:", error);
+      throw new Error(error.response?.data?.message || "Failed to fetch users");
     }
   },
 
@@ -57,18 +77,20 @@ const adminService = {
       const response = await api.get(`/admin/users/${id}`);
       return response.data;
     } catch (error) {
-      console.error('API Error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to fetch user details');
+      console.error("API Error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch user details"
+      );
     }
   },
 
   createUser: async (userData) => {
     try {
-      const response = await api.post('/admin/users', userData);
+      const response = await api.post("/admin/users", userData);
       return response.data;
     } catch (error) {
-      console.error('API Error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to create user');
+      console.error("API Error:", error);
+      throw new Error(error.response?.data?.message || "Failed to create user");
     }
   },
 
@@ -85,28 +107,28 @@ const adminService = {
       const response = await api.put(`/admin/users/${id}`, userData);
       return response.data;
     } catch (error) {
-      console.error('API Error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to update user');
+      console.error("API Error:", error);
+      throw new Error(error.response?.data?.message || "Failed to update user");
     }
   },
-
 
   deleteUser: async (id) => {
     try {
       await api.delete(`/admin/users/${id}`);
     } catch (error) {
-      console.error('API Error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to delete user');
+      console.error("API Error:", error);
+      throw new Error(error.response?.data?.message || "Failed to delete user");
     }
   },
-
 
   getDeliveries: async (params) => {
     try {
       const response = await api.get(`admin/delivery`, { params });
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to fetch deliveries');
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch deliveries"
+      );
     }
   },
   // Edit an existing delivery
@@ -115,7 +137,9 @@ const adminService = {
       const response = await api.put(`admin/delivery/${id}`, deliveryData);
       return response.data; // return the data from response
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to edit delivery');
+      throw new Error(
+        error.response?.data?.message || "Failed to edit delivery"
+      );
     }
   },
 
@@ -125,72 +149,98 @@ const adminService = {
       const response = await api.delete(`admin/delivery/${id}`);
       return response.data; // return the data from response
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to delete delivery');
+      throw new Error(
+        error.response?.data?.message || "Failed to delete delivery"
+      );
     }
   },
   // W-Cut Production Management
   getWCutFlexo: async (params) => {
     try {
-      const response = await api.get('/admin/production/w-cut/flexo', { params });
+      const response = await api.get("/admin/production/w-cut/flexo", {
+        params,
+      });
       return response.data;
     } catch (error) {
-      console.error('API Error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to fetch W-Cut Flexo data');
+      console.error("API Error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch W-Cut Flexo data"
+      );
     }
   },
 
   getWCutBagMaking: async (params) => {
     try {
-      const response = await api.get('/admin/production/w-cut/bag-making', { params });
+      const response = await api.get("/admin/production/w-cut/bag-making", {
+        params,
+      });
       return response.data;
     } catch (error) {
-      console.error('API Error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to fetch W-Cut Bag Making data');
+      console.error("API Error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch W-Cut Bag Making data"
+      );
     }
   },
 
   // D-Cut Production Management
   getDCutOpsert: async (params) => {
     try {
-      const response = await api.get('/admin/production/d-cut/opsert', { params });
+      const response = await api.get("/admin/production/d-cut/opsert", {
+        params,
+      });
       return response.data;
     } catch (error) {
-      console.error('API Error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to fetch D-Cut Opsert data');
+      console.error("API Error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch D-Cut Opsert data"
+      );
     }
   },
 
   getDCutBagMaking: async (params) => {
     try {
-      const response = await api.get('/admin/production/d-cut/bag-making', { params });
+      const response = await api.get("/admin/production/d-cut/bag-making", {
+        params,
+      });
       return response.data;
     } catch (error) {
-      console.error('API Error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to fetch D-Cut Bag Making data');
+      console.error("API Error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch D-Cut Bag Making data"
+      );
     }
   },
 
   // Production Status Updates
   updateProductionStatus: async (type, id, status) => {
     try {
-      const response = await api.put(`/admin/production/${type}/${id}/status`, { status });
+      const response = await api.put(`/admin/production/${type}/${id}/status`, {
+        status,
+      });
       return response.data;
     } catch (error) {
-      console.error('API Error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to update status');
+      console.error("API Error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to update status"
+      );
     }
   },
 
   // Production Process Movement
   moveToNextStage: async (type, id, nextStage) => {
     try {
-      const response = await api.post(`/admin/production/${type}/${id}/move`, { nextStage });
+      const response = await api.post(`/admin/production/${type}/${id}/move`, {
+        nextStage,
+      });
       return response.data;
     } catch (error) {
-      console.error('API Error:', error);
-      throw new Error(error.response?.data?.message || 'Failed to move to next stage');
+      console.error("API Error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to move to next stage"
+      );
     }
-  }
+  },
 };
 
 export default adminService;

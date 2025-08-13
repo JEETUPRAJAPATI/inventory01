@@ -9,6 +9,7 @@ import {
   Grid,
   Divider,
 } from "@mui/material";
+import { formatSnakeCase } from "../../../utils/formatSnakeCase";
 
 export default function FullDetailsDialog({ open, onClose, record }) {
   const order = record?.order || {}; // Directly access order data
@@ -61,7 +62,8 @@ export default function FullDetailsDialog({ open, onClose, record }) {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Typography tem xs={12} sm={6} variant="body1">
-              <strong>Type:</strong> {order.bagDetails?.type || "N/A"}
+              <strong>Type:</strong>{" "}
+              {formatSnakeCase(order.bagDetails?.type) || "N/A"}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>

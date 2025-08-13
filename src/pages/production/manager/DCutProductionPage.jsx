@@ -24,6 +24,7 @@ import UpdateDetailsDialog from "./UpdateDetailsDialog";
 import FullDetailsDialog from "./FullDetailsDialog";
 import { formatSnakeCase } from "../../../utils/formatSnakeCase";
 import formatDate from "../../../utils/formatDate";
+import { formatToIndianDateTimeLines } from "../../../utils/dateUtils";
 
 export default function DCutProductionPage() {
   function ProductionTable({ type }) {
@@ -238,14 +239,18 @@ export default function DCutProductionPage() {
                           />
                         </TableCell>
                         <TableCell>
-                          {record.createdAt
-                            ? formatDate(record.createdAt)
-                            : "N/A"}
+                          {formatToIndianDateTimeLines(record.createdAt)
+                            .split("\n")
+                            .map((line, idx) => (
+                              <div key={idx}>{line}</div>
+                            ))}
                         </TableCell>
                         <TableCell>
-                          {record.updatedAt
-                            ? formatDate(record.updatedAt)
-                            : "N/A"}
+                          {formatToIndianDateTimeLines(record.createdAt)
+                            .split("\n")
+                            .map((line, idx) => (
+                              <div key={idx}>{line}</div>
+                            ))}
                         </TableCell>
                         <TableCell>
                           <IconButton

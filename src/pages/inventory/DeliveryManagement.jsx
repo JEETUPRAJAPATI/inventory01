@@ -29,6 +29,7 @@ import toast from "react-hot-toast";
 import deliveryService from "../../services/deliveryService";
 import { formatSnakeCase } from "../../utils/formatSnakeCase";
 import { Edit } from "@mui/icons-material";
+import { formatDate } from "../../utils/dateUtils";
 
 export default function DeliveryManagement() {
   const [deliveries, setDeliveries] = useState([]);
@@ -254,11 +255,7 @@ export default function DeliveryManagement() {
                         {formatSnakeCase(delivery.orderDetails?.mobileNumber)}
                       </TableCell>
                       <TableCell>
-                        {delivery.deliveryDate
-                          ? new Date(delivery.deliveryDate)
-                              .toISOString()
-                              .split("T")[0]
-                          : "N/A"}
+                        {formatDate(delivery.deliveryDate) || "N/A"}
                       </TableCell>
                       <TableCell>
                         <Chip

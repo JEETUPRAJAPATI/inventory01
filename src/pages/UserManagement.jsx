@@ -20,8 +20,17 @@ import {
   DialogActions,
   Dialog,
   CircularProgress,
+  InputAdornment,
 } from "@mui/material";
-import { Edit, Delete, Add, Search, Key } from "@mui/icons-material";
+import {
+  Edit,
+  Delete,
+  Add,
+  Search,
+  Key,
+  VisibilityOff,
+  Visibility,
+} from "@mui/icons-material";
 import UserForm from "../components/users/UserForm";
 import DeleteConfirmDialog from "../components/common/DeleteConfirmDialog";
 import { useAdminData } from "../hooks/useAdminData";
@@ -40,7 +49,8 @@ export default function UserManagement() {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [error, setError] = useState("");
-
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [filteredUsers, setFilteredUsers] = useState([]);
   // Pagination states
   const [page, setPage] = useState(0);
@@ -283,7 +293,7 @@ export default function UserManagement() {
                     </TableCell>
                     <TableCell>
                       <Chip
-                        label={user.status}
+                        label={formatSnakeCase(user.status)}
                         color={user.status === "active" ? "success" : "default"}
                         size="small"
                       />
@@ -339,16 +349,29 @@ export default function UserManagement() {
         <DialogContent>
           <TextField
             label="New Password"
-            type="password"
+            type={showNewPassword ? "text" : "password"}
             fullWidth
             variant="outlined"
             margin="dense"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowNewPassword((prev) => !prev)}
+                    edge="end"
+                  >
+                    {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
+
           <TextField
             label="Confirm Password"
-            type="password"
+            type={showConfirmPassword ? "text" : "password"}
             fullWidth
             variant="outlined"
             margin="dense"
@@ -356,6 +379,18 @@ export default function UserManagement() {
             onChange={(e) => setConfirmPassword(e.target.value)}
             error={!!error}
             helperText={error}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    edge="end"
+                  >
+                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
         </DialogContent>
         <DialogActions

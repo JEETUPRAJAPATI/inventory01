@@ -198,7 +198,7 @@ export default function RollSize() {
                     <TableCell>{formatSnakeCase(item.name)}</TableCell>
                     <TableCell>
                       <Chip
-                        label={item.status}
+                        label={formatSnakeCase(item.status)}
                         color={item.status === "active" ? "success" : "default"}
                         size="small"
                       />

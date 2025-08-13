@@ -93,39 +93,42 @@ export default function OpsertOrderList({ orders, onFilterChange, filters }) {
                     size="small"
                   />
                 </TableCell>
+
                 <TableCell>
                   {order.status === "pending" && (
-                    <Button
-                      startIcon={<Print />}
-                      variant="contained"
-                      color="primary"
-                      size="small"
-                      onClick={() => handleStartPrinting(order._id)}
-                    >
-                      Start Printing
-                    </Button>
+                    <Tooltip title="Start Printing">
+                      <IconButton
+                        color="primary"
+                        size="small"
+                        onClick={() => handleStartPrinting(order._id)}
+                      >
+                        <Print />
+                      </IconButton>
+                    </Tooltip>
                   )}
+
                   {order.status === "in_progress" && (
-                    <Button
-                      startIcon={<Update />}
-                      variant="contained"
-                      color="success"
-                      size="small"
-                      onClick={() => handleUpdateStatus(order._id)}
-                    >
-                      Complete
-                    </Button>
+                    <Tooltip title="Complete">
+                      <IconButton
+                        color="success"
+                        size="small"
+                        onClick={() => handleUpdateStatus(order._id)}
+                      >
+                        <Update />
+                      </IconButton>
+                    </Tooltip>
                   )}
+
                   {order.status === "completed" && (
-                    <Button
-                      startIcon={<LocalShipping />}
-                      variant="contained"
-                      color="primary"
-                      size="small"
-                      onClick={() => handleMoveToDelivery(order._id)}
-                    >
-                      Move to Delivery
-                    </Button>
+                    <Tooltip title="Move to Delivery">
+                      <IconButton
+                        color="primary"
+                        size="small"
+                        onClick={() => handleMoveToDelivery(order._id)}
+                      >
+                        <LocalShipping />
+                      </IconButton>
+                    </Tooltip>
                   )}
                 </TableCell>
               </TableRow>

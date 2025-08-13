@@ -40,7 +40,6 @@ import DeliveryList from "./pages/delivery/DeliveryList";
 import WcutBagMakingReportsPage from "./pages/production/reports/WcutBagMakingReportsPage";
 import DcutBagMakingReportsPage from "./pages/production/reports/DcutBagMakingReportsPage";
 
-
 export default function App() {
   return (
     <>

@@ -34,7 +34,7 @@ export default function WCutBagMakingPage() {
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     search: "",
-    status: "",
+    status: "all",
     page: 1,
     limit: 20,
   });
@@ -55,6 +55,7 @@ export default function WCutBagMakingPage() {
     setFilters({
       search: "",
       type: "",
+      status: "all",
     });
   };
   useEffect(() => {
@@ -121,23 +122,15 @@ export default function WCutBagMakingPage() {
             name="status"
             value={filters.status}
             onChange={handleFilterChange}
-            sx={{ minWidth: 120 }}
-            SelectProps={{
-              displayEmpty: true,
-              renderValue: (selected) => {
-                if (selected === "") {
-                  return <em>All Statuses</em>;
-                }
-                return selected;
-              },
-            }}
+            sx={{ minWidth: 150 }}
           >
-            <MenuItem value="">
+            <MenuItem value="all">
               <em>All Statuses</em>
             </MenuItem>
             <MenuItem value="pending">Pending</MenuItem>
             <MenuItem value="in_progress">In Progress</MenuItem>
             <MenuItem value="completed">Completed</MenuItem>
+            <MenuItem value="delivered">Delivered</MenuItem>
           </TextField>
 
           <Button variant="outlined" onClick={handleReset}>
@@ -216,7 +209,8 @@ export default function WCutBagMakingPage() {
                       <Chip
                         label={formatSnakeCase(order.status)}
                         color={
-                          order.status === "completed"
+                          order.status === "completed" ||
+                          order.status === "delivered"
                             ? "success"
                             : order.status === "in_progress"
                             ? "warning"

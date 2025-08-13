@@ -33,7 +33,7 @@ export default function WCutFlexoPage() {
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     search: "",
-    status: "", // Default to '' to represent "All Statuses"
+    status: "all", // Default to '' to represent "All Statuses"
     page: 1,
     limit: 10,
   });
@@ -67,7 +67,7 @@ export default function WCutFlexoPage() {
   const handleReset = () => {
     setFilters({
       search: "",
-      status: "",
+      status: "all",
       page: 1,
       limit: 10,
     });
@@ -119,23 +119,15 @@ export default function WCutFlexoPage() {
             name="status"
             value={filters.status}
             onChange={handleFilterChange}
-            sx={{ minWidth: 120 }}
-            SelectProps={{
-              displayEmpty: true,
-              renderValue: (selected) => {
-                if (selected === "") {
-                  return <em>All Statuses</em>;
-                }
-                return selected;
-              },
-            }}
+            sx={{ minWidth: 150 }}
           >
-            <MenuItem value="">
+            <MenuItem value="all">
               <em>All Statuses</em>
             </MenuItem>
             <MenuItem value="pending">Pending</MenuItem>
             <MenuItem value="in_progress">In Progress</MenuItem>
             <MenuItem value="completed">Completed</MenuItem>
+            <MenuItem value="delivered">Delivered</MenuItem>
           </TextField>
 
           <Button variant="outlined" onClick={handleReset}>
@@ -216,6 +208,10 @@ export default function WCutFlexoPage() {
                             ? "success"
                             : order.status === "in_progress"
                             ? "warning"
+                            : order.status === "pending"
+                            ? "warning"
+                            : order.status === "delivered"
+                            ? "success"
                             : "default"
                         }
                         size="small"

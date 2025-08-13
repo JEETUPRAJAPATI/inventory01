@@ -836,7 +836,7 @@ export default function RawMaterials() {
                 <TableCell>GSM</TableCell>
                 <TableCell>Fabric Quality</TableCell>
                 <TableCell>Quantity (kg)</TableCell>
-                 <TableCell>Status</TableCell>
+                <TableCell>Status</TableCell>
                 <TableCell>QR Code</TableCell>
                 <TableCell>Action</TableCell>
               </TableRow>
@@ -870,13 +870,13 @@ export default function RawMaterials() {
                     </TableCell>
                     <TableCell>{subcategory.quantity}</TableCell>
                     <TableCell>
-                    <Chip
-                      label={subcategory.is_used ? "Used" : "Unused"}
-                      color={subcategory.is_used ? "warning" : "success"}
-                      size="small"
-                      variant="outlined"
-                    />
-                  </TableCell>
+                      <Chip
+                        label={subcategory.is_used ? "Used" : "Unused"}
+                        color={subcategory.is_used ? "warning" : "success"}
+                        size="small"
+                        variant="outlined"
+                      />
+                    </TableCell>
 
                     <TableCell>
                       <IconButton
@@ -1003,14 +1003,15 @@ export default function RawMaterials() {
             alignItems: "center",
           }}
         >
-        <Typography variant="h6">
-          Raw Materials -{" "}
-          <Typography component="span" variant="body2" color="error">
-            * To create a category, the Fabric Color, GSM, and Quality must match the selected order.
+          <Typography variant="h6">
+            Raw Materials -{" "}
+            <Typography component="span" variant="body2" color="error">
+              * To create a category, the Fabric Color, GSM, and Quality must
+              match the selected order.
+            </Typography>
           </Typography>
-        </Typography>
 
-            <Button
+          <Button
             variant="contained"
             color="primary"
             startIcon={<Add />}

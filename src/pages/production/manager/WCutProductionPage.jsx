@@ -26,6 +26,7 @@ import FullDetailsDialog from "./FullDetailsDialog";
 import orderService from "/src/services/productionManagerService.js";
 import { formatSnakeCase } from "../../../utils/formatSnakeCase";
 import formatDate from "../../../utils/formatDate";
+import { formatToIndianDateTimeLines } from "../../../utils/dateUtils";
 
 export default function WCutProductionPage() {
   function ProductionTable({ type }) {
@@ -241,14 +242,18 @@ export default function WCutProductionPage() {
                             />
                           </TableCell>
                           <TableCell>
-                            {record.createdAt
-                              ? formatDate(record.createdAt)
-                              : "N/A"}
+                            {formatToIndianDateTimeLines(record.createdAt)
+                              .split("\n")
+                              .map((line, idx) => (
+                                <div key={idx}>{line}</div>
+                              ))}
                           </TableCell>
                           <TableCell>
-                            {record.updatedAt
-                              ? formatDate(record.updatedAt)
-                              : "N/A"}
+                            {formatToIndianDateTimeLines(record.createdAt)
+                              .split("\n")
+                              .map((line, idx) => (
+                                <div key={idx}>{line}</div>
+                              ))}
                           </TableCell>
                           <TableCell>
                             <IconButton

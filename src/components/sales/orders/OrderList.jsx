@@ -32,6 +32,7 @@ import * as XLSX from "xlsx";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import { formatSnakeCase } from "../../../utils/formatSnakeCase";
+import { formatToIndianDateTimeLines } from "../../../utils/dateUtils";
 
 export default function OrderList({ orders, refreshOrders }) {
   const [formOpen, setFormOpen] = useState(false);
@@ -296,14 +297,15 @@ export default function OrderList({ orders, refreshOrders }) {
                 <TableCell>Quantity</TableCell>
                 <TableCell>Rate</TableCell>
                 <TableCell>Status</TableCell>
-                <TableCell>Date</TableCell>
+                <TableCell>Created At</TableCell>
+                <TableCell>Updated At</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {filteredOrders
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((order) => (
+                .map((order, index) => (
                   <TableRow key={order._id}>
                     <TableCell>{order.orderId}</TableCell>
                     <TableCell>{formatSnakeCase(order.customerName)}</TableCell>
@@ -321,7 +323,18 @@ export default function OrderList({ orders, refreshOrders }) {
                       />
                     </TableCell>
                     <TableCell>
-                      {new Date(order.createdAt).toLocaleDateString()}
+                      {formatToIndianDateTimeLines(order.createdAt)
+                        .split("\n")
+                        .map((line, idx) => (
+                          <div key={idx}>{line}</div>
+                        ))}
+                    </TableCell>
+                    <TableCell>
+                      {formatToIndianDateTimeLines(order.updatedAt)
+                        .split("\n")
+                        .map((line, idx) => (
+                          <div key={idx}>{line}</div>
+                        ))}
                     </TableCell>
                     <TableCell>
                       <IconButton

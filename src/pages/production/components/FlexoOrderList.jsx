@@ -339,27 +339,22 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
   };
 
   const renderAddSubcategoryDialog = () => {
- const filteredMaterials = useMemo(() => {
-  if (!searchTerm) return requiredMaterials;
+    const filteredMaterials = useMemo(() => {
+      if (!searchTerm) return requiredMaterials;
 
-  const searchLower = searchTerm.toLowerCase();
-
-  return requiredMaterials.filter((material) => {
-    const gsm = material.gsm?.toString().toLowerCase() || "";
-    const fabricColor = material.fabricColor?.toLowerCase() || "";
-    const rollSize = material.rollSize?.toString().toLowerCase() || "";
-    const quantity = material.quantity?.toString().toLowerCase() || "";
-    const materialId = material._id?.toString().toLowerCase() || "";
-
-    return (
-      gsm.includes(searchLower) ||
-      fabricColor.includes(searchLower) ||
-      rollSize.includes(searchLower) ||
-      quantity.includes(searchLower) ||
-      materialId.includes(searchLower)
-    );
-  });
-}, [searchTerm, requiredMaterials]);
+      return requiredMaterials.filter((material) => {
+        const searchLower = searchTerm.toLowerCase();
+        return (
+          material.gsm.toString().toLowerCase().includes(searchLower) ||
+          material.fabricColor.toLowerCase().includes(searchLower) ||
+          (material.rollSize
+            ? material.rollSize.toString().toLowerCase()
+            : ""
+          ).includes(searchLower) ||
+          material.quantity.toString().toLowerCase().includes(searchLower)
+        );
+      });
+    }, [searchTerm, requiredMaterials]);
 
     return (
       <Dialog
@@ -403,7 +398,7 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
               <Table>
                 <TableHead>
                   <TableRow>
-                          <TableCell>ID</TableCell>
+                    <TableCell>ID</TableCell>
                     <TableCell>Order ID</TableCell>
                     <TableCell>GSM</TableCell>
                     <TableCell>Fabric Color</TableCell>
@@ -431,7 +426,7 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
                   ) : (
                     filteredMaterials.map((material) => (
                       <TableRow key={material._id}>
-                          <TableCell>{material._id}</TableCell>
+                        <TableCell>{material._id}</TableCell>
                         <TableCell>{selectedOrderId}</TableCell>
                         <TableCell>{formatSnakeCase(material.gsm)}</TableCell>
                         <TableCell style={{ filter: "blur(5px)" }}>
@@ -443,23 +438,22 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
                         <TableCell>{material.quantity}</TableCell>
                         <TableCell>
                           <Chip
-                            label={material.status}
-                            color={material.status === 'inactive' ? 'default' : 'success'}
+                            label={formatSnakeCase(material.status)}
+                            color={
+                              material.status === "inactive"
+                                ? "default"
+                                : "success"
+                            }
                             variant="outlined"
+                            color="primary"
                             size="small"
-                          />
+                            onClick={() =>
+                              handleVerifyOrder(selectedOrderId, material._id)
+                            }
+                          >
+                            Scanner
+                          </Chip>
                         </TableCell>
-                      <TableCell>
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        size="small"
-                        onClick={() => handleVerifyOrder(selectedOrderId, material._id)}
-                        disabled={material.status === 'inactive'} // Disable if inactive
-                      >
-                        Scanner
-                      </Button>
-                    </TableCell>
                       </TableRow>
                     ))
                   )}

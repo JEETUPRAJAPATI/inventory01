@@ -59,6 +59,7 @@ export default function DCutBagMakingPage() {
     setFilters({
       search: "",
       type: "",
+      status: "all",
     });
   };
   const handleFilterChange = (e) => {
@@ -120,23 +121,15 @@ export default function DCutBagMakingPage() {
             name="status"
             value={filters.status}
             onChange={handleFilterChange}
-            sx={{ minWidth: 120 }}
-            SelectProps={{
-              displayEmpty: true,
-              renderValue: (selected) => {
-                if (selected === "") {
-                  return <em>All Statuses</em>;
-                }
-                return selected;
-              },
-            }}
+            sx={{ minWidth: 150 }}
           >
-            <MenuItem value="">
+            <MenuItem value="all">
               <em>All Statuses</em>
             </MenuItem>
             <MenuItem value="pending">Pending</MenuItem>
             <MenuItem value="in_progress">In Progress</MenuItem>
             <MenuItem value="completed">Completed</MenuItem>
+            <MenuItem value="delivered">Delivered</MenuItem>
           </TextField>
 
           <Button variant="outlined" onClick={handleReset}>
@@ -215,9 +208,11 @@ export default function DCutBagMakingPage() {
                       <Chip
                         label={formatSnakeCase(order.status)}
                         color={
-                          order.status === "completed"
+                          order.status === "completed" ||
+                          order.status === "delivered"
                             ? "success"
-                            : order.status === "in_progress"
+                            : order.status === "in_progress" ||
+                              order.status === "pending"
                             ? "warning"
                             : "default"
                         }

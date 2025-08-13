@@ -95,73 +95,75 @@ export default function UpdateDetailsDialog({
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <form onSubmit={handleSubmit}>
         <DialogTitle>Update {type} Production Details</DialogTitle>
-       <DialogContent>
-  <Grid container spacing={2} sx={{ mt: 1 }}>
-    {/* Row 1: Roll Size and Cylinder Size */}
-    <Grid item xs={12} md={6}>
-      <TextField
-        fullWidth
-        label="Roll Size"
-        name="roll_size"
-        value={formData.roll_size}
-        onChange={handleChange}
-        required
-      />
-    </Grid>
-    <Grid
-      item
-      xs={12}
-      md={6}
-      sx={{ display: `${type === "DCut" ? "none" : "block"}` }}
-    >
-      <TextField
-        fullWidth
-        label="Cylinder Size"
-        name="cylinder_size"
-        value={formData.cylinder_size === "" ? 0 : formData.cylinder_size}
-        onChange={handleChange}
-      />
-    </Grid>
+        <DialogContent>
+          <Grid container spacing={2} sx={{ mt: 1 }}>
+            {/* Row 1: Roll Size and Cylinder Size */}
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Roll Size"
+                name="roll_size"
+                value={formData.roll_size}
+                onChange={handleChange}
+                required
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              md={6}
+              sx={{ display: `${type === "DCut" ? "none" : "block"}` }}
+            >
+              <TextField
+                fullWidth
+                label="Cylinder Size"
+                name="cylinder_size"
+                value={
+                  formData.cylinder_size === "" ? 0 : formData.cylinder_size
+                }
+                onChange={handleChange}
+              />
+            </Grid>
 
-    {/* Row 2: Quantity in Kgs and Quantity in Rolls */}
-    <Grid item xs={12} md={6}>
-      <TextField
-        fullWidth
-        label="Quantity (in Kgs)"
-        name="quantity_kgs"
-        type="number"
-        value={formData.quantity_kgs || quantityKg} // Use quantityKg if empty
-        onChange={handleChange}
-        required
-        disabled={formData.quantity_kgs || quantityKg} // Disable if not empty
-      />
-    </Grid>
-    <Grid item xs={12} md={6}>
-      <TextField
-        fullWidth
-        label="Quantity (in Rolls)"
-        name="quantity_rolls"
-        type="number"
-        value={formData.quantity_rolls}
-        onChange={handleChange}
-        required
-      />
-    </Grid>
+            {/* Row 2: Quantity in Kgs and Quantity in Rolls */}
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Quantity (in Kgs)"
+                name="quantity_kgs"
+                type="number"
+                value={formData.quantity_kgs || quantityKg} // Use quantityKg if empty
+                onChange={handleChange}
+                required
+                disabled={formData.quantity_kgs || quantityKg} // Disable if not empty
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Quantity (in Rolls)"
+                name="quantity_rolls"
+                type="number"
+                value={formData.quantity_rolls}
+                onChange={handleChange}
+                required
+              />
+            </Grid>
 
-    {/* Remarks */}
-    <Grid item xs={12}>
-      <TextField
-        fullWidth
-        label="Remarks (if Any)"
-        name="remarks"
-        value={formData.remarks}
-        onChange={handleChange}
-        multiline
-        rows={3}
-      />
-    </Grid>
-  </Grid>
-</DialogContent>
+            {/* Remarks */}
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Remarks (if Any)"
+                name="remarks"
+                value={formData.remarks}
+                onChange={handleChange}
+                multiline
+                rows={3}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
 
         <DialogActions
           sx={{ display: "flex", justifyContent: "space-between" }}

@@ -29,6 +29,7 @@ import { Edit, Delete, Add, Search } from "@mui/icons-material";
 import { formatSnakeCase } from "../../../utils/formatSnakeCase";
 import DeleteConfirmDialog from "../../common/DeleteConfirmDialog";
 import FormSelect from "../../common/FormSelect";
+import { formatDate } from "../../../utils/dateUtils";
 export default function DeliveryList() {
   const [deliveries, setDeliveries] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -70,11 +71,7 @@ export default function DeliveryList() {
   }, [filters]);
 
   // Format date to 'YYYY-MM-DD'
-  const formatDate = (date) => {
-    if (!date) return "";
-    const d = new Date(date);
-    return d.toISOString().split("T")[0]; // 'YYYY-MM-DD'
-  };
+
   const handleDelete = (user) => {
     setUserToDelete(user);
     setDeleteDialogOpen(true);
@@ -83,7 +80,7 @@ export default function DeliveryList() {
     setSelectedDelivery(delivery);
     setEditForm({
       status: delivery.status,
-      deliveryDate: formatDate(delivery.deliveryDate),
+      deliveryDate: new Date(delivery.deliveryDate).toISOString().split("T")[0],
       driverContact: delivery.driverContact,
       driverName: delivery.driverName,
       vehicleNo: delivery.vehicleNo,
@@ -199,6 +196,7 @@ export default function DeliveryList() {
             <MenuItem value="pending">Pending</MenuItem>
             <MenuItem value="in_transit">In Transit</MenuItem>
             <MenuItem value="done">Done</MenuItem>
+            <MenuItem value="delivered">Delivered</MenuItem>
           </TextField>
           <Button variant="outlined" onClick={handleResetFilters}>
             Reset
@@ -247,9 +245,7 @@ export default function DeliveryList() {
                         {formatSnakeCase(record.orderDetails?.jobName || "N/A")}
                       </TableCell>
                       <TableCell>
-                        {record.deliveryDate
-                          ? new Date(record.deliveryDate).toLocaleDateString()
-                          : "N/A"}
+                        {formatDate(record.deliveryDate) || "N/A"}
                       </TableCell>
                       <TableCell>
                         <Chip

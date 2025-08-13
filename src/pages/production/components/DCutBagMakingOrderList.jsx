@@ -150,7 +150,7 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
       const response = await OrderService.listMaterials(orderId);
       console.log("Response Data:", response);
       if (!response.success) {
-             throw new Error(response.message || "Unknown error occurred.");
+        throw new Error(response.message || "Unknown error occurred.");
       }
       if (response.totalQuantity === 0) {
         console.warn("No required materials found, resetting state...");
@@ -173,12 +173,12 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
 
       // setSelectedOrderId(orderId);
       // setShowScanner(true);
-     } catch (error) {
-    console.log("error is", error);
-    const errorMessage =
-      error?.message || "Error checking active jobs. Please try again.";
-    toast.error(errorMessage);
-  }
+    } catch (error) {
+      console.log("error is", error);
+      const errorMessage =
+        error?.message || "Error checking active jobs. Please try again.";
+      toast.error(errorMessage);
+    }
   };
 
   const handleOpenModal = (orderId) => {
@@ -490,7 +490,7 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
                     <TableCell>Fabric Color</TableCell>
                     <TableCell>Roll Size</TableCell>
                     <TableCell>Quantity(Kg)</TableCell>
-                     <TableCell>Status</TableCell>
+                    <TableCell>Status</TableCell>
                     <TableCell>Actions</TableCell>
                   </TableRow>
                 </TableHead>
@@ -523,21 +523,27 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
                           {formatSnakeCase(material.rollSize)}
                         </TableCell>
                         <TableCell>{material.quantity}</TableCell>
-                         <TableCell>
-                            <Chip
-                              label={material.status}
-                              color={material.status === 'inactive' ? 'default' : 'success'}
-                              variant="outlined"
-                              size="small"
-                            />
-                          </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={formatSnakeCase(material.status)}
+                            color={
+                              material.status === "inactive"
+                                ? "default"
+                                : "success"
+                            }
+                            variant="outlined"
+                            size="small"
+                          />
+                        </TableCell>
                         <TableCell>
                           <Button
                             variant="outlined"
                             color="primary"
                             size="small"
-                            onClick={() => handleVerifyOrder(selectedOrderId, material._id)}
-                             disabled={material.status === 'inactive'} // Disable if inactive
+                            onClick={() =>
+                              handleVerifyOrder(selectedOrderId, material._id)
+                            }
+                            disabled={material.status === "inactive"} // Disable if inactive
                           >
                             Scanner
                           </Button>
@@ -632,7 +638,11 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
                     </TableCell>
                     <TableCell>
                       <Chip
-                        label={order.dcutbagmakingDetails?.[0]?.status || "N/A"}
+                        label={
+                          formatSnakeCase(
+                            order.dcutbagmakingDetails?.[0]?.status
+                          ) || "N/A"
+                        }
                         color={getStatusColor(
                           order.dcutbagmakingDetails?.[0]?.status || "default"
                         )}

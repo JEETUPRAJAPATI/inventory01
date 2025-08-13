@@ -258,7 +258,7 @@ export default function OrderForm({ open, onClose, onSubmit, order = null }) {
                 onChange={handleChange}
                 required
                 placeholder="Enter customer name"
-                 onKeyPress={(e) => {
+                onKeyPress={(e) => {
                   const regex = /^[a-zA-Z\s]*$/;
                   if (!regex.test(e.key)) {
                     e.preventDefault(); // Block non-alphabet input
@@ -266,7 +266,7 @@ export default function OrderForm({ open, onClose, onSubmit, order = null }) {
                 }}
               />
             </Grid>
-          <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6}>
               <label className="text-sm">
                 Mobile Number <span className="text-red-500">*</span>
               </label>
@@ -274,7 +274,7 @@ export default function OrderForm({ open, onClose, onSubmit, order = null }) {
                 value={formData.mobileNumber}
                 onChange={handleMobileNumberSearch}
                 onInputChange={(event, newValue) => {
-                  setFormData(prev => ({
+                  setFormData((prev) => ({
                     ...prev,
                     mobileNumber: newValue,
                   }));
@@ -319,9 +319,7 @@ export default function OrderForm({ open, onClose, onSubmit, order = null }) {
               />
             </Grid>
             <Grid item xs={12} md={6}>
-              <label className="text-sm">
-                Email
-              </label>
+              <label className="text-sm">Email</label>
               <FormInput
                 name="email"
                 type="email"
@@ -376,9 +374,7 @@ export default function OrderForm({ open, onClose, onSubmit, order = null }) {
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <label className="text-sm">
-                Handle Color 
-              </label>
+              <label className="text-sm">Handle Color</label>
               <FormSelect
                 name="bagDetails.handleColor"
                 value={formData.bagDetails.handleColor}
