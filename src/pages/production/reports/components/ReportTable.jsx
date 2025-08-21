@@ -16,6 +16,7 @@ import {
   TablePagination,
 } from "@mui/material";
 import { formatSnakeCase } from "../../../../utils/formatSnakeCase";
+import { formatToIndianDateTimeLines } from "../../../../utils/dateUtils";
 
 export default function ReportTable({ records }) {
   const getStatusColor = (status) => {
@@ -66,18 +67,6 @@ export default function ReportTable({ records }) {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
 
-          {/* Status Filter */}
-          <Select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            displayEmpty
-            size="small"
-          >
-            <MenuItem value="">All Status</MenuItem>
-            <MenuItem value="pending">Pending</MenuItem>
-            <MenuItem value="completed">Completed</MenuItem>
-            <MenuItem value="delivery">Delivery</MenuItem>
-          </Select>
           <Button variant="outlined" onClick={handleResetFilters}>
             Reset
           </Button>
@@ -121,9 +110,7 @@ export default function ReportTable({ records }) {
                       />
                     </TableCell>
                     <TableCell>
-                      {record.createdAt
-                        ? new Date(record.createdAt).toLocaleDateString()
-                        : "-"}
+                      {formatToIndianDateTimeLines(record.createdAt)}
                     </TableCell>
                   </TableRow>
                 ))
