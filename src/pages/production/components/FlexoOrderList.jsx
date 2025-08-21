@@ -445,14 +445,21 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
                                 : "success"
                             }
                             variant="outlined"
+                            size="small"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="outlined"
                             color="primary"
                             size="small"
                             onClick={() =>
                               handleVerifyOrder(selectedOrderId, material._id)
                             }
+                            disabled={material.status === "inactive"} // Disable if inactive
                           >
                             Scanner
-                          </Chip>
+                          </Button>
                         </TableCell>
                       </TableRow>
                     ))

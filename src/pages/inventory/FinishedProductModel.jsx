@@ -38,6 +38,7 @@ import {
   Inventory,
   DirectionsCar,
 } from "@mui/icons-material";
+import { formatSnakeCase } from "../../utils/formatSnakeCase";
 
 export default function FinishedProductModel({ open, production, onClose }) {
   if (!production || !production.data) {
@@ -245,7 +246,7 @@ export default function FinishedProductModel({ open, production, onClose }) {
                             Total Quantity
                           </TableCell>
                           <TableCell sx={{ fontWeight: "bold" }}>
-                            {productionData.totalQuantity ?? 0}
+                            {(productionData.totalQuantity ?? 0).toFixed(2)}
                           </TableCell>
                         </TableRow>
                         {/* ✅ Row for Scrap Quantity */}
@@ -254,7 +255,7 @@ export default function FinishedProductModel({ open, production, onClose }) {
                             Scrap Quantity
                           </TableCell>
                           <TableCell sx={{ fontWeight: "bold" }}>
-                            {productionData?.scrapQuantity ?? 0}
+                            {(productionData?.scrapQuantity ?? 0).toFixed(2)}
                           </TableCell>
                         </TableRow>
                         {/* Remaining Quantity */}
@@ -262,8 +263,10 @@ export default function FinishedProductModel({ open, production, onClose }) {
                           <TableCell colSpan={5} sx={{ fontWeight: "bold" }}>
                             Remaining Quantity
                           </TableCell>
+
                           <TableCell sx={{ fontWeight: "bold" }}>
-                            {productionData.remainingQuantity ?? 0}
+                            {(productionData.remainingQuantity ?? 0).toFixed(2)}
+                            {/* {productionData.remainingQuantity.tofixed(2) ?? 0} */}
                           </TableCell>
                         </TableRow>
                       </TableBody>
@@ -291,7 +294,9 @@ export default function FinishedProductModel({ open, production, onClose }) {
                     Bag Type
                   </Typography>
                   <Typography variant="body1" fontWeight="bold">
-                    {productionData.orderDetails?.bagDetails?.type || "N/A"}
+                    {formatSnakeCase(
+                      productionData.orderDetails?.bagDetails?.type
+                    )}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} sm={6}>
