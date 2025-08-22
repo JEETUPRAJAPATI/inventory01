@@ -120,14 +120,25 @@ export default function DeliveryManagement() {
     // Add basic form validation here
     const { vehicleNo, driverName, driverContact, deliveryDate, status } =
       deliveryDetails;
-    if (
-      !vehicleNo ||
-      !driverName ||
-      !driverContact ||
-      !deliveryDate ||
-      !status
-    ) {
-      toast.error("All fields are required");
+    
+    if (!vehicleNo || vehicleNo.trim() === "") {
+      toast.error("Vehicle number is required");
+      return false;
+    }
+    if (!driverName || driverName.trim() === "") {
+      toast.error("Driver name is required");
+      return false;
+    }
+    if (!driverContact || driverContact.trim() === "") {
+      toast.error("Driver contact is required");
+      return false;
+    }
+    if (!deliveryDate || deliveryDate === "") {
+      toast.error("Delivery date is required");
+      return false;
+    }
+    if (!status || status === "") {
+      toast.error("Status is required");
       return false;
     }
     return true;
@@ -166,12 +177,15 @@ export default function DeliveryManagement() {
         });
       }
 
+      // Format the date properly before sending
+      const formattedDate = deliveryDate ? new Date(deliveryDate).toISOString() : null;
+      
       // Update the delivery record
       await deliveryService.updateDelivery(_id, {
-        vehicleNo,
-        driverName,
-        driverContact,
-        deliveryDate,
+        vehicleNo: vehicleNo.trim(),
+        driverName: driverName.trim(),
+        driverContact: driverContact.trim(),
+        deliveryDate: formattedDate,
         status,
       });
 
@@ -429,7 +443,7 @@ export default function DeliveryManagement() {
                     ? new Date(deliveryDetails.deliveryDate)
                         .toISOString()
                         .split("T")[0]
-                    : new Date().toISOString().split("T")[0]
+                    : ""
                 }
                 onChange={handleChange}
                 fullWidth
