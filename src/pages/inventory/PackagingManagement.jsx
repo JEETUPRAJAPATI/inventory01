@@ -370,96 +370,80 @@ export default function PackagingManagement() {
 
       const pageWidth = doc.internal.pageSize.getWidth();
       let margin = 3.5;
-      let currentY = 5;
+      let currentY = 2; // 2px padding from top
 
       // -------- HEADER --------
-      const logoSize = 14;
-      doc.addImage(COMPANY_LOGO, "PNG", margin, currentY, logoSize, logoSize);
+      const logoSize = 10; // smaller logo
+      doc.addImage(
+        COMPANY_LOGO,
+        "PNG",
+        (pageWidth - logoSize) / 2,
+        currentY,
+        logoSize,
+        logoSize
+      );
+      currentY += logoSize + 4; // 2px padding below
 
       doc.setFont("helvetica", "bold");
       doc.setFontSize(8.5);
-      doc.text(
-        "Thailiwale Industries Pvt. Ltd.",
-        margin + logoSize + 2.5,
-        currentY + 5
-      );
+      doc.text("THAILIWALE INDUSTRIES PVT. LTD.", pageWidth / 2, currentY, {
+        align: "center",
+      });
+      currentY += 4;
 
       doc.setFont("helvetica", "normal");
       doc.setFontSize(6);
       doc.text(
-        "201/1/4, SR Compound, Lasudiya Mori, Indore 453771",
-        margin + logoSize + 2.5,
-        currentY + 9
+        "201/1/4, SR Compound, Lasudiya Mori, Indore",
+        pageWidth / 2,
+        currentY,
+        { align: "center" }
       );
+      currentY += 3;
       doc.text(
-        "Email: info@thailiwale.com",
-        margin + logoSize + 2.5,
-        currentY + 12.5
+        "Mob.: +91 8989788532, Email: info@thailiwale.com",
+        pageWidth / 2,
+        currentY,
+        { align: "center" }
       );
-      doc.text(
-        "Phone: +91 7999857050, +91 8989788532",
-        margin + logoSize + 2.5,
-        currentY + 16
-      );
+      currentY += 4;
 
-      currentY += logoSize + 3;
-
-      doc.setDrawColor(120);
-      doc.line(margin, currentY, pageWidth - margin, currentY);
-      currentY += 2;
-
-      // -------- SECOND TABLE (Customer/Job Info FIRST) --------
-      const table2 = [
+      // -------- TABLE (All details in one table) --------
+      const tableData = [
+        ["Order ID", order.orderId],
+        ["Package ID", pkg._id],
         ["Job Name", order.jobName],
         ["Customer Name", order.customerName],
-        ["Fabric Quality", order.fabricQuality],
         ["Address", order.address],
+        ["Fabric Quality", order.fabricQuality],
+        ["GSM", bagDetails.gsm || "N/A"],
+        ["Bag Type", formatSnakeCase(bagDetails.type) || "N/A"],
+        ["Bag Colour", bagDetails.color || "N/A"],
+        ["Bag Size", bagDetails.size || `${pkg.length}x${pkg.width}`],
+        ["Print Colour", bagDetails.printColor || "N/A"],
+        ["Flexo Unit No", unitNumbers?.flexo || "N/A"],
+        ["Bag Making Unit No", unitNumbers?.wcut || "N/A"],
+        ["Net Weight", `${pkg.weight} kg`],
         ["Total Packages", Array.isArray(pkg) ? pkg.length : 1],
       ];
 
       autoTable(doc, {
         startY: currentY,
-        body: table2,
+        body: tableData,
         theme: "grid",
-        styles: { fontSize: 6, cellPadding: 1, lineHeight: 1 },
-        columnStyles: { 0: { fontStyle: "bold" } },
-        didParseCell: (data) => {
-          if (data.section === "body" && data.column.index === 0) {
-            data.cell.styles.fillColor = [25, 118, 210]; // blue
-            data.cell.styles.textColor = 255;
-          }
+        styles: {
+          fontSize: 6,
+          cellPadding: { top: 1, right: 2, bottom: 1, left: 2 },
+          lineHeight: 1,
+          halign: "left", // all align left
+          valign: "middle",
         },
-      });
-
-      currentY = doc.lastAutoTable.finalY + 2;
-
-      // -------- FIRST TABLE (Bag/Order Info SECOND) --------
-
-      const table1 = [
-        ["Order ID", order.orderId],
-        ["Package ID", pkg._id],
-        ["Flexo Unit No.", unitNumbers?.flexo || "N/A"],
-        ["Bag Size", bagDetails.size || `${pkg.length}x${pkg.width}`],
-        ["Print Colour", bagDetails.printColor || "N/A"],
-        ["GSM", bagDetails.gsm || "N/A"],
-        ["Bag Colour", bagDetails.color || "N/A"],
-        ["Bag Type", formatSnakeCase(bagDetails.type) || "N/A"],
-        ["Net Weight", `${pkg.weight} kg`],
-        ["Bag Making Unit No.", unitNumbers?.wcut || "N/A"],
-      ];
-
-      autoTable(doc, {
-        startY: currentY,
-        body: table1,
-        theme: "grid",
-        styles: { fontSize: 6, cellPadding: 1, lineHeight: 1 },
-        columnStyles: { 0: { fontStyle: "bold" } },
-        didParseCell: (data) => {
-          if (data.section === "body" && data.column.index === 0) {
-            data.cell.styles.fillColor = [25, 118, 210]; // blue
-            data.cell.styles.textColor = 255;
-          }
+        columnStyles: {
+          0: { fontStyle: "bold", cellWidth: 30 }, // label column
+          1: { halign: "left" }, // value column left aligned
         },
+        tableWidth: pageWidth - margin * 2,
+        margin: { left: margin, right: margin },
       });
 
       currentY = doc.lastAutoTable.finalY + 2;
@@ -471,14 +455,9 @@ export default function PackagingManagement() {
       await QRCode.toCanvas(qrCanvas, qrText, { width: 70 });
       const qrDataUrl = qrCanvas.toDataURL("image/png");
 
-      const qrSize = 30;
+      const qrSize = 22; // slightly smaller to fit
       const qrX = (pageWidth - qrSize) / 2;
       doc.addImage(qrDataUrl, "PNG", qrX, currentY, qrSize, qrSize);
-
-      doc.setFontSize(6);
-      doc.text("Scan for details", pageWidth / 2, currentY + qrSize + 4, {
-        align: "center",
-      });
 
       // -------- SAVE --------
       doc.save(`Label_${order.orderId}_${pkg._id}.pdf`);
