@@ -47,14 +47,16 @@ export default function DeliveryManagement() {
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
+  const [allDrivers, setAllDrivers] = useState([]);
   // Fetch deliveries from API
   const fetchDeliveries = async () => {
     try {
       setLoading(true);
       const response = await deliveryService.getDeliveries(); // API call to fetch deliveries
-      console.log(response.data);
+      const drivers = await deliveryService.getDrivers(); // API call to fetch drivers
+
       setDeliveries(response.data || []);
+      setAllDrivers(drivers.data || []);
     } catch (error) {
       toast.error("Error fetching deliveries: " + error.message);
     } finally {
@@ -65,7 +67,7 @@ export default function DeliveryManagement() {
   useEffect(() => {
     fetchDeliveries(); // Fetch deliveries on component mount
   }, []);
-
+  console.log("driver", allDrivers);
   const handleEdit = (delivery) => {
     if (!delivery) return;
     setSelectedDelivery(delivery); // Store the selected delivery
