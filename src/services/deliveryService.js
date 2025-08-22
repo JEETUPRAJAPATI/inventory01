@@ -3,7 +3,7 @@ import api from "./api";
 const deliveryService = {
   createDriver: async (driverData) => {
     try {
-      const response = await api.post("/create/driver", driverData);
+      const response = await api.post("/driver/create-driver", driverData);
       return response.data;
     } catch (error) {
       throw new Error(
@@ -15,11 +15,21 @@ const deliveryService = {
   // Read/List drivers (with optional pagination)
   getDrivers: async () => {
     try {
-      const response = await api.get("/read-driver");
+      const response = await api.get("/driver/read-driver");
       return response.data;
     } catch (error) {
       throw new Error(
         error.response?.data?.message || "Failed to fetch drivers"
+      );
+    }
+  },
+  updateDriver: async (id, driverData) => {
+    try {
+      const response = await api.put(`/driver/update-driver/${id}`, driverData);
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Failed to update driver"
       );
     }
   },

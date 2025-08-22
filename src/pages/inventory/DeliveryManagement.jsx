@@ -24,6 +24,7 @@ import {
   FormControl,
   InputLabel,
   IconButton,
+  Autocomplete,
 } from "@mui/material";
 import toast from "react-hot-toast";
 import deliveryService from "../../services/deliveryService";
@@ -135,25 +136,52 @@ export default function DeliveryManagement() {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const { _id, ...updatedDetails } = deliveryDetails; // Destructure '_id' from the state
 
-      console.log("Updated data without ID:", updatedDetails); // Log the updated details without the '_id'
+      const { _id, vehicleNo, driverName, driverContact } = deliveryDetails;
 
-      // Now pass the ID separately and exclude it from the payload
-      await deliveryService.updateDelivery(_id, updatedDetails); // Pass _id as a URL parameter or as part of the request
+      if (!vehicleNo) {
+        toast.error("Vehicle number is required");
+        return;
+      }
 
-      toast.success("Delivery details updated successfully");
+      // allDrivers = already fetched driver list from backend
+      // ✅ use correct field from backend response
+      const existingDriver = allDrivers.find(
+        (d) => d.vehicleNumber?.toLowerCase() === vehicleNo.toLowerCase()
+      );
+
+      if (existingDriver) {
+        // Update driver details
+        await deliveryService.updateDriver(existingDriver._id, {
+          name: driverName, // ✅ rename
+          contact: driverContact,
+          vehicleNumber: vehicleNo, // ✅ rename
+        });
+
+        toast.success("Driver updated successfully");
+      } else {
+        // Create new driver
+        await deliveryService.createDriver({
+          name: driverName, // ✅ rename
+          contact: driverContact,
+          vehicleNumber: vehicleNo, // ✅ rename
+        });
+
+        toast.success("New driver added successfully");
+      }
+
       setSelectedDelivery(null);
       fetchDeliveries(); // Refetch deliveries after update
     } catch (error) {
-      console.log("errors", error);
+      console.error("errors", error);
       const errorMessage =
-        error?.response?.data?.message || "Failed to updated";
+        error?.response?.data?.message || "Failed to save driver details";
       toast.error(errorMessage);
     } finally {
       setSaving(false);
     }
   };
+
   const paginatedOrders = filteredOrders.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
@@ -316,13 +344,52 @@ export default function DeliveryManagement() {
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid item xs={12}>
-              <TextField
+              {/* <TextField
                 label="Vehicle Number"
                 name="vehicleNo"
                 value={deliveryDetails.vehicleNo}
                 onChange={handleChange}
                 fullWidth
                 required
+              /> */}
+              <Autocomplete
+                freeSolo
+                options={allDrivers.map((d) => d.vehicleNumber)}
+                value={deliveryDetails.vehicleNo}
+                onChange={(event, newValue) => {
+                  const matchedDriver = allDrivers.find(
+                    (d) => d.vehicleNumber === newValue
+                  );
+                  if (matchedDriver) {
+                    setDeliveryDetails((prev) => ({
+                      ...prev,
+                      vehicleNo: matchedDriver.vehicleNumber,
+                      driverName: matchedDriver.name,
+                      driverContact: matchedDriver.contact,
+                    }));
+                  } else {
+                    setDeliveryDetails((prev) => ({
+                      ...prev,
+                      vehicleNo: newValue || "",
+                      driverName: "",
+                      driverContact: "",
+                    }));
+                  }
+                }}
+                onInputChange={(event, newInputValue) => {
+                  setDeliveryDetails((prev) => ({
+                    ...prev,
+                    vehicleNo: newInputValue,
+                  }));
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Vehicle Number"
+                    fullWidth
+                    required
+                  />
+                )}
               />
             </Grid>
             <Grid item xs={12}>
