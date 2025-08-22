@@ -97,8 +97,8 @@ export default function UpdateDetailsDialog({
         <DialogTitle>Update {type} Production Details</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            {/* Row 1: Roll Size and Cylinder Size */}
-            <Grid item xs={12} md={6}>
+            {/* Row 1: Roll Size (Full Width) */}
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 label="Roll Size"
