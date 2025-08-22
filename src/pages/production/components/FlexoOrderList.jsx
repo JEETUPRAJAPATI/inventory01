@@ -346,6 +346,7 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
         const searchLower = searchTerm.toLowerCase();
         return (
           material.gsm.toString().toLowerCase().includes(searchLower) ||
+           material._id.toString().toLowerCase().includes(searchLower) ||
           material.fabricColor.toLowerCase().includes(searchLower) ||
           (material.rollSize
             ? material.rollSize.toString().toLowerCase()
@@ -429,10 +430,10 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
                         <TableCell>{material._id}</TableCell>
                         <TableCell>{selectedOrderId}</TableCell>
                         <TableCell>{formatSnakeCase(material.gsm)}</TableCell>
-                        <TableCell style={{ filter: "blur(5px)" }}>
+                        <TableCell>
                           {formatSnakeCase(material.fabricColor)}
                         </TableCell>
-                        <TableCell style={{ filter: "blur(5px)" }}>
+                        <TableCell>
                           {formatSnakeCase(material.rollSize)}
                         </TableCell>
                         <TableCell>{material.quantity}</TableCell>
@@ -445,15 +446,25 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
                                 : "success"
                             }
                             variant="outlined"
-                            color="primary"
+                      
                             size="small"
                             onClick={() =>
                               handleVerifyOrder(selectedOrderId, material._id)
                             }
                           >
-                            Scanner
                           </Chip>
                         </TableCell>
+                          <TableCell>
+                         <Button
+                        variant="outlined"
+                        color="primary"
+                        size="small"
+                        onClick={() => handleVerifyOrder(selectedOrderId, material._id)}
+                        disabled={material.status === 'inactive'} // Disable if inactive
+                      >
+                        Scanner
+                      </Button>
+                      </TableCell>
                       </TableRow>
                     ))
                   )}

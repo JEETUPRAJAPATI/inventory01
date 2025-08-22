@@ -516,10 +516,10 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
                         <TableCell>{material._id}</TableCell>
                         <TableCell>{selectedOrderId}</TableCell>
                         <TableCell>{formatSnakeCase(material.gsm)}</TableCell>
-                        <TableCell style={{ filter: "blur(5px)" }}>
+                        <TableCell>
                           {formatSnakeCase(material.fabricColor)}
                         </TableCell>
-                        <TableCell style={{ filter: "blur(5px)" }}>
+                        <TableCell>
                           {formatSnakeCase(material.rollSize)}
                         </TableCell>
                         <TableCell>{material.quantity}</TableCell>
