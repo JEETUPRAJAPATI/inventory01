@@ -293,7 +293,7 @@ export default function RawMaterials() {
         }
       );
 
-      toast.success("Row Material Updated successfully");
+      toast.success("Raw Material Updated successfully");
       setUpdateQuantityModalOpen(false); // Close modal
       setQuantityToUpdate(""); // Reset input field
       fetchCategories();

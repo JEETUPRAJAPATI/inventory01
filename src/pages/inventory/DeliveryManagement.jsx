@@ -24,6 +24,7 @@ import {
   FormControl,
   InputLabel,
   IconButton,
+  Autocomplete,
 } from "@mui/material";
 import toast from "react-hot-toast";
 import deliveryService from "../../services/deliveryService";
@@ -47,14 +48,16 @@ export default function DeliveryManagement() {
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
+  const [allDrivers, setAllDrivers] = useState([]);
   // Fetch deliveries from API
   const fetchDeliveries = async () => {
     try {
       setLoading(true);
       const response = await deliveryService.getDeliveries(); // API call to fetch deliveries
-      console.log(response.data);
+      const drivers = await deliveryService.getDrivers(); // API call to fetch drivers
+
       setDeliveries(response.data || []);
+      setAllDrivers(drivers.data || []);
     } catch (error) {
       toast.error("Error fetching deliveries: " + error.message);
     } finally {
@@ -65,7 +68,7 @@ export default function DeliveryManagement() {
   useEffect(() => {
     fetchDeliveries(); // Fetch deliveries on component mount
   }, []);
-
+  console.log("driver", allDrivers);
   const handleEdit = (delivery) => {
     if (!delivery) return;
     setSelectedDelivery(delivery); // Store the selected delivery
@@ -131,27 +134,60 @@ export default function DeliveryManagement() {
   };
 
   const handleSave = async () => {
+    // Validate form first
+    if (!validateForm()) {
+      setSaving(false);
+      return;
+    }
+
     try {
       setSaving(true);
-      const { _id, ...updatedDetails } = deliveryDetails; // Destructure '_id' from the state
 
-      console.log("Updated data without ID:", updatedDetails); // Log the updated details without the '_id'
+      const { _id, vehicleNo, driverName, driverContact, deliveryDate, status } = deliveryDetails;
 
-      // Now pass the ID separately and exclude it from the payload
-      await deliveryService.updateDelivery(_id, updatedDetails); // Pass _id as a URL parameter or as part of the request
+      // Handle driver creation/update
+      const existingDriver = allDrivers.find(
+        (d) => d.vehicleNumber?.toLowerCase() === vehicleNo.toLowerCase()
+      );
+
+      if (existingDriver) {
+        // Update existing driver
+        await deliveryService.updateDriver(existingDriver._id, {
+          name: driverName,
+          contact: driverContact,
+          vehicleNumber: vehicleNo,
+        });
+      } else {
+        // Create new driver
+        await deliveryService.createDriver({
+          name: driverName,
+          contact: driverContact,
+          vehicleNumber: vehicleNo,
+        });
+      }
+
+      // Update the delivery record
+      await deliveryService.updateDelivery(_id, {
+        vehicleNo,
+        driverName,
+        driverContact,
+        deliveryDate,
+        status,
+      });
 
       toast.success("Delivery details updated successfully");
       setSelectedDelivery(null);
       fetchDeliveries(); // Refetch deliveries after update
     } catch (error) {
-      console.log("errors", error);
+      console.error("Update error:", error);
       const errorMessage =
-        error?.response?.data?.message || "Failed to updated";
+        error?.response?.data?.message || "Failed to update delivery details";
       toast.error(errorMessage);
     } finally {
       setSaving(false);
     }
   };
+
   const paginatedOrders = filteredOrders.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
@@ -314,13 +350,52 @@ export default function DeliveryManagement() {
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid item xs={12}>
-              <TextField
+              {/* <TextField
                 label="Vehicle Number"
                 name="vehicleNo"
                 value={deliveryDetails.vehicleNo}
                 onChange={handleChange}
                 fullWidth
                 required
+              /> */}
+              <Autocomplete
+                freeSolo
+                options={allDrivers.map((d) => d.vehicleNumber)}
+                value={deliveryDetails.vehicleNo}
+                onChange={(event, newValue) => {
+                  const matchedDriver = allDrivers.find(
+                    (d) => d.vehicleNumber === newValue
+                  );
+                  if (matchedDriver) {
+                    setDeliveryDetails((prev) => ({
+                      ...prev,
+                      vehicleNo: matchedDriver.vehicleNumber,
+                      driverName: matchedDriver.name,
+                      driverContact: matchedDriver.contact,
+                    }));
+                  } else {
+                    setDeliveryDetails((prev) => ({
+                      ...prev,
+                      vehicleNo: newValue || "",
+                      driverName: "",
+                      driverContact: "",
+                    }));
+                  }
+                }}
+                onInputChange={(event, newInputValue) => {
+                  setDeliveryDetails((prev) => ({
+                    ...prev,
+                    vehicleNo: newInputValue,
+                  }));
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Vehicle Number"
+                    fullWidth
+                    required
+                  />
+                )}
               />
             </Grid>
             <Grid item xs={12}>

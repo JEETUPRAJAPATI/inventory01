@@ -60,7 +60,7 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
   const [addSubcategoryDialogOpen, setAddSubcategoryDialogOpen] =
     useState(false);
   const [selectedMaterialId, setSelectedMaterialId] = useState(false);
-  // Row matirial list
+  // Raw matirial list
   const [requiredMaterials, setRequiredMaterials] = useState([]);
   const [totalQuantity, setTotalQuantity] = useState(0);
   const [rollSize, setRollSize] = useState(0);
@@ -98,7 +98,7 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
     // try {
     //   // Fetch row materials for the given order
     //   const rowMaterials = await OrderService.listMaterials(orderId);
-    //   console.log("Row Materials Response:", rowMaterials);
+    //   console.log("Raw Materials Response:", rowMaterials);
 
     //   // Check if requiredMaterials is empty
     //   if (!rowMaterials.requiredMaterials || rowMaterials.requiredMaterials.length === 0) {

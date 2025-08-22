@@ -1,6 +1,7 @@
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import COMPANY_LOGO from '../assets/logo.jpg';
+import { formatSnakeCase } from './formatSnakeCase';
 
 export const pdfFinishedProduct = (Details) => {
     console.log('Invoice Data:', Details);
@@ -80,7 +81,7 @@ export const pdfFinishedProduct = (Details) => {
             ],
             body: [
                 [
-                    Details?.orderDetails?.bagDetails?.type || 'N/A',
+                    formatSnakeCase(Details?.orderDetails?.bagDetails?.type) || "N/A",
                     Details?.orderDetails?.bagDetails?.size || 'N/A',
                     Details?.orderDetails?.bagDetails?.color || 'N/A',
                     Details?.orderDetails?.bagDetails?.printColor || 'N/A',

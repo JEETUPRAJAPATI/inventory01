@@ -68,7 +68,7 @@ export default function QRCodeDialog({ open, onClose, orderData }) {
           </Typography>
           <Box sx={{ mt: 2 }}>
             <Typography variant="body2">
-              <strong>Row material id:</strong> {orderData._id}
+              <strong>Raw material id:</strong> {orderData._id}
             </Typography>
             <Typography variant="body2">
               <strong>Fabric Color:</strong> {orderData.fabricColor}

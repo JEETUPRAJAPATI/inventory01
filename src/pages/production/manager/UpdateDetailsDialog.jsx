@@ -97,7 +97,7 @@ export default function UpdateDetailsDialog({
         <DialogTitle>Update {type} Production Details</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            {/* Row 1: Roll Size and Cylinder Size */}
+            {/* Raw 1: Roll Size and Cylinder Size */}
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
@@ -125,7 +125,7 @@ export default function UpdateDetailsDialog({
               />
             </Grid>
 
-            {/* Row 2: Quantity in Kgs and Quantity in Rolls */}
+            {/* Raw 2: Quantity in Kgs and Quantity in Rolls */}
             <Grid item xs={12} md={12}>
               <TextField
                 fullWidth
