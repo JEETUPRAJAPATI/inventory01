@@ -134,48 +134,54 @@ export default function DeliveryManagement() {
   };
 
   const handleSave = async () => {
+    // Validate form first
+    if (!validateForm()) {
+      setSaving(false);
+      return;
+    }
+
     try {
       setSaving(true);
 
-      const { _id, vehicleNo, driverName, driverContact } = deliveryDetails;
+      const { _id, vehicleNo, driverName, driverContact, deliveryDate, status } = deliveryDetails;
 
-      if (!vehicleNo) {
-        toast.error("Vehicle number is required");
-        return;
-      }
-
-      // allDrivers = already fetched driver list from backend
-      // ✅ use correct field from backend response
+      // Handle driver creation/update
       const existingDriver = allDrivers.find(
         (d) => d.vehicleNumber?.toLowerCase() === vehicleNo.toLowerCase()
       );
 
       if (existingDriver) {
-        // Update driver details
+        // Update existing driver
         await deliveryService.updateDriver(existingDriver._id, {
-          name: driverName, // ✅ rename
+          name: driverName,
           contact: driverContact,
-          vehicleNumber: vehicleNo, // ✅ rename
+          vehicleNumber: vehicleNo,
         });
-
-        toast.success("Driver updated successfully");
       } else {
         // Create new driver
         await deliveryService.createDriver({
-          name: driverName, // ✅ rename
+          name: driverName,
           contact: driverContact,
-          vehicleNumber: vehicleNo, // ✅ rename
+          vehicleNumber: vehicleNo,
         });
-
-        toast.success("New driver added successfully");
       }
 
+      // Update the delivery record
+      await deliveryService.updateDelivery(_id, {
+        vehicleNo,
+        driverName,
+        driverContact,
+        deliveryDate,
+        status,
+      });
+
+      toast.success("Delivery details updated successfully");
       setSelectedDelivery(null);
       fetchDeliveries(); // Refetch deliveries after update
     } catch (error) {
-      console.error("errors", error);
+      console.error("Update error:", error);
       const errorMessage =
-        error?.response?.data?.message || "Failed to save driver details";
+        error?.response?.data?.message || "Failed to update delivery details";
       toast.error(errorMessage);
     } finally {
       setSaving(false);

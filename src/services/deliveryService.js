@@ -57,8 +57,14 @@ const deliveryService = {
     }
   },
   updateDelivery: async (id, updatedDetails) => {
-    const response = await api.put(`inventory/delivery/${id}`, updatedDetails);
-    return response.data;
+    try {
+      const response = await api.put(`/delivery/${id}`, updatedDetails);
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Failed to update delivery"
+      );
+    }
   },
 
   // Update delivery status
