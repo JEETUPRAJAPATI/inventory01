@@ -68,7 +68,7 @@ export default function DeliveryManagement() {
   useEffect(() => {
     fetchDeliveries(); // Fetch deliveries on component mount
   }, []);
-  console.log("driver", allDrivers);
+
   const handleEdit = (delivery) => {
     if (!delivery) return;
     setSelectedDelivery(delivery); // Store the selected delivery
@@ -77,7 +77,7 @@ export default function DeliveryManagement() {
       vehicleNo: delivery.vehicleNo || "",
       driverName: delivery.driverName || "",
       driverContact: delivery.driverContact || "",
-      deliveryDate: delivery.deliveryDate || "",
+      deliveryDate: delivery.deliveryDate || new Date().toISOString(), // 👈 fallback to today
       status: delivery.status || "", // Ensure the status is also set
     });
   };
