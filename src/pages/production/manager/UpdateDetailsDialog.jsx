@@ -111,7 +111,7 @@ export default function UpdateDetailsDialog({
             <Grid
               item
               xs={12}
-              md={6}
+              md={12}
               sx={{ display: `${type === "DCut" ? "none" : "block"}` }}
             >
               <TextField
