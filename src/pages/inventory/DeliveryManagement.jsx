@@ -120,7 +120,7 @@ export default function DeliveryManagement() {
     // Add basic form validation here
     const { vehicleNo, driverName, driverContact, deliveryDate, status } =
       deliveryDetails;
-    
+
     if (!vehicleNo || vehicleNo.trim() === "") {
       toast.error("Vehicle number is required");
       return false;
@@ -154,7 +154,14 @@ export default function DeliveryManagement() {
     try {
       setSaving(true);
 
-      const { _id, vehicleNo, driverName, driverContact, deliveryDate, status } = deliveryDetails;
+      const {
+        _id,
+        vehicleNo,
+        driverName,
+        driverContact,
+        deliveryDate,
+        status,
+      } = deliveryDetails;
 
       // Handle driver creation/update
       const existingDriver = allDrivers.find(
@@ -178,8 +185,10 @@ export default function DeliveryManagement() {
       }
 
       // Format the date properly before sending
-      const formattedDate = deliveryDate ? new Date(deliveryDate).toISOString() : null;
-      
+      const formattedDate = deliveryDate
+        ? new Date(deliveryDate).toISOString()
+        : null;
+
       // Update the delivery record
       await deliveryService.updateDelivery(_id, {
         vehicleNo: vehicleNo.trim(),

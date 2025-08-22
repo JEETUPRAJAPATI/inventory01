@@ -125,8 +125,8 @@ export default function UpdateDetailsDialog({
               />
             </Grid>
 
-            {/* Row 2: Quantity in Kgs and Quantity in Rolls */}
-            <Grid item xs={12} md={6}>
+            {/* Raw 2: Quantity in Kgs and Quantity in Rolls */}
+            <Grid item xs={12} md={12}>
               <TextField
                 fullWidth
                 label="Quantity (in Kgs)"
@@ -135,10 +135,10 @@ export default function UpdateDetailsDialog({
                 value={formData.quantity_kgs || quantityKg} // Use quantityKg if empty
                 onChange={handleChange}
                 required
-                disabled={formData.quantity_kgs || quantityKg} // Disable if not empty
+                // disabled={formData.quantity_kgs || quantityKg} // Disable if not empty
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            {/* <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
                 label="Quantity (in Rolls)"
@@ -148,7 +148,7 @@ export default function UpdateDetailsDialog({
                 onChange={handleChange}
                 required
               />
-            </Grid>
+            </Grid> */}
 
             {/* Remarks */}
             <Grid item xs={12}>

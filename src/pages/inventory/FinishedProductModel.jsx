@@ -249,7 +249,7 @@ export default function FinishedProductModel({ open, production, onClose }) {
                             {(productionData.totalQuantity ?? 0).toFixed(2)}
                           </TableCell>
                         </TableRow>
-                        {/* ✅ Row for Scrap Quantity */}
+                        {/* ✅ Raw for Scrap Quantity */}
                         <TableRow>
                           <TableCell colSpan={5} sx={{ fontWeight: "bold" }}>
                             Scrap Quantity

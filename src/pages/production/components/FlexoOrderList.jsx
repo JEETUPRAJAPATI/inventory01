@@ -60,7 +60,7 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
   const [addSubcategoryDialogOpen, setAddSubcategoryDialogOpen] =
     useState(false);
   const [selectedMaterialId, setSelectedMaterialId] = useState(false);
-  // Row matirial list
+  // Raw matirial list
   const [requiredMaterials, setRequiredMaterials] = useState([]);
   const [totalQuantity, setTotalQuantity] = useState(0);
   const [rollSize, setRollSize] = useState(0);
@@ -98,7 +98,7 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
     // try {
     //   // Fetch row materials for the given order
     //   const rowMaterials = await OrderService.listMaterials(orderId);
-    //   console.log("Row Materials Response:", rowMaterials);
+    //   console.log("Raw Materials Response:", rowMaterials);
 
     //   // Check if requiredMaterials is empty
     //   if (!rowMaterials.requiredMaterials || rowMaterials.requiredMaterials.length === 0) {
@@ -346,6 +346,7 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
         const searchLower = searchTerm.toLowerCase();
         return (
           material.gsm.toString().toLowerCase().includes(searchLower) ||
+          material._id.toString().toLowerCase().includes(searchLower) ||
           material.fabricColor.toLowerCase().includes(searchLower) ||
           (material.rollSize
             ? material.rollSize.toString().toLowerCase()
@@ -429,10 +430,10 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
                         <TableCell>{material._id}</TableCell>
                         <TableCell>{selectedOrderId}</TableCell>
                         <TableCell>{formatSnakeCase(material.gsm)}</TableCell>
-                        <TableCell style={{ filter: "blur(5px)" }}>
+                        <TableCell>
                           {formatSnakeCase(material.fabricColor)}
                         </TableCell>
-                        <TableCell style={{ filter: "blur(5px)" }}>
+                        <TableCell>
                           {formatSnakeCase(material.rollSize)}
                         </TableCell>
                         <TableCell>{material.quantity}</TableCell>
@@ -448,6 +449,7 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
                             size="small"
                           />
                         </TableCell>
+
                         <TableCell>
                           <Button
                             variant="outlined"
