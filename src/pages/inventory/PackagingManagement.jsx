@@ -425,7 +425,7 @@ export default function PackagingManagement() {
         ["Flexo Unit No", unitNumbers?.flexo || "N/A"],
         ["Bag Making Unit No", unitNumbers?.wcut || "N/A"],
         ["Net Weight", `${formatNumber(pkg.weight || 0)} kg`],
-        ["Total Packages", Array.isArray(pkg) ? pkg.length : 1],
+        ["Total Packages", packages[0].package_details.length],
       ];
 
       autoTable(doc, {
@@ -451,7 +451,9 @@ export default function PackagingManagement() {
 
       // -------- QR CODE --------
       const qrCanvas = document.createElement("canvas");
-      const qrText = `Order ID: ${order.orderId}\nPackage ID: ${pkg._id}\nWeight: ${formatNumber(pkg.weight || 0)} kg`;
+      const qrText = `Order ID: ${order.orderId}\nPackage ID: ${
+        pkg._id
+      }\nWeight: ${formatNumber(pkg.weight || 0)} kg`;
 
       await QRCode.toCanvas(qrCanvas, qrText, { width: 70 });
       const qrDataUrl = qrCanvas.toDataURL("image/png");
@@ -615,7 +617,7 @@ export default function PackagingManagement() {
   //     resolve();
   //   });
   // };
-
+  console.log("debugger", packages[0].package_details.length);
   return (
     <>
       <Card>
@@ -735,7 +737,9 @@ export default function PackagingManagement() {
                         <TableCell>
                           {order?.order?.bagDetails?.size || "N/A"}
                         </TableCell>
-                        <TableCell>{formatNumber(parseFloat(order?.totalWeight || 0))}</TableCell>
+                        <TableCell>
+                          {formatNumber(parseFloat(order?.totalWeight || 0))}
+                        </TableCell>
                         <TableCell>
                           <Chip
                             label={formatSnakeCase(order.status)}
@@ -839,10 +843,18 @@ export default function PackagingManagement() {
                     pkg.package_details.map((pkgDetail) => (
                       <TableRow key={pkgDetail._id}>
                         <TableCell>{pkgDetail._id}</TableCell>
-                        <TableCell>{formatNumber(parseFloat(pkgDetail.length || 0))}</TableCell>
-                        <TableCell>{formatNumber(parseFloat(pkgDetail.width || 0))}</TableCell>
-                        <TableCell>{formatNumber(parseFloat(pkgDetail.height || 0))}</TableCell>
-                        <TableCell>{formatNumber(parseFloat(pkgDetail.weight || 0))}</TableCell>
+                        <TableCell>
+                          {formatNumber(parseFloat(pkgDetail.length || 0))}
+                        </TableCell>
+                        <TableCell>
+                          {formatNumber(parseFloat(pkgDetail.width || 0))}
+                        </TableCell>
+                        <TableCell>
+                          {formatNumber(parseFloat(pkgDetail.height || 0))}
+                        </TableCell>
+                        <TableCell>
+                          {formatNumber(parseFloat(pkgDetail.weight || 0))}
+                        </TableCell>
                         <TableCell>
                           <IconButton
                             color="primary"
@@ -924,7 +936,10 @@ export default function PackagingManagement() {
                 type="number"
                 value={newPackage.length}
                 onChange={(e) =>
-                  setNewPackage({ ...newPackage, length: formatNumber(parseFloat(e.target.value || 0)) })
+                  setNewPackage({
+                    ...newPackage,
+                    length: formatNumber(parseFloat(e.target.value || 0)),
+                  })
                 }
                 fullWidth
               />
@@ -935,7 +950,10 @@ export default function PackagingManagement() {
                 type="number"
                 value={newPackage.width}
                 onChange={(e) =>
-                  setNewPackage({ ...newPackage, width: formatNumber(parseFloat(e.target.value || 0)) })
+                  setNewPackage({
+                    ...newPackage,
+                    width: formatNumber(parseFloat(e.target.value || 0)),
+                  })
                 }
                 fullWidth
               />
@@ -946,7 +964,10 @@ export default function PackagingManagement() {
                 type="number"
                 value={newPackage.height}
                 onChange={(e) =>
-                  setNewPackage({ ...newPackage, height: formatNumber(parseFloat(e.target.value || 0)) })
+                  setNewPackage({
+                    ...newPackage,
+                    height: formatNumber(parseFloat(e.target.value || 0)),
+                  })
                 }
                 fullWidth
               />
@@ -957,7 +978,10 @@ export default function PackagingManagement() {
                 type="number"
                 value={newPackage.weight}
                 onChange={(e) =>
-                  setNewPackage({ ...newPackage, weight: formatNumber(parseFloat(e.target.value || 0)) })
+                  setNewPackage({
+                    ...newPackage,
+                    weight: formatNumber(parseFloat(e.target.value || 0)),
+                  })
                 }
                 fullWidth
               />
@@ -985,7 +1009,10 @@ export default function PackagingManagement() {
                 type="number"
                 value={newPackage.length}
                 onChange={(e) =>
-                  setNewPackage({ ...newPackage, length: formatNumber(parseFloat(e.target.value || 0)) })
+                  setNewPackage({
+                    ...newPackage,
+                    length: formatNumber(parseFloat(e.target.value || 0)),
+                  })
                 }
                 fullWidth
               />
@@ -996,7 +1023,10 @@ export default function PackagingManagement() {
                 type="number"
                 value={newPackage.width}
                 onChange={(e) =>
-                  setNewPackage({ ...newPackage, width: formatNumber(parseFloat(e.target.value || 0)) })
+                  setNewPackage({
+                    ...newPackage,
+                    width: formatNumber(parseFloat(e.target.value || 0)),
+                  })
                 }
                 fullWidth
               />
@@ -1007,7 +1037,10 @@ export default function PackagingManagement() {
                 type="number"
                 value={newPackage.height}
                 onChange={(e) =>
-                  setNewPackage({ ...newPackage, height: formatNumber(parseFloat(e.target.value || 0)) })
+                  setNewPackage({
+                    ...newPackage,
+                    height: formatNumber(parseFloat(e.target.value || 0)),
+                  })
                 }
                 fullWidth
               />
@@ -1018,7 +1051,10 @@ export default function PackagingManagement() {
                 type="number"
                 value={newPackage.weight}
                 onChange={(e) =>
-                  setNewPackage({ ...newPackage, weight: formatNumber(parseFloat(e.target.value || 0)) })
+                  setNewPackage({
+                    ...newPackage,
+                    weight: formatNumber(parseFloat(e.target.value || 0)),
+                  })
                 }
                 fullWidth
               />
@@ -1090,7 +1126,9 @@ export default function PackagingManagement() {
                     Dimensions: {selectedOrder?.order?.totalDimensions || "N/A"}
                   </Typography>
                   <Typography variant="body2">
-                    Weight: {formatNumber(parseFloat(selectedOrder?.totalWeight || 0))} kg
+                    Weight:{" "}
+                    {formatNumber(parseFloat(selectedOrder?.totalWeight || 0))}{" "}
+                    kg
                   </Typography>
                 </Box>
               </Grid>
