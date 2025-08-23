@@ -37,6 +37,7 @@ import autoTable from "jspdf-autotable";
 import JsBarcode from "jsbarcode";
 import html2canvas from "html2canvas";
 import { formatSnakeCase } from "../../utils/formatSnakeCase";
+import { formatNumber } from "../../utils/numberFormatter";
 const initialPackageState = {
   length: "",
   width: "",
@@ -734,7 +735,10 @@ export default function PackagingManagement() {
                         <TableCell>
                           {order?.order?.bagDetails?.size || "N/A"}
                         </TableCell>
-                        <TableCell>{order?.totalWeight || "N/A"}</TableCell>
+                        <TableCell>
+                          {formatNumber(parseFloat(order?.totalWeight || 0))}
+                        </TableCell>
+
                         <TableCell>
                           <Chip
                             label={formatSnakeCase(order.status)}
