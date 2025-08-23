@@ -46,9 +46,11 @@ export default function DeliveryManagement() {
   const [saving, setSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [errors, setErrors] = useState({});
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [allDrivers, setAllDrivers] = useState([]);
+  const resetErrors = () => setErrors({});
   // Fetch deliveries from API
   const fetchDeliveries = async () => {
     try {
@@ -118,30 +120,48 @@ export default function DeliveryManagement() {
 
   const validateForm = () => {
     // Add basic form validation here
+    // const { vehicleNo, driverName, driverContact, deliveryDate, status } =
+    //   deliveryDetails;
+
+    // if (!vehicleNo || vehicleNo.trim() === "") {
+    //   toast.error("Vehicle number is required");
+    //   return false;
+    // }
+    // if (!driverName || driverName.trim() === "") {
+    //   toast.error("Driver name is required");
+    //   return false;
+    // }
+    // if (!driverContact || driverContact.trim() === "") {
+    //   toast.error("Driver contact is required");
+    //   return false;
+    // }
+    // if (!deliveryDate || deliveryDate === "") {
+    //   toast.error("Delivery date is required");
+    //   return false;
+    // }
+    // if (!status || status === "") {
+    //   toast.error("Status is required");
+    //   return false;
+    // }
+    // return true;
+    const newErrors = {};
     const { vehicleNo, driverName, driverContact, deliveryDate, status } =
       deliveryDetails;
 
-    if (!vehicleNo || vehicleNo.trim() === "") {
-      toast.error("Vehicle number is required");
-      return false;
+    if (!vehicleNo?.trim()) newErrors.vehicleNo = "Vehicle number is required";
+    if (!driverName?.trim()) newErrors.driverName = "Driver name is required";
+    if (!driverContact?.trim())
+      newErrors.driverContact = "Driver contact is required";
+    else if (!/^(\+91)?[0-9]{10}$/.test(driverContact.trim())) {
+      newErrors.driverContact =
+        "Enter valid phone number (with or without +91)";
     }
-    if (!driverName || driverName.trim() === "") {
-      toast.error("Driver name is required");
-      return false;
-    }
-    if (!driverContact || driverContact.trim() === "") {
-      toast.error("Driver contact is required");
-      return false;
-    }
-    if (!deliveryDate || deliveryDate === "") {
-      toast.error("Delivery date is required");
-      return false;
-    }
-    if (!status || status === "") {
-      toast.error("Status is required");
-      return false;
-    }
-    return true;
+
+    if (!deliveryDate) newErrors.deliveryDate = "Delivery date is required";
+    if (!status) newErrors.status = "Status is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSave = async () => {
@@ -208,6 +228,7 @@ export default function DeliveryManagement() {
       toast.error(errorMessage);
     } finally {
       setSaving(false);
+      resetErrors();
     }
   };
 
@@ -364,7 +385,10 @@ export default function DeliveryManagement() {
 
       <Dialog
         open={!!selectedDelivery}
-        onClose={() => setSelectedDelivery(null)}
+        onClose={() => {
+          setSelectedDelivery(null);
+          resetErrors();
+        }}
         aria-labelledby="update-delivery-dialog-title"
       >
         <DialogTitle id="update-delivery-dialog-title">
@@ -417,6 +441,8 @@ export default function DeliveryManagement() {
                     label="Vehicle Number"
                     fullWidth
                     required
+                    error={!!errors.vehicleNo}
+                    helperText={errors.vehicleNo}
                   />
                 )}
               />
@@ -429,6 +455,8 @@ export default function DeliveryManagement() {
                 onChange={handleChange}
                 fullWidth
                 required
+                error={!!errors.driverName}
+                helperText={errors.driverName}
               />
             </Grid>
             <Grid item xs={12}>
@@ -439,6 +467,8 @@ export default function DeliveryManagement() {
                 onChange={handleChange}
                 fullWidth
                 required
+                error={!!errors.driverContact}
+                helperText={errors.driverContact}
               />
             </Grid>
 
@@ -463,6 +493,8 @@ export default function DeliveryManagement() {
                 inputProps={{
                   min: new Date().toISOString().split("T")[0], // allow today and future
                 }}
+                error={!!errors.deliveryDate}
+                helperText={errors.deliveryDate}
               />
             </Grid>
 
@@ -488,7 +520,14 @@ export default function DeliveryManagement() {
         <DialogActions
           sx={{ display: "flex", justifyContent: "space-between" }}
         >
-          <Button onClick={() => setSelectedDelivery(null)} disabled={saving}>
+          <Button
+            onClick={() => {
+              setSelectedDelivery(null);
+
+              resetErrors();
+            }}
+            disabled={saving}
+          >
             Cancel
           </Button>
           <Button
