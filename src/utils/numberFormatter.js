@@ -1,23 +1,27 @@
-
 /**
  * Utility functions for consistent number formatting
  */
 
 export const formatNumber = (value, decimals = 2) => {
-  if (value === null || value === undefined || value === '') {
-    return '0.00';
+  if (value === null || value === undefined || value === "") {
+    return "0";
   }
-  
-  const numValue = typeof value === 'string' ? parseFloat(value) : value;
-  
+
+  const numValue = typeof value === "string" ? parseFloat(value) : value;
+
   if (isNaN(numValue)) {
-    return '0.00';
+    return "0";
   }
-  
-  return numValue.toFixed(decimals);
+
+  // Check if the number has a decimal part
+  if (Number.isInteger(numValue)) {
+    return numValue.toString(); // no decimals
+  }
+
+  return numValue.toFixed(decimals); // show decimals
 };
 
-export const formatCurrency = (value, currency = '₹', decimals = 2) => {
+export const formatCurrency = (value, currency = "₹", decimals = 2) => {
   const formattedNumber = formatNumber(value, decimals);
   return `${currency}${formattedNumber}`;
 };
