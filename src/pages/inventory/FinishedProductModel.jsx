@@ -230,7 +230,15 @@ export default function FinishedProductModel({ open, production, onClose }) {
                         {productionData.productionDetails?.subcategoryIds?.map(
                           (subcategory, index) => (
                             <TableRow key={subcategory._id}>
-                              <TableCell>{subcategory._id}</TableCell>
+                                <TableCell>
+                    {subcategory._id}
+                    {subcategory.shortId && (
+                      <>
+                        <br />
+                        <small style={{ color: "gray" }}>({subcategory.shortId})</small>
+                      </>
+                    )}
+                  </TableCell>
                               <TableCell>{subcategory.fabricColor}</TableCell>
                               <TableCell>{subcategory.rollSize}</TableCell>
                               <TableCell>{subcategory.gsm}</TableCell>

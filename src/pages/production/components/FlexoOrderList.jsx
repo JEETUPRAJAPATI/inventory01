@@ -357,6 +357,8 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
           material.gsm.toString().toLowerCase().includes(searchLower) ||
           material._id.toString().toLowerCase().includes(searchLower) ||
           material.fabricColor.toLowerCase().includes(searchLower) ||
+          material.shortId?.toLowerCase().includes(searchLower) ||
+       
           (material.rollSize
             ? material.rollSize.toString().toLowerCase()
             : ""
@@ -409,6 +411,7 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
                 <TableHead>
                   <TableRow>
                     <TableCell>ID</TableCell>
+                     <TableCell>Short ID</TableCell>
                     <TableCell>Order ID</TableCell>
                     <TableCell>GSM</TableCell>
                     <TableCell>Fabric Color</TableCell>
@@ -437,6 +440,7 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
                     filteredMaterials.map((material) => (
                       <TableRow key={material._id}>
                         <TableCell>{material._id}</TableCell>
+                          <TableCell>{material.shortId}</TableCell>
                         <TableCell>{selectedOrderId}</TableCell>
                         <TableCell>{formatSnakeCase(material.gsm)}</TableCell>
                         <TableCell>

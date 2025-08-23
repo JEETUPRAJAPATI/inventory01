@@ -435,12 +435,15 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
         const rollSize = material.rollSize?.toString().toLowerCase() || "";
         const quantity = material.quantity?.toString().toLowerCase() || "";
         const MaterialId = material._id?.toString().toLowerCase() || "";
-
+        const shortId = material.shortId?.toString().toLowerCase() || "";
+      
+       
         return (
           gsm.includes(lowerSearch) ||
           fabricColor.includes(lowerSearch) ||
           rollSize.includes(lowerSearch) ||
-          MaterialId.includes(lowerSearch)
+          MaterialId.includes(lowerSearch) ||
+            shortId.includes(lowerSearch)
         );
       });
     }, [searchTerm, requiredMaterials]);
@@ -490,6 +493,7 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
                 <TableHead>
                   <TableRow>
                     <TableCell>ID</TableCell>
+                     <TableCell>Short ID</TableCell>
                     <TableCell>Order ID</TableCell>
                     <TableCell>GSM</TableCell>
                     <TableCell>Fabric Color</TableCell>
@@ -519,6 +523,7 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
                     filteredMaterials.map((material) => (
                       <TableRow key={material._id}>
                         <TableCell>{material._id}</TableCell>
+                         <TableCell>{material.shortId}</TableCell>
                         <TableCell>{selectedOrderId}</TableCell>
                         <TableCell>{formatSnakeCase(material.gsm)}</TableCell>
                         <TableCell>

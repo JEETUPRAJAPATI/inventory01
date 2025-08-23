@@ -857,7 +857,16 @@ export default function RawMaterials() {
               ) : (
                 subCategories.map((subcategory) => (
                   <TableRow key={subcategory._id}>
-                    <TableCell>{subcategory._id}</TableCell>
+                  <TableCell>
+                    {subcategory._id}
+                    {subcategory.shortId && (
+                      <>
+                        <br />
+                        <small style={{ color: "gray" }}>({subcategory.shortId})</small>
+                      </>
+                    )}
+                  </TableCell>
+
                     <TableCell>
                       {formatSnakeCase(subcategory.fabricColor)}
                     </TableCell>

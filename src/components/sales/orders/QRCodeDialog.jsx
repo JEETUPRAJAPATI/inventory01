@@ -67,9 +67,14 @@ export default function QRCodeDialog({ open, onClose, orderData }) {
             Scan this QR to get Roll details
           </Typography>
           <Box sx={{ mt: 2 }}>
+             <Typography variant="body2">
+              <strong>Raw material Short ID:</strong> {orderData.shortId}
+            </Typography>
+            
             <Typography variant="body2">
               <strong>Raw material id:</strong> {orderData._id}
             </Typography>
+           
             <Typography variant="body2">
               <strong>Fabric Color:</strong> {orderData.fabricColor}
             </Typography>

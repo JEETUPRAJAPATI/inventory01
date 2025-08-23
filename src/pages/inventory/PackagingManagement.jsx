@@ -424,7 +424,7 @@ export default function PackagingManagement() {
         ["Flexo Unit No", unitNumbers?.flexo || "N/A"],
         ["Bag Making Unit No", unitNumbers?.wcut || "N/A"],
         ["Net Weight", `${pkg.weight} kg`],
-        ["Total Packages", Array.isArray(pkg) ? pkg.length : 1],
+        ["Total Packages", packages[0].package_details.length],
       ];
 
       autoTable(doc, {
