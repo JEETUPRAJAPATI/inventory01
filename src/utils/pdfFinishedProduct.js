@@ -120,7 +120,7 @@ export const pdfFinishedProduct = (Details) => {
             ],
             body: [
                 [
-                    Details?.productionDetails?.scrapQuantity ?? 'N/A',
+                    Details?.scrapQuantity ?? 'N/A',
                     Details?.totalQuantity ?? 'N/A',
                     Details?.remainingQuantity ?? 'N/A'
                 ]
