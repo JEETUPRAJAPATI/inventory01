@@ -617,7 +617,7 @@ export default function PackagingManagement() {
   //     resolve();
   //   });
   // };
-  console.log("debugger", packages[0].package_details.length);
+
   return (
     <>
       <Card>
