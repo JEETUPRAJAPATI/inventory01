@@ -156,7 +156,8 @@ export default function OpsertOrderList({
                     <TableCell>
                       {order.opsertDetails[0].status === "pending" && (
                         <Tooltip title="Start Printing" arrow>
-                          <IconButton
+                          <Button
+                            variant="contained"
                             color="primary"
                             size="small"
                             onClick={() =>
@@ -168,31 +169,33 @@ export default function OpsertOrderList({
                             }
                           >
                             <Print />
-                          </IconButton>
+                          </Button>
                         </Tooltip>
                       )}
 
                       {order.opsertDetails[0].status === "in_progress" && (
                         <Tooltip title="Complete Order" arrow>
-                          <IconButton
+                          <Button
+                            variant="contained"
                             color="success"
                             size="small"
                             onClick={() => handleOpenModal(order.orderId)}
                           >
                             <Update />
-                          </IconButton>
+                          </Button>
                         </Tooltip>
                       )}
 
                       {order.opsertDetails[0].status === "completed" && (
                         <Tooltip title="Move to Packaging" arrow>
-                          <IconButton
+                          <Button
+                            variant="contained"
                             color="info"
                             size="small"
                             onClick={() => handleMoveToPackaging(order.orderId)}
                           >
                             <LocalShipping />
-                          </IconButton>
+                          </Button>
                         </Tooltip>
                       )}
                     </TableCell>

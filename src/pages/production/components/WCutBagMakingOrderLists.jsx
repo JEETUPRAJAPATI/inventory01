@@ -17,10 +17,12 @@ import {
   Select,
   MenuItem,
   TextField,
+  Tooltip,
 } from "@mui/material";
 import { Print, Update, LocalShipping } from "@mui/icons-material";
 import toast from "react-hot-toast";
 import OrderService from "../../../services/wcutBagMakingServices";
+import { formatSnakeCase } from "../../../utils/formatSnakeCase";
 
 export default function WCutBagMakingOrderLists({
   orders,
@@ -151,7 +153,9 @@ export default function WCutBagMakingOrderLists({
                       "-"}
                   </TableCell>
                   <TableCell>{order.fabricQuality || "-"}</TableCell>
-                  <TableCell>{order.bagDetails?.type || "-"}</TableCell>
+                  <TableCell>
+                    {formatSnakeCase(order.bagDetails?.type) || "-"}
+                  </TableCell>
                   <TableCell>{order.bagDetails?.size || "-"}</TableCell>
                   <TableCell>
                     {order.productionManagers?.[0]?.production_details
@@ -182,47 +186,52 @@ export default function WCutBagMakingOrderLists({
                       }}
                     >
                       {order.opsertDetails[0]?.status === "pending" && (
-                        <Button
-                          startIcon={<Print />}
-                          variant="contained"
-                          color="primary"
-                          size="small"
-                          fullWidth
-                          onClick={() =>
-                            updateOrderStatus(
-                              order.orderId,
-                              "in_progress",
-                              "",
-                              "Printing started"
-                            )
-                          }
-                        >
-                          Start
-                        </Button>
+                        <Tooltip title="Start Printing" arrow>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            size="small"
+                            fullWidth
+                            onClick={() =>
+                              updateOrderStatus(
+                                order.orderId,
+                                "in_progress",
+                                "",
+                                "Printing started"
+                              )
+                            }
+                          >
+                            <Print />
+                          </Button>
+                        </Tooltip>
                       )}
+
                       {order.opsertDetails[0]?.status === "in_progress" && (
-                        <Button
-                          startIcon={<Update />}
-                          variant="contained"
-                          color="success"
-                          size="small"
-                          fullWidth
-                          onClick={() => handleOpenModal(order.orderId)}
-                        >
-                          Complete
-                        </Button>
+                        <Tooltip title="Complete Printing" arrow>
+                          <Button
+                            variant="contained"
+                            color="success"
+                            size="small"
+                            fullWidth
+                            onClick={() => handleOpenModal(order.orderId)}
+                          >
+                            <Update />
+                          </Button>
+                        </Tooltip>
                       )}
+
                       {order.opsertDetails[0]?.status === "completed" && (
-                        <Button
-                          startIcon={<LocalShipping />}
-                          variant="contained"
-                          color="primary"
-                          size="small"
-                          fullWidth
-                          onClick={() => handleOpenScrapModal(order)}
-                        >
-                          Package
-                        </Button>
+                        <Tooltip title="Move to Packaging" arrow>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            size="small"
+                            fullWidth
+                            onClick={() => handleOpenScrapModal(order)}
+                          >
+                            <LocalShipping />
+                          </Button>
+                        </Tooltip>
                       )}
                     </Box>
                   </TableCell>
