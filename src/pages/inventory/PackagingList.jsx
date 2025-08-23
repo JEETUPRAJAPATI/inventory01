@@ -21,6 +21,7 @@ import {
 import { Edit, Save } from "@mui/icons-material";
 import toast from "react-hot-toast";
 import { formatSnakeCase } from "../../utils/formatSnakeCase";
+import { formatNumber } from "../../utils/numberFormatter";
 
 const mockPackages = [
   {
@@ -122,7 +123,7 @@ export default function PackagingList() {
                         ? `${pkg.dimensions.length}x${pkg.dimensions.width}x${pkg.dimensions.height}`
                         : "N/A"}
                     </TableCell>
-                    <TableCell>{pkg.dimensions?.weight ?? "N/A"}</TableCell>
+                    <TableCell>{pkg.dimensions?.weight !== undefined ? formatNumber(pkg.dimensions.weight) : "N/A"}</TableCell>
                     <TableCell>
                       <IconButton
                         size="small"

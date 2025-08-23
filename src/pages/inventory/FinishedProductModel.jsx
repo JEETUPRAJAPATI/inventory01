@@ -39,6 +39,7 @@ import {
   DirectionsCar,
 } from "@mui/icons-material";
 import { formatSnakeCase } from "../../utils/formatSnakeCase";
+import { formatNumber } from "../../utils/numberFormatter";
 
 export default function FinishedProductModel({ open, production, onClose }) {
   if (!production || !production.data) {
@@ -246,7 +247,7 @@ export default function FinishedProductModel({ open, production, onClose }) {
                             Total Quantity
                           </TableCell>
                           <TableCell sx={{ fontWeight: "bold" }}>
-                            {(productionData.totalQuantity ?? 0).toFixed(2)}
+                            {formatNumber(productionData.totalQuantity ?? 0, 2)}
                           </TableCell>
                         </TableRow>
                         {/* ✅ Raw for Scrap Quantity */}
@@ -255,7 +256,7 @@ export default function FinishedProductModel({ open, production, onClose }) {
                             Scrap Quantity
                           </TableCell>
                           <TableCell sx={{ fontWeight: "bold" }}>
-                            {(productionData?.scrapQuantity ?? 0).toFixed(2)}
+                            {formatNumber(productionData?.scrapQuantity ?? 0, 2)}
                           </TableCell>
                         </TableRow>
                         {/* Remaining Quantity */}
