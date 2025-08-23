@@ -842,10 +842,18 @@ export default function PackagingManagement() {
                     pkg.package_details.map((pkgDetail) => (
                       <TableRow key={pkgDetail._id}>
                         <TableCell>{pkgDetail._id}</TableCell>
-                        <TableCell>{pkgDetail.length ?? ""}</TableCell>
-                        <TableCell>{pkgDetail.width ?? ""}</TableCell>
-                        <TableCell>{pkgDetail.height ?? ""}</TableCell>
-                        <TableCell>{pkgDetail.weight ?? ""}</TableCell>
+                         <TableCell>
+                          {formatNumber(parseFloat(pkgDetail.length || 0))}
+                        </TableCell>
+                        <TableCell>
+                          {formatNumber(parseFloat(pkgDetail.width || 0))}
+                        </TableCell>
+                        <TableCell>
+                          {formatNumber(parseFloat(pkgDetail.height || 0))}
+                        </TableCell>
+                        <TableCell>
+                          {formatNumber(parseFloat(pkgDetail.weight || 0))}
+                        </TableCell>
                         <TableCell>
                           <IconButton
                             color="primary"
