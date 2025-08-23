@@ -41,7 +41,7 @@ import "jspdf-autotable";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { API_BASE_URL } from "../../config/constants";
-
+import { formatNumber } from "../../utils/numberFormatter";
 import orderService from "/src/services/orderService.js";
 import FormSelect from "../../components/common/FormSelect";
 import authService from "../../services/authService";
@@ -877,7 +877,7 @@ export default function RawMaterials() {
                     <TableCell>
                       {formatSnakeCase(subcategory.fabricQuality)}
                     </TableCell>
-                    <TableCell>{subcategory.quantity}</TableCell>
+                      <TableCell>{formatNumber(subcategory.quantity)}</TableCell>
                     <TableCell>
                       <Chip
                         label={subcategory.is_used ? "Used" : "Unused"}
@@ -1072,7 +1072,7 @@ export default function RawMaterials() {
                       {formatSnakeCase(category.fabric_quality)}
                     </TableCell>
                     <TableCell>
-                      {category.totalSubcategoryQuantity ?? 0}
+                            {formatNumber(category.totalSubcategoryQuantity) ?? 0}
                     </TableCell>
                     <TableCell>{renderActions(category)}</TableCell>
                   </TableRow>
