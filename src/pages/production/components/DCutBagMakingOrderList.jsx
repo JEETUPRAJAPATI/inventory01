@@ -37,6 +37,7 @@ import { useState, useEffect, useMemo } from "react";
 import OrderService from "../../../services/dcutBagMakingService";
 import QRCodeScanner from "../../../components/QRCodeScanner"; // Assuming this is your QRCodeScanner component
 import { formatSnakeCase } from "../../../utils/formatSnakeCase";
+import { formatNumber } from "../../../utils/numberFormatter";
 const modalStyle = {
   position: "absolute",
   top: "50%",
@@ -532,7 +533,7 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
                         <TableCell>
                           {formatSnakeCase(material.rollSize)}
                         </TableCell>
-                        <TableCell>{material.quantity}</TableCell>
+                         <TableCell>{formatNumber(material.quantity)}</TableCell>
                         <TableCell>
                           <Chip
                             label={formatSnakeCase(material.status)}
