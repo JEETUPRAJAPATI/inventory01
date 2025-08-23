@@ -311,66 +311,71 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
     if (bagType === "wcut") {
       if (order.status === "pending") {
         return (
-          <Button
-            startIcon={<QrCodeScanner />}
-            variant="outlined"
-            size="small"
-            onClick={() => handleVerify(order._id)}
-          >
-            Verify
-          </Button>
+          <Tooltip title="Verify Order" arrow>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => handleVerify(order._id)}
+            >
+              <QrCodeScanner />
+            </Button>
+          </Tooltip>
         );
       }
       if (order.status === "in_progress") {
         return (
-          <Button
-            startIcon={<Update />}
-            variant="contained"
-            color="success"
-            size="small"
-            onClick={() => handleOpenModal(order.orderId)}
-          >
-            Complete
-          </Button>
+          <Tooltip title="Complete Order" arrow>
+            <Button
+              variant="contained"
+              color="success"
+              size="small"
+              onClick={() => handleOpenModal(order.orderId)}
+            >
+              <Update />
+            </Button>
+          </Tooltip>
         );
       }
       if (order.status === "completed") {
         return (
-          <Button
-            startIcon={<LocalShipping />}
-            variant="contained"
-            color="primary"
-            size="small"
-            onClick={() => handleOpenScrapModal(order._id, "opsert")}
-          >
-            Move to Delivery
-          </Button>
+          <Tooltip title="Move to Delivery" arrow>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={() => handleOpenScrapModal(order._id, "opsert")}
+            >
+              <LocalShipping />
+            </Button>
+          </Tooltip>
         );
       }
     } else {
       if (order.dcutbagmakingDetails[0].status === "pending") {
         return (
-          <Button
-            startIcon={<QrCodeScanner />}
-            variant="outlined"
-            size="small"
-            onClick={() => handleVerify(order.orderId)}
-          >
-            Verify
-          </Button>
+          <Tooltip title="Verify Order" arrow>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => handleVerify(order.orderId)}
+            >
+              <QrCodeScanner />
+            </Button>
+          </Tooltip>
         );
       }
       if (order.dcutbagmakingDetails[0].status === "in_progress") {
         return (
-          <Button
-            startIcon={<Update />}
-            variant="contained"
-            color="success"
-            size="small"
-            onClick={() => handleOpenModal(order.orderId)}
-          >
-            Complete
-          </Button>
+          <Tooltip title="Complete Order" arrow>
+            <Button
+              variant="contained"
+              color="success"
+              size="small"
+              onClick={() => handleOpenModal(order.orderId)}
+            >
+              <Update />
+            </Button>
+          </Tooltip>
         );
       }
       if (order.dcutbagmakingDetails[0].status === "completed") {
@@ -402,7 +407,7 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
       }
     }
 
-    return null; // If no status matched, no button will be shown
+    return null;
   };
 
   const getStatusColor = (status) => {

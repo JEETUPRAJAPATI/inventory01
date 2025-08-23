@@ -240,73 +240,81 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
     };
     return colors[status] || "default";
   };
-
   const renderActions = (order) => {
     if (bagType === "wcut") {
       if (order.flexoDetails?.[0]?.status === "pending") {
         return (
-          <Button
-            startIcon={<QrCodeScanner />}
-            variant="outlined"
-            size="small"
-            onClick={() => handleVerify(order.orderId)}
-          >
-            Verify
-          </Button>
+          <Tooltip title="Verify" arrow>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => handleVerify(order.orderId)}
+            >
+              <QrCodeScanner />
+            </Button>
+          </Tooltip>
         );
       }
+
       if (order.flexoDetails?.[0]?.status === "in_progress") {
         return (
-          <Button
-            startIcon={<Update />}
-            variant="contained"
-            color="success"
-            size="small"
-            onClick={() => handleOpenModal(order.orderId)}
-          >
-            Complete
-          </Button>
+          <Tooltip title="Complete" arrow>
+            <Button
+              variant="contained"
+              color="success"
+              size="small"
+              onClick={() => handleOpenModal(order.orderId)}
+            >
+              <Update />
+            </Button>
+          </Tooltip>
         );
       }
+
       if (order.flexoDetails?.[0]?.status === "completed") {
         return (
-          <Button
-            startIcon={<LocalShipping />}
-            variant="contained"
-            color="primary"
-            size="small"
-            onClick={() => handleMoveToBagMaking(order.orderId)}
-          >
-            Move to Bag Making
-          </Button>
+          <Tooltip title="Move to Bag Making" arrow>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={() => handleMoveToBagMaking(order.orderId)}
+            >
+              <LocalShipping />
+            </Button>
+          </Tooltip>
         );
       }
     } else {
       if (order.flexoDetails[0].status === "pending") {
         return (
-          <Button
-            startIcon={<QrCodeScanner />}
-            variant="outlined"
-            size="small"
-            onClick={() => handleVerify(order.orderId)}
-          >
-            Verify
-          </Button>
+          <Tooltip title="Verify" arrow>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => handleVerify(order.orderId)}
+            >
+              <QrCodeScanner />
+            </Button>
+          </Tooltip>
         );
       }
+
       if (order.flexoDetails[0].status === "in_progress") {
         return (
-          <Button
-            startIcon={<Update />}
-            variant="contained"
-            color="success"
-            size="small"
-            onClick={() => handleOpenModal(order.orderId)}
-          >
-            Complete
-          </Button>
+          <Tooltip title="Complete" arrow>
+            <Button
+              variant="contained"
+              color="success"
+              size="small"
+              onClick={() => handleOpenModal(order.orderId)}
+            >
+              <Update />
+            </Button>
+          </Tooltip>
         );
       }
+
       if (order.flexoDetails[0].status === "completed") {
         return (
           <Box sx={{ display: "flex", gap: 1 }}>
@@ -335,6 +343,7 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
         );
       }
     }
+
     return null;
   };
 
