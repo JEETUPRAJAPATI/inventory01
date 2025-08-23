@@ -50,10 +50,10 @@ export default function FinishedProductModel({ open, production, onClose }) {
 
   const getStatusColor = (status) => {
     const colors = {
-      Pending: "warning",
-      "In Transit": "info",
-      Delivered: "success",
-      Cancelled: "error",
+      pending: "warning",
+      in_transit: "info",
+      delivered: "success",
+      cancelled: "error",
     };
     return colors[status] || "default";
   };
@@ -256,7 +256,10 @@ export default function FinishedProductModel({ open, production, onClose }) {
                             Scrap Quantity
                           </TableCell>
                           <TableCell sx={{ fontWeight: "bold" }}>
-                            {formatNumber(productionData?.scrapQuantity ?? 0, 2)}
+                            {formatNumber(
+                              productionData?.scrapQuantity ?? 0,
+                              2
+                            )}
                           </TableCell>
                         </TableRow>
                         {/* Remaining Quantity */}

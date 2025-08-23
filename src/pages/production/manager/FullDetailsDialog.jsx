@@ -143,13 +143,14 @@ export default function FullDetailsDialog({ open, onClose, record }) {
               {productionManager.production_details?.roll_size || "N/A"}
             </Typography>
           </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <Typography variant="body1">
-              <strong>Cylinder Size:</strong>{" "}
-              {productionManager.production_details?.cylinder_size || "N/A"}
-            </Typography>
-          </Grid>
+          {order.bagDetails?.type !== "d_cut_loop_handle" && (
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1">
+                <strong>Cylinder Size:</strong>
+                {productionManager.production_details?.cylinder_size || "N/A"}
+              </Typography>
+            </Grid>
+          )}
 
           <Grid item xs={12} sm={6}>
             <Typography variant="body1">

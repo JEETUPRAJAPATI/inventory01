@@ -51,6 +51,7 @@ import QRCode from "qrcode";
 import COMPANY_LOGO from "../../assets/logo.jpg";
 import { formatSnakeCase } from "../../utils/formatSnakeCase";
 import DeleteConfirmDialog from "../../components/common/DeleteConfirmDialog";
+import { formatNumber } from "../../utils/numberFormatter";
 const categoryOptions = [
   { value: "fabric", label: "Fabric" },
   { value: "handle", label: "Handle" },
@@ -868,7 +869,7 @@ export default function RawMaterials() {
                     <TableCell>
                       {formatSnakeCase(subcategory.fabricQuality)}
                     </TableCell>
-                    <TableCell>{subcategory.quantity}</TableCell>
+                    <TableCell>{formatNumber(subcategory.quantity)}</TableCell>
                     <TableCell>
                       <Chip
                         label={subcategory.is_used ? "Used" : "Unused"}
@@ -1063,7 +1064,7 @@ export default function RawMaterials() {
                       {formatSnakeCase(category.fabric_quality)}
                     </TableCell>
                     <TableCell>
-                      {category.totalSubcategoryQuantity ?? 0}
+                      {formatNumber(category.totalSubcategoryQuantity) ?? 0}
                     </TableCell>
                     <TableCell>{renderActions(category)}</TableCell>
                   </TableRow>
