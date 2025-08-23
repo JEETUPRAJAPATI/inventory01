@@ -117,7 +117,12 @@ export default function OpsertForm({ open, onClose, onSubmit, record = null }) {
                 name="quantity"
                 type="number"
                 value={formData.quantity}
-                onChange={handleChange}
+                onChange={(e) => handleChange({
+                  target: {
+                    name: e.target.name,
+                    value: parseFloat(e.target.value || 0).toFixed(2)
+                  }
+                })}
                 required
               />
             </Grid>

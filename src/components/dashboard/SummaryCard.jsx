@@ -21,8 +21,10 @@ export default function SummaryCard({
   // Safely format the value
   const displayValue = isAmountCard
     ? typeof value === "string" || typeof value === "number"
-      ? value.toString().replace("₹", "")
-      : "0"
+      ? parseFloat(value.toString().replace("₹", "")).toFixed(2)
+      : "0.00"
+    : typeof value === "number"
+    ? value.toFixed(2)
     : value ?? "0";
   console.log(">>>>", title);
   return (

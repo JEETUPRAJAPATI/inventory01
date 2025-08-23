@@ -610,7 +610,7 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
                       {order.productionManagers?.[0]?.production_details
                         ?.roll_size || "-"}
                     </TableCell>
-                    <TableCell>{order.bagDetails?.gsm || "-"}</TableCell>
+                    <TableCell>{order.bagDetails?.gsm ? parseFloat(order.bagDetails.gsm).toFixed(2) : "-"}</TableCell>
                     <TableCell>
                       {formatSnakeCase(order.bagDetails?.color || "-")}
                     </TableCell>
@@ -634,7 +634,7 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
                       {order.productionManagers?.[0]?.production_details
                         ?.cylinder_size || "-"}
                     </TableCell>
-                    <TableCell>{order.quantity}</TableCell>
+                    <TableCell>{parseFloat(order.quantity || 0).toFixed(2)}</TableCell>
                     <TableCell>
                       {order.productionManagers?.[0]?.production_details
                         ?.remarks ||

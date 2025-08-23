@@ -423,7 +423,7 @@ export default function PackagingManagement() {
         ["Print Colour", bagDetails.printColor || "N/A"],
         ["Flexo Unit No", unitNumbers?.flexo || "N/A"],
         ["Bag Making Unit No", unitNumbers?.wcut || "N/A"],
-        ["Net Weight", `${pkg.weight} kg`],
+        ["Net Weight", `${parseFloat(pkg.weight || 0).toFixed(2)} kg`],
         ["Total Packages", Array.isArray(pkg) ? pkg.length : 1],
       ];
 
@@ -450,7 +450,7 @@ export default function PackagingManagement() {
 
       // -------- QR CODE --------
       const qrCanvas = document.createElement("canvas");
-      const qrText = `Order ID: ${order.orderId}\nPackage ID: ${pkg._id}\nWeight: ${pkg.weight} kg`;
+      const qrText = `Order ID: ${order.orderId}\nPackage ID: ${pkg._id}\nWeight: ${parseFloat(pkg.weight || 0).toFixed(2)} kg`;
 
       await QRCode.toCanvas(qrCanvas, qrText, { width: 70 });
       const qrDataUrl = qrCanvas.toDataURL("image/png");
@@ -734,7 +734,7 @@ export default function PackagingManagement() {
                         <TableCell>
                           {order?.order?.bagDetails?.size || "N/A"}
                         </TableCell>
-                        <TableCell>{order?.totalWeight || "N/A"}</TableCell>
+                        <TableCell>{parseFloat(order?.totalWeight || 0).toFixed(2)}</TableCell>
                         <TableCell>
                           <Chip
                             label={formatSnakeCase(order.status)}
@@ -838,10 +838,10 @@ export default function PackagingManagement() {
                     pkg.package_details.map((pkgDetail) => (
                       <TableRow key={pkgDetail._id}>
                         <TableCell>{pkgDetail._id}</TableCell>
-                        <TableCell>{pkgDetail.length ?? ""}</TableCell>
-                        <TableCell>{pkgDetail.width ?? ""}</TableCell>
-                        <TableCell>{pkgDetail.height ?? ""}</TableCell>
-                        <TableCell>{pkgDetail.weight ?? ""}</TableCell>
+                        <TableCell>{parseFloat(pkgDetail.length || 0).toFixed(2)}</TableCell>
+                        <TableCell>{parseFloat(pkgDetail.width || 0).toFixed(2)}</TableCell>
+                        <TableCell>{parseFloat(pkgDetail.height || 0).toFixed(2)}</TableCell>
+                        <TableCell>{parseFloat(pkgDetail.weight || 0).toFixed(2)}</TableCell>
                         <TableCell>
                           <IconButton
                             color="primary"
@@ -923,7 +923,7 @@ export default function PackagingManagement() {
                 type="number"
                 value={newPackage.length}
                 onChange={(e) =>
-                  setNewPackage({ ...newPackage, length: e.target.value })
+                  setNewPackage({ ...newPackage, length: parseFloat(e.target.value || 0).toFixed(2) })
                 }
                 fullWidth
               />
@@ -934,7 +934,7 @@ export default function PackagingManagement() {
                 type="number"
                 value={newPackage.width}
                 onChange={(e) =>
-                  setNewPackage({ ...newPackage, width: e.target.value })
+                  setNewPackage({ ...newPackage, width: parseFloat(e.target.value || 0).toFixed(2) })
                 }
                 fullWidth
               />
@@ -945,7 +945,7 @@ export default function PackagingManagement() {
                 type="number"
                 value={newPackage.height}
                 onChange={(e) =>
-                  setNewPackage({ ...newPackage, height: e.target.value })
+                  setNewPackage({ ...newPackage, height: parseFloat(e.target.value || 0).toFixed(2) })
                 }
                 fullWidth
               />
@@ -956,7 +956,7 @@ export default function PackagingManagement() {
                 type="number"
                 value={newPackage.weight}
                 onChange={(e) =>
-                  setNewPackage({ ...newPackage, weight: e.target.value })
+                  setNewPackage({ ...newPackage, weight: parseFloat(e.target.value || 0).toFixed(2) })
                 }
                 fullWidth
               />
@@ -984,7 +984,7 @@ export default function PackagingManagement() {
                 type="number"
                 value={newPackage.length}
                 onChange={(e) =>
-                  setNewPackage({ ...newPackage, length: e.target.value })
+                  setNewPackage({ ...newPackage, length: parseFloat(e.target.value || 0).toFixed(2) })
                 }
                 fullWidth
               />
@@ -995,7 +995,7 @@ export default function PackagingManagement() {
                 type="number"
                 value={newPackage.width}
                 onChange={(e) =>
-                  setNewPackage({ ...newPackage, width: e.target.value })
+                  setNewPackage({ ...newPackage, width: parseFloat(e.target.value || 0).toFixed(2) })
                 }
                 fullWidth
               />
@@ -1006,7 +1006,7 @@ export default function PackagingManagement() {
                 type="number"
                 value={newPackage.height}
                 onChange={(e) =>
-                  setNewPackage({ ...newPackage, height: e.target.value })
+                  setNewPackage({ ...newPackage, height: parseFloat(e.target.value || 0).toFixed(2) })
                 }
                 fullWidth
               />
@@ -1017,7 +1017,7 @@ export default function PackagingManagement() {
                 type="number"
                 value={newPackage.weight}
                 onChange={(e) =>
-                  setNewPackage({ ...newPackage, weight: e.target.value })
+                  setNewPackage({ ...newPackage, weight: parseFloat(e.target.value || 0).toFixed(2) })
                 }
                 fullWidth
               />
@@ -1089,7 +1089,7 @@ export default function PackagingManagement() {
                     Dimensions: {selectedOrder?.order?.totalDimensions || "N/A"}
                   </Typography>
                   <Typography variant="body2">
-                    Weight: {selectedOrder?.totalWeight || "N/A"} kg
+                    Weight: {parseFloat(selectedOrder?.totalWeight || 0).toFixed(2)} kg
                   </Typography>
                 </Box>
               </Grid>
