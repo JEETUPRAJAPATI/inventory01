@@ -144,9 +144,7 @@ export const pdfFinishedProduct = (Details) => {
         // === Packaging Details Table ===
         const packageData = (Details?.packageDetails?.package_details || [])
             .filter(pkg => pkg.weight != null) // Only include rows with valid weight
-            .map(pkg => [
-                `${pkg.weight} kg`
-            ]);
+           .map((pkg) => [pkg.length, pkg.width, pkg.height, `${pkg.weight} kg`]);
 
         // Fallback if no valid data found
         const tableBody = packageData.length > 0 ? packageData : [
@@ -155,9 +153,7 @@ export const pdfFinishedProduct = (Details) => {
 
         doc.autoTable({
             startY: finalY,
-            head: [
-                ['Weight']
-            ], // Ensure this is a 2D array
+              head: [["Length", "Width", "Height", "Weight"]], 
             body: tableBody,
             theme: 'grid'
         });
