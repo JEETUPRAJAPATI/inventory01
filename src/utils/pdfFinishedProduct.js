@@ -2,6 +2,7 @@ import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import COMPANY_LOGO from "../assets/logo.jpg";
 import { formatSnakeCase } from "./formatSnakeCase";
+import { formatNumber, formatCurrency } from "./numberFormatter.js";
 
 export const pdfFinishedProduct = (Details) => {
   console.log("Invoice Data:", Details);

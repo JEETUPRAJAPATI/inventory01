@@ -1,3 +1,6 @@
+
+import { formatNumber, formatCurrency } from '../../utils/numberFormatter.js';
+
 import { useState, useEffect } from "react";
 import {
   Card,
