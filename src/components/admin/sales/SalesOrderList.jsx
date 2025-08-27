@@ -11,12 +11,14 @@ import {
   Typography,
   Chip,
   Box,
+  CircularProgress,
 } from "@mui/material";
 import { Edit, Delete, QrCode } from "@mui/icons-material";
 import FilterBar from "../../common/FilterBar";
 import toast from "react-hot-toast";
 import adminService from "../../../services/adminService";
 import { formatSnakeCase } from "../../../utils/formatSnakeCase";
+import { formatNumber } from "../../../utils/numberFormatter";
 
 export default function SalesOrderList({ onFilterChange }) {
   const [filters, setFilters] = useState({
@@ -25,15 +27,19 @@ export default function SalesOrderList({ onFilterChange }) {
     type: "all",
   });
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true); // Added loading state
 
   useEffect(() => {
     const fetchSalesOrders = async () => {
+      setLoading(true); // Set loading to true before fetching
       try {
         const response = await adminService.getSales(filters);
         console.log(response);
         setData(response.data); // Update this based on the response structure
       } catch (error) {
         toast.error("Failed to load sales orders");
+      } finally {
+        setLoading(false); // Set loading to false after fetching
       }
     };
 
@@ -45,17 +51,34 @@ export default function SalesOrderList({ onFilterChange }) {
     onFilterChange(newFilters);
   };
 
-  const filteredOrders = salesOrders.filter((order) => {
-    const matchesSearch =
-      order.customerName.toLowerCase().includes(filters.search.toLowerCase()) ||
-      order.id.toLowerCase().includes(filters.search.toLowerCase());
-    const matchesStatus =
-      filters.status === "all" || order.status === filters.status;
-    const matchesType =
-      filters.type === "all" || order.bagType === filters.type;
+  // Dummy function for handleDelete, replace with actual implementation if needed
+  const handleDelete = (orderId) => {
+    toast.promise(
+      adminService.deleteSalesOrder(orderId).then(() => {
+        setData(data.filter((order) => order._id !== orderId));
+      }),
+      {
+        loading: "Deleting order...",
+        success: "Order deleted successfully",
+        error: "Failed to delete order",
+      }
+    );
+  };
 
-    return matchesSearch && matchesStatus && matchesType;
-  });
+  // Filtering logic is now handled by the backend API call based on filters state
+  // The below filteredOrders is redundant if the API handles filtering.
+  // If frontend filtering is desired, ensure 'data' is populated before filtering.
+  // const filteredOrders = data.filter((order) => {
+  //   const matchesSearch =
+  //     order.customerName.toLowerCase().includes(filters.search.toLowerCase()) ||
+  //     order.orderId.toLowerCase().includes(filters.search.toLowerCase()); // Corrected to orderId
+  //   const matchesStatus =
+  //     filters.status === "all" || order.status === filters.status;
+  //   const matchesType =
+  //     filters.type === "all" || order.bagDetails?.type === filters.type; // Corrected to access bagDetails.type
+
+  //   return matchesSearch && matchesStatus && matchesType;
+  // });
 
   return (
     <Card>
@@ -68,6 +91,7 @@ export default function SalesOrderList({ onFilterChange }) {
           onFilterChange={handleFilterChange}
           filterOptions={{
             status: ["pending", "in_progress", "completed"],
+            type: ["paper", "plastic", "fabric"], // Example types, adjust as needed
           }}
         />
       </Box>
@@ -114,13 +138,13 @@ export default function SalesOrderList({ onFilterChange }) {
                   <TableCell>
                     {formatSnakeCase(order.bagDetails?.type || "N/A")}
                   </TableCell>
-                  <TableCell>{order.quantity}</TableCell>
-                  <TableCell>₹{order.totalAmount}</TableCell>
+                  <TableCell>{formatNumber(order.quantity)}</TableCell>
+                  <TableCell>₹{formatNumber(order.totalAmount)}</TableCell>
                   <TableCell>
                     <Chip
                       label={formatSnakeCase(order.status)}
                       color={
-                        order.status === "Completed" ? "success" : "warning"
+                        order.status === "completed" ? "success" : "warning"
                       }
                       size="small"
                     />
