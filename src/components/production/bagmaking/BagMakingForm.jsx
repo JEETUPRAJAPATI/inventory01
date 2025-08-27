@@ -11,6 +11,7 @@ import FormInput from "../../common/FormInput";
 import FormSelect from "../../common/FormSelect";
 import { bagTypes } from "../../../constants/productionTypes";
 import { colorOptions } from "../../../constants/colors";
+import { formatNumber } from "../../../utils/numberFormatter";
 
 const initialFormData = {
   role_size: "",

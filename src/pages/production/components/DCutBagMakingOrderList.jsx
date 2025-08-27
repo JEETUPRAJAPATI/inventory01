@@ -640,7 +640,7 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
                         ?.cylinder_size || "-"}
                     </TableCell>
                     <TableCell>
-                      {parseFloat(order.quantity || 0).toFixed(2)}
+                      {formatNumber(order.quantity || 0)}
                     </TableCell>
                     <TableCell>
                       {order.productionManagers?.[0]?.production_details

@@ -6,6 +6,7 @@ import { useColorMode } from "../../contexts/ColorModeContext";
 import DCutBagMakingOrderList from "./components/DCutBagMakingOrderList";
 import OrderService from "../../services/dcutBagMakingService";
 import { formatSnakeCase } from "../../utils/formatSnakeCase";
+import { formatNumber } from "../../utils/numberFormatter";
 
 export default function DcutBagMakingDashboard({ type }) {
   const navigate = useNavigate();

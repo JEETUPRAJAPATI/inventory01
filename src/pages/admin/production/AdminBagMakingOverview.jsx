@@ -4,6 +4,7 @@ import SummaryCard from "../../../components/dashboard/SummaryCard";
 import BagMakingOrderList from "../../production/components/BagMakingOrderList";
 import { useAdminData } from "../../../hooks/useAdminData";
 import Loader from "../../../utils/Loader";
+import { formatNumber } from "../../../utils/numberFormatter";
 
 export default function AdminBagMakingOverview({ type }) {
   const [filters, setFilters] = useState({
