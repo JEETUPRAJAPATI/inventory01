@@ -18,11 +18,11 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { PictureAsPdf, Print } from "@mui/icons-material";
+import DeleteConfirmDialog from "../../components/common/DeleteConfirmDialog";
 import toast from "react-hot-toast";
-import { generateInvoicePDF } from "../../utils/pdfGenerator";
-import invoiceService from "../../services/invoiceService"; // Assuming you have an API service for invoices
-import { MailOutline } from "@mui/icons-material";
+import invoiceService from "../../services/invoiceService";
 import { formatSnakeCase } from "../../utils/formatSnakeCase";
+import { formatNumber, formatCurrency } from "../../utils/numberFormatter";
 
 const InvoiceManagement = () => {
   const [invoices, setInvoices] = useState([]);
@@ -240,7 +240,7 @@ const InvoiceManagement = () => {
                         "N/A"}
                     </TableCell>
                     <TableCell>
-                      ₹{invoice.orderDetails?.orderPrice || "0"}
+                      {formatCurrency(invoice.orderDetails?.orderPrice) || "0"}
                     </TableCell>
                     <TableCell>
                       {invoice.date
@@ -307,6 +307,13 @@ const InvoiceManagement = () => {
           setRowsPerPage(parseInt(event.target.value, 10));
           setPage(0);
         }}
+      />
+      <DeleteConfirmDialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Invoice"
+        content={`Are you sure you want to delete invoice ${invoiceToDelete?.invoice_id}?`}
       />
     </Card>
   );

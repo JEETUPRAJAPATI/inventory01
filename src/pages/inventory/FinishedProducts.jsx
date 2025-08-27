@@ -212,7 +212,7 @@ export default function FinishedProducts() {
                     </TableCell>
 
                     <TableCell>
-                      {formatSnakeCase(product.orderDetails?.quantity)}
+                      {formatNumber(product.orderDetails?.quantity)}
                     </TableCell>
 
                     <TableCell>
@@ -224,7 +224,7 @@ export default function FinishedProducts() {
 
                     <TableCell>
                       {product.orderDetails?.orderPrice !== undefined
-                        ? `₹${product.orderDetails.orderPrice}`
+                        ? formatCurrency(product.orderDetails.orderPrice)
                         : "N/A"}
                     </TableCell>
 
