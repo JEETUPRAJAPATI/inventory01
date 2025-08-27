@@ -37,6 +37,7 @@ import { useState, useEffect, useMemo } from "react";
 import OrderService from "../../../services/dcutBagMakingService";
 import QRCodeScanner from "../../../components/QRCodeScanner"; // Assuming this is your QRCodeScanner component
 import { formatSnakeCase } from "../../../utils/formatSnakeCase";
+import { formatNumber } from "../../../utils/numberFormatter";
 const modalStyle = {
   position: "absolute",
   top: "50%",
@@ -518,7 +519,11 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
                   ) : (
                     filteredMaterials.map((material) => (
                       <TableRow key={material._id}>
-                        <TableCell>{material._id}</TableCell>
+                        <TableCell>
+                          {material._id}
+                          <br />
+                          <small>({material.shortId})</small>
+                        </TableCell>
                         <TableCell>{selectedOrderId}</TableCell>
                         <TableCell>{formatSnakeCase(material.gsm)}</TableCell>
                         <TableCell>
@@ -527,7 +532,7 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
                         <TableCell>
                           {formatSnakeCase(material.rollSize)}
                         </TableCell>
-                        <TableCell>{material.quantity}</TableCell>
+                        <TableCell>{formatNumber(material.quantity)}</TableCell>
                         <TableCell>
                           <Chip
                             label={formatSnakeCase(material.status)}
@@ -610,7 +615,11 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
                       {order.productionManagers?.[0]?.production_details
                         ?.roll_size || "-"}
                     </TableCell>
-                    <TableCell>{order.bagDetails?.gsm || "-"}</TableCell>
+                    <TableCell>
+                      {order.bagDetails?.gsm
+                        ? parseFloat(order.bagDetails.gsm).toFixed(2)
+                        : "-"}
+                    </TableCell>
                     <TableCell>
                       {formatSnakeCase(order.bagDetails?.color || "-")}
                     </TableCell>
@@ -634,7 +643,9 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
                       {order.productionManagers?.[0]?.production_details
                         ?.cylinder_size || "-"}
                     </TableCell>
-                    <TableCell>{order.quantity}</TableCell>
+                    <TableCell>
+                      {parseFloat(order.quantity || 0).toFixed(2)}
+                    </TableCell>
                     <TableCell>
                       {order.productionManagers?.[0]?.production_details
                         ?.remarks ||

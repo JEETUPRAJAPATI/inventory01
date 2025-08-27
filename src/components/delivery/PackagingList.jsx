@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import { formatSnakeCase } from "../../utils/formatSnakeCase";
+import { formatNumber } from "../../utils/numberFormatter";
 
 const mockPackages = [
   {
@@ -77,7 +78,7 @@ export default function PackagingList() {
                       size="small"
                     />
                   </TableCell>
-                  <TableCell>{pkg.weight}</TableCell>
+                  <TableCell>{formatNumber(pkg.weight, 2)}</TableCell>
                   <TableCell>{formatSnakeCase(pkg.dimensions)}</TableCell>
                   <TableCell>
                     <IconButton size="small" color="primary">

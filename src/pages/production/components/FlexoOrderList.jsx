@@ -354,14 +354,20 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
       return requiredMaterials.filter((material) => {
         const searchLower = searchTerm.toLowerCase();
         return (
-          material.gsm.toString().toLowerCase().includes(searchLower) ||
+          parseFloat(material.gsm || 0)
+            .toFixed(2)
+            .toLowerCase()
+            .includes(searchLower) ||
           material._id.toString().toLowerCase().includes(searchLower) ||
           material.fabricColor.toLowerCase().includes(searchLower) ||
           (material.rollSize
-            ? material.rollSize.toString().toLowerCase()
+            ? parseFloat(material.rollSize).toFixed(2).toLowerCase()
             : ""
           ).includes(searchLower) ||
-          material.quantity.toString().toLowerCase().includes(searchLower)
+          parseFloat(material.quantity || 0)
+            .toFixed(2)
+            .toLowerCase()
+            .includes(searchLower)
         );
       });
     }, [searchTerm, requiredMaterials]);
@@ -436,7 +442,10 @@ export default function FlexoOrderList({ status = "pending", bagType }) {
                   ) : (
                     filteredMaterials.map((material) => (
                       <TableRow key={material._id}>
-                        <TableCell>{material._id}</TableCell>
+                        <TableCell>
+                          {material._id} <br />
+                          <small>({material.shortId})</small>
+                        </TableCell>
                         <TableCell>{selectedOrderId}</TableCell>
                         <TableCell>{formatSnakeCase(material.gsm)}</TableCell>
                         <TableCell>
