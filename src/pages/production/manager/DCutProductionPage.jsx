@@ -25,7 +25,6 @@ import FullDetailsDialog from "./FullDetailsDialog";
 import { formatSnakeCase } from "../../../utils/formatSnakeCase";
 import formatDate from "../../../utils/formatDate";
 import { formatToIndianDateTimeLines } from "../../../utils/dateUtils";
-import { formatNumber } from "../../../utils/numberFormatter";
 
 export default function DCutProductionPage() {
   function ProductionTable({ type }) {
@@ -213,7 +212,7 @@ export default function DCutProductionPage() {
                         <TableCell>
                           {formatSnakeCase(record.bagDetails?.gsm)}
                         </TableCell>
-                        <TableCell>{record.quantity ? formatNumber(record.quantity) : "N/A"}</TableCell>
+                        <TableCell>{record.quantity ?? "N/A"}</TableCell>
                         <TableCell>
                           {formatSnakeCase(record.bagDetails?.color)}
                         </TableCell>

@@ -1,7 +1,6 @@
 import { Grid } from '@mui/material';
 import SummaryCard from '../../../components/dashboard/SummaryCard';
 import SalesOrderList from '../../../components/admin/sales/SalesOrderList';
-import { formatNumber } from '../../../utils/numberFormatter';
 
 export default function AdminSalesPage() {
   return (

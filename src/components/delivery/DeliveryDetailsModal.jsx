@@ -11,22 +11,21 @@ import {
   Box,
   Stack,
 } from "@mui/material";
-import { formatSnakeCase } from "../../utils/formatSnakeCase";
 export default function DeliveryDetailsModal({ open, delivery, onClose }) {
   if (!delivery || !delivery.data || !delivery.data.data) {
     return null;
   }
 
   const deliveryData = delivery.data.data; // Extract correct data object
-  const customerInfo = delivery.data;
+
   console.log("Delivery data:", deliveryData);
 
   const getStatusColor = (status) => {
     const colors = {
-      pending: "warning",
-      in_transit: "info",
-      delivered: "success",
-      cancelled: "error",
+      Pending: "warning",
+      "In Transit": "info",
+      Delivered: "success",
+      Cancelled: "error",
     };
     return colors[status] || "default";
   };
@@ -47,7 +46,7 @@ export default function DeliveryDetailsModal({ open, delivery, onClose }) {
                 Customer Name
               </Typography>
               <Typography variant="body1" fontWeight="bold">
-                {customerInfo.customer || "N/A"}
+                {deliveryData.customer || "N/A"}
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -55,7 +54,7 @@ export default function DeliveryDetailsModal({ open, delivery, onClose }) {
                 Contact
               </Typography>
               <Typography variant="body1" fontWeight="bold">
-                {customerInfo.contact || "N/A"}
+                {deliveryData.contact || "N/A"}
               </Typography>
             </Grid>
           </Grid>
@@ -112,7 +111,7 @@ export default function DeliveryDetailsModal({ open, delivery, onClose }) {
                 Status
               </Typography>
               <Chip
-                label={formatSnakeCase(deliveryData.status) || "Unknown"}
+                label={deliveryData.status || "Unknown"}
                 color={getStatusColor(deliveryData.status)}
                 size="medium"
               />

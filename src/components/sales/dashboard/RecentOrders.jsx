@@ -15,7 +15,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import orderService from "/src/services/orderService.js";
 import { formatSnakeCase } from "../../../utils/formatSnakeCase";
-import { formatNumber } from "../../../utils/numberFormatter";
 
 const mockOrders = [
   {
@@ -121,7 +120,7 @@ export default function RecentOrders() {
                 <TableRow key={order.id || `order-${order._id}`}>
                   <TableCell>{formatSnakeCase(order.customerName)}</TableCell>
                   <TableCell>{formatSnakeCase(order.jobName)}</TableCell>
-                  <TableCell>{formatNumber(order.quantity)}</TableCell>
+                  <TableCell>{order.quantity}</TableCell>
                   <TableCell>
                     <Chip
                       label={formatSnakeCase(order.status)}

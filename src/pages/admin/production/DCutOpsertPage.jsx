@@ -28,7 +28,6 @@ import {
 import adminService from "../../../services/adminService";
 import toast from "react-hot-toast";
 import { formatSnakeCase } from "../../../utils/formatSnakeCase";
-import { formatNumber } from "../../../utils/numberFormatter";
 export default function DCutOpsertPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);

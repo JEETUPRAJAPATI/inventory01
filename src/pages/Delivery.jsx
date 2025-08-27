@@ -1,7 +1,6 @@
 import { Grid } from '@mui/material';
 import SummaryCard from '../components/dashboard/SummaryCard';
 import DeliveryList from '../components/delivery/DeliveryList';
-import { formatNumber } from '../utils/numberFormatter';
 
 export default function Delivery() {
   return (
@@ -9,7 +8,7 @@ export default function Delivery() {
       <Grid item xs={12} md={6} lg={3}>
         <SummaryCard
           title="Pending Deliveries"
-          value={formatNumber(32)}
+          value="32"
           increase="-8%"
           color="warning"
         />
@@ -17,7 +16,7 @@ export default function Delivery() {
       <Grid item xs={12} md={6} lg={3}>
         <SummaryCard
           title="Delivered Today"
-          value={formatNumber(45)}
+          value="45"
           increase="+18%"
           color="success"
         />

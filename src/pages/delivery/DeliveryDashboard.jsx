@@ -3,7 +3,6 @@ import { Grid } from "@mui/material";
 import SummaryCard from "../../components/dashboard/SummaryCard";
 import DeliveryList from "../../components/delivery/RecentDelivery";
 import deliveryService from "../../services/deliveryService";
-import { formatNumber } from "../../utils/numberFormatter";
 import toast from "react-hot-toast";
 
 export default function DeliveryDashboard() {
@@ -37,7 +36,7 @@ export default function DeliveryDashboard() {
       <Grid item xs={12} md={4}>
         <SummaryCard
           title="Total Deliveries"
-          value={formatNumber(stats.totalDeliveries)}
+          value={stats.totalDeliveries}
           increase="+10%"
           color="primary"
         />
@@ -45,7 +44,7 @@ export default function DeliveryDashboard() {
       <Grid item xs={12} md={4}>
         <SummaryCard
           title="Pending"
-          value={formatNumber(stats.pending)}
+          value={stats.pending}
           increase="+5%"
           color="warning"
         />
@@ -53,7 +52,7 @@ export default function DeliveryDashboard() {
       <Grid item xs={12} md={4}>
         <SummaryCard
           title="Completed"
-          value={formatNumber(stats.completed)}
+          value={stats.completed}
           increase="+12%"
           color="success"
         />

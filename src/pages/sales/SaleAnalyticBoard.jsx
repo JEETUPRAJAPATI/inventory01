@@ -5,7 +5,6 @@ import { Grid } from "@mui/material";
 import toast from "react-hot-toast";
 import salesOrderService from "../../services/orderService";
 import SummaryCard from "../../components/dashboard/SummaryCard";
-import { formatCurrency } from "../../utils/numberFormatter";
 
 export default function SaleAnalyticBoard() {
   const [stats, setStats] = useState(null);
@@ -45,7 +44,7 @@ export default function SaleAnalyticBoard() {
           data: stats.cancelledOrders,
           color: "error",
         },
-        { title: "Total Amount", data: { ...stats.totalAmount, value: formatCurrency(stats.totalAmount?.value) }, color: "info" },
+        { title: "Total Amount", data: stats.totalAmount, color: "info" },
       ].map((item, i) => (
         <Grid item xs={12} md={2.4} key={i} sx={{ flexGrow: 1 }}>
           <SummaryCard

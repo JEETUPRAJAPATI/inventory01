@@ -39,7 +39,6 @@ import {
   DirectionsCar,
 } from "@mui/icons-material";
 import { formatSnakeCase } from "../../utils/formatSnakeCase";
-import { formatNumber } from "../../utils/numberFormatter";
 
 export default function FinishedProductModel({ open, production, onClose }) {
   if (!production || !production.data) {
@@ -50,10 +49,10 @@ export default function FinishedProductModel({ open, production, onClose }) {
 
   const getStatusColor = (status) => {
     const colors = {
-      pending: "warning",
-      in_transit: "info",
-      delivered: "success",
-      cancelled: "error",
+      Pending: "warning",
+      "In Transit": "info",
+      Delivered: "success",
+      Cancelled: "error",
     };
     return colors[status] || "default";
   };
@@ -247,7 +246,7 @@ export default function FinishedProductModel({ open, production, onClose }) {
                             Total Quantity
                           </TableCell>
                           <TableCell sx={{ fontWeight: "bold" }}>
-                            {formatNumber(productionData.totalQuantity ?? 0, 2)}
+                            {(productionData.totalQuantity ?? 0).toFixed(2)}
                           </TableCell>
                         </TableRow>
                         {/* ✅ Raw for Scrap Quantity */}
@@ -256,10 +255,7 @@ export default function FinishedProductModel({ open, production, onClose }) {
                             Scrap Quantity
                           </TableCell>
                           <TableCell sx={{ fontWeight: "bold" }}>
-                            {formatNumber(
-                              productionData?.scrapQuantity ?? 0,
-                              2
-                            )}
+                            {(productionData?.scrapQuantity ?? 0).toFixed(2)}
                           </TableCell>
                         </TableRow>
                         {/* Remaining Quantity */}

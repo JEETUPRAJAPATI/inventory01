@@ -33,7 +33,6 @@ import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import { formatSnakeCase } from "../../../utils/formatSnakeCase";
 import { formatToIndianDateTimeLines } from "../../../utils/dateUtils";
-import { formatNumber, formatCurrency } from "../../../utils/numberFormatter";
 
 export default function OrderList({ orders, refreshOrders }) {
   const [formOpen, setFormOpen] = useState(false);
@@ -124,8 +123,8 @@ export default function OrderList({ orders, refreshOrders }) {
       "Customer Name": order.customerName,
       "Job Name": order.jobName,
       "Bag Type": formatSnakeCase(order.bagDetails.type),
-      Quantity: formatNumber(order.quantity),
-      "Order Value": formatCurrency(order.orderPrice),
+      Quantity: order.quantity,
+      "Order Value": order.orderPrice,
       Status: order.status.toUpperCase(),
       "Order Date": new Date(order.createdAt).toLocaleDateString(),
       "Mobile Number": order.mobileNumber,
@@ -162,8 +161,8 @@ export default function OrderList({ orders, refreshOrders }) {
       order.customerName,
       order.jobName,
       formatSnakeCase(order.bagDetails.type),
-      formatNumber(order.quantity),
-      formatCurrency(order.orderPrice),
+      order.quantity,
+      order.orderPrice,
       order.status.toUpperCase(),
     ]);
 
@@ -314,8 +313,8 @@ export default function OrderList({ orders, refreshOrders }) {
                     <TableCell>
                       {formatSnakeCase(order.bagDetails.type)}
                     </TableCell>
-                    <TableCell>{formatNumber(order.quantity)}</TableCell>
-                    <TableCell>{formatCurrency(order.orderPrice)}</TableCell>
+                    <TableCell>{order.quantity}</TableCell>
+                    <TableCell>{order.orderPrice}</TableCell>
                     <TableCell>
                       <Chip
                         label={formatSnakeCase(order.status)}

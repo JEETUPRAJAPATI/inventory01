@@ -17,7 +17,6 @@ import {
 import { Visibility, CheckCircle, Cancel } from "@mui/icons-material";
 import DeliveryDetailsModal from "./DeliveryDetailsModal";
 import toast from "react-hot-toast";
-import { formatNumber } from "../../../../utils/numberFormatter";
 
 const mockDeliveries = [
   {
@@ -49,7 +48,6 @@ export default function DeliveryList({ status }) {
   const [selectedDelivery, setSelectedDelivery] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter, setDateFilter] = useState("");
-  const loading = false; // Assuming loading state for demonstration
 
   const handleView = (delivery) => {
     setSelectedDelivery(delivery);

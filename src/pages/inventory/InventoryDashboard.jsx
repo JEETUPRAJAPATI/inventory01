@@ -8,7 +8,6 @@ import toast from "react-hot-toast";
 import authService from "../../services/authService";
 import axios from "axios";
 import Loader from "../../utils/Loader";
-import { formatNumber, formatCurrency } from "../../utils/numberFormatter";
 
 export default function InventoryDashboard() {
   const [loading, setLoading] = useState(true);
@@ -51,7 +50,7 @@ export default function InventoryDashboard() {
       <Grid item xs={12} md={2} lg={2}>
         <SummaryCard
           title="Raw Materials"
-          value={formatNumber(stats.totalRawMaterials)}
+          value={`${stats.totalRawMaterials.toLocaleString()}`}
           increase=""
           color="primary"
         />
@@ -59,7 +58,7 @@ export default function InventoryDashboard() {
       <Grid item xs={12} md={2} lg={2}>
         <SummaryCard
           title="Invoices"
-          value={formatNumber(stats.totalInvoices)}
+          value={`${stats.totalInvoices.toLocaleString()}`}
           increase=""
           color="info"
         />
@@ -67,7 +66,7 @@ export default function InventoryDashboard() {
       <Grid item xs={12} md={2} lg={2}>
         <SummaryCard
           title="Packages"
-          value={formatNumber(stats.totalPackages)}
+          value={`${stats.totalPackages.toLocaleString()}`}
           increase=""
           color="secondary"
         />
@@ -75,7 +74,7 @@ export default function InventoryDashboard() {
       <Grid item xs={12} md={2} lg={2}>
         <SummaryCard
           title="Deliveries"
-          value={formatNumber(stats.totalDeliveries)}
+          value={`${stats.totalDeliveries.toLocaleString()}`}
           increase=""
           color="success"
         />
@@ -83,7 +82,7 @@ export default function InventoryDashboard() {
       <Grid item xs={12} md={2} lg={2}>
         <SummaryCard
           title="Finished Products"
-          value={formatNumber(stats.totalFinishedProducts)}
+          value={`${stats.totalFinishedProducts.toLocaleString()}`}
           increase=""
           color="info"
         />
@@ -91,7 +90,7 @@ export default function InventoryDashboard() {
       <Grid item xs={12} md={2} lg={2}>
         <SummaryCard
           title="Revenue"
-          value={formatCurrency(stats.totalRevenue)}
+          value={`₹${stats.totalRevenue.toLocaleString()}`}
           increase=""
           color="info"
         />

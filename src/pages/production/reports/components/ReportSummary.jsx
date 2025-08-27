@@ -1,13 +1,12 @@
 import { Grid } from '@mui/material';
 import SummaryCard from '../../../../components/dashboard/SummaryCard';
-import { formatNumber } from '../../../../utils/numberFormatter';
 
 export default function ReportSummary({ records }) {
   const getTotalProduction = () => records.length;
-
+  
   const getCompletedProduction = () => 
     records.filter(record => record.status === 'completed').length;
-
+  
   const getEfficiencyRate = () => {
     const completed = getCompletedProduction();
     const total = getTotalProduction();
@@ -19,14 +18,14 @@ export default function ReportSummary({ records }) {
       <Grid item xs={12} md={4}>
         <SummaryCard
           title="Total Production"
-          value={formatNumber(getTotalProduction())}
+          value={getTotalProduction()}
           color="primary"
         />
       </Grid>
       <Grid item xs={12} md={4}>
         <SummaryCard
           title="Completed"
-          value={formatNumber(getCompletedProduction())}
+          value={getCompletedProduction()}
           color="success"
         />
       </Grid>

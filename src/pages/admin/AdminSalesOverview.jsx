@@ -24,7 +24,6 @@ import OrderForm from "../../components/sales/orders/OrderForm";
 import DeleteConfirmDialog from "../../components/common/DeleteConfirmDialog";
 import { Edit, Delete, Search } from "@mui/icons-material";
 import { formatSnakeCase } from "../../utils/formatSnakeCase";
-import { formatNumber } from "../../utils/numberFormatter";
 export default function AdminSalesOverview() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);

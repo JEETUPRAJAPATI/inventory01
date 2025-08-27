@@ -1,6 +1,3 @@
-
-import { formatNumber, formatCurrency } from '../../utils/numberFormatter.js';
-
 import { useState, useEffect } from "react";
 import {
   Card,
@@ -212,7 +209,7 @@ export default function FinishedProducts() {
                     </TableCell>
 
                     <TableCell>
-                      {formatNumber(product.orderDetails?.quantity)}
+                      {formatSnakeCase(product.orderDetails?.quantity)}
                     </TableCell>
 
                     <TableCell>
@@ -224,7 +221,7 @@ export default function FinishedProducts() {
 
                     <TableCell>
                       {product.orderDetails?.orderPrice !== undefined
-                        ? formatCurrency(product.orderDetails.orderPrice)
+                        ? `₹${product.orderDetails.orderPrice}`
                         : "N/A"}
                     </TableCell>
 

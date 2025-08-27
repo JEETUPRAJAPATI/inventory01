@@ -21,8 +21,6 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import adminService from "../../../services/adminService";
 import { formatSnakeCase } from "../../../utils/formatSnakeCase";
-import { formatToIndianDateTimeLines } from "../../../utils/dateUtils";
-import { formatNumber } from "../../../utils/numberFormatter";
 
 export default function FlexoOrderList({
   orders,
@@ -97,7 +95,7 @@ export default function FlexoOrderList({
                 <TableCell>{formatSnakeCase(order.bagType)}</TableCell>
                 <TableCell>{order.rollSize}</TableCell>
                 <TableCell>{order.cylinderSize}</TableCell>
-                <TableCell>{order.quantity ? formatNumber(order.quantity) : '0'}</TableCell>
+                <TableCell>{order.quantity}</TableCell>
                 <TableCell>
                   <Chip
                     label={order.status}

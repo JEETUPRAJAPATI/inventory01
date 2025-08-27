@@ -15,7 +15,6 @@ import ReportTable from './components/ReportTable';
 import ReportCharts from './components/ReportCharts';
 import ReportFilters from './components/ReportFilters';
 import OrderService from '../../../services/wcutBagMakingServices';
-import { formatNumber } from '../../../utils/numberFormatter';
 
 export default function WcutBagMakingReportsPage({ type }) {
   const navigate = useNavigate();

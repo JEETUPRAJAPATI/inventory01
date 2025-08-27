@@ -28,7 +28,6 @@ import {
 import adminService from "../../../services/adminService";
 import toast from "react-hot-toast";
 import { formatSnakeCase } from "../../../utils/formatSnakeCase";
-import { formatNumber } from "../../../utils/numberFormatter";
 
 export default function WCutBagMakingPage() {
   const [orders, setOrders] = useState([]);
@@ -179,7 +178,7 @@ export default function WCutBagMakingPage() {
                     <TableCell>
                       {formatSnakeCase(order.orderDetails?.jobName)}
                     </TableCell>
-                    <TableCell>{order.orderDetails?.quantity ? formatNumber(order.orderDetails.quantity) : "N/A"}</TableCell>
+                    <TableCell>{order.orderDetails?.quantity}</TableCell>
                     <TableCell>
                       {formatSnakeCase(order.orderDetails?.customerName)}
                     </TableCell>
@@ -205,7 +204,7 @@ export default function WCutBagMakingPage() {
                     <TableCell>
                       {formatSnakeCase(order.orderDetails?.bagDetails?.gsm)}
                     </TableCell>
-                    <TableCell>{order.scrapQuantity ? formatNumber(order.scrapQuantity) : "N/A"}</TableCell>
+                    <TableCell>{order.scrapQuantity || "N/A"}</TableCell>
                     <TableCell>
                       <Chip
                         label={formatSnakeCase(order.status)}

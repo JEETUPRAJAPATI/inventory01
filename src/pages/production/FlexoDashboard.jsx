@@ -6,7 +6,6 @@ import { useColorMode } from "../../contexts/ColorModeContext";
 import FlexoOrderList from "./components/FlexoOrderList";
 import OrderService from "../../services/wcutBagFlexoService";
 import { formatSnakeCase } from "../../utils/formatSnakeCase";
-import { formatNumber } from "../../utils/numberFormatter";
 
 export default function FlexoDashboard() {
   const navigate = useNavigate();

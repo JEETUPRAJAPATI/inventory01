@@ -14,7 +14,6 @@ import {
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import { formatSnakeCase } from "../../utils/formatSnakeCase";
-import { formatNumber } from "../../utils/numberFormatter";
 
 const mockPackages = [
   {
@@ -54,7 +53,7 @@ export default function PackagingList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {false ? ( // Assuming loading is false for this example, as it's not defined in the provided snippet.
+            {loading ? (
               <TableRow>
                 <TableCell colSpan={6} align="center">
                   <CircularProgress />
@@ -78,7 +77,7 @@ export default function PackagingList() {
                       size="small"
                     />
                   </TableCell>
-                  <TableCell>{formatNumber(pkg.weight, 2)}</TableCell>
+                  <TableCell>{pkg.weight}</TableCell>
                   <TableCell>{formatSnakeCase(pkg.dimensions)}</TableCell>
                   <TableCell>
                     <IconButton size="small" color="primary">
