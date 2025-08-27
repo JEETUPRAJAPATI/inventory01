@@ -6,6 +6,7 @@ import { useColorMode } from "../../contexts/ColorModeContext";
 import OrderService from "../../../src/services/wcutBagMakingServices";
 import WcutBagMakingOrderList from "./components/WCutBagMakingOrderLists";
 import { formatSnakeCase } from "../../utils/formatSnakeCase";
+import { formatNumber } from "../../utils/numberFormatter";
 
 export default function WcutBagMakingDashboard({ type }) {
   const navigate = useNavigate();
