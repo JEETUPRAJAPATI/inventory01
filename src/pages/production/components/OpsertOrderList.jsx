@@ -24,6 +24,7 @@ import { Print, Update, LocalShipping } from "@mui/icons-material";
 import toast from "react-hot-toast";
 import OrderService from "../../../services/dcutOpsertService.js";
 import { formatSnakeCase } from "../../../utils/formatSnakeCase.js";
+import { formatNumber } from "../../../utils/numberFormatter";
 
 export default function OpsertOrderList({
   orders,
@@ -138,7 +139,7 @@ export default function OpsertOrderList({
                       {order.productionManagers?.[0]?.production_details
                         ?.cylinder_size || "-"}
                     </TableCell>
-                    <TableCell>{order.quantity}</TableCell>
+                    <TableCell>{formatNumber(order.quantity)}</TableCell>
                     <TableCell>
                       {order.productionManagers?.[0]?.production_details
                         ?.remarks ||

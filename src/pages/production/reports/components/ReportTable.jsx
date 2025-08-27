@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import { formatSnakeCase } from "../../../../utils/formatSnakeCase";
 import { formatToIndianDateTimeLines } from "../../../../utils/dateUtils";
+import { formatNumber } from "../../../../utils/numberFormatter";
 
 export default function ReportTable({ records }) {
   const getStatusColor = (status) => {
@@ -96,7 +97,7 @@ export default function ReportTable({ records }) {
                       {formatSnakeCase(record.bagType) || "N/A"}
                     </TableCell>
                     <TableCell>
-                      {record.quantity !== undefined ? record.quantity : "N/A"}
+                      {record.quantity ? formatNumber(record.quantity) : "N/A"}
                     </TableCell>
                     <TableCell>
                       <Chip

@@ -1,6 +1,7 @@
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import COMPANY_LOGO from '../assets/logo.jpg';
+import { formatNumber, formatCurrency } from './numberFormatter.js';
 
 export const generateInvoicePDF = (invoiceData) => {
   try {

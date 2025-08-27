@@ -132,8 +132,14 @@ export default function UpdateDetailsDialog({
                 label="Quantity (in Kgs)"
                 name="quantity_kgs"
                 type="number"
-                value={formData.quantity_kgs || quantityKg} // Use quantityKg if empty
-                onChange={handleChange}
+                value={formData.quantity_kgs ?? ""} // keep controlled input
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    quantity_kgs:
+                      e.target.value === "" ? "" : parseFloat(e.target.value),
+                  })
+                }
                 required
                 // disabled={formData.quantity_kgs || quantityKg} // Disable if not empty
               />

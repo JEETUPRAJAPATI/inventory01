@@ -20,6 +20,7 @@ import DeleteConfirmDialog from "../../components/common/DeleteConfirmDialog";
 import toast from "react-hot-toast";
 import purchaseOrderService from "../../services/purchaseOrderService"; // Assumed service file for API calls
 import { formatSnakeCase } from "../../utils/formatSnakeCase";
+import { formatNumber, formatCurrency } from "../../utils/numberFormatter";
 
 export default function PurchaseOrders() {
   const [orders, setOrders] = useState([]);
@@ -159,8 +160,8 @@ export default function PurchaseOrders() {
                     <TableCell>{order.order_number}</TableCell>
                     <TableCell>{order.supplier}</TableCell>
                     <TableCell>{formatSnakeCase(order.materialType)}</TableCell>
-                    <TableCell>{order.quantity}</TableCell>
-                    <TableCell>₹{order.totalAmount}</TableCell>
+                    <TableCell>{formatNumber(order.quantity)}</TableCell>
+                    <TableCell>{formatCurrency(order.totalAmount)}</TableCell>
                     <TableCell>
                       {new Intl.DateTimeFormat("en-GB", {
                         year: "numeric",

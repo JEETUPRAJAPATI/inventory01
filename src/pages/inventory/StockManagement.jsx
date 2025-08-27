@@ -17,6 +17,7 @@ import { Add, Edit, Delete } from "@mui/icons-material";
 import DeleteConfirmDialog from "../../components/common/DeleteConfirmDialog";
 import toast from "react-hot-toast";
 import { formatSnakeCase } from "../../utils/formatSnakeCase";
+import { formatNumber } from "../../utils/numberFormatter";
 
 const mockStock = [
   {
@@ -93,9 +94,9 @@ export default function StockManagement() {
                   <TableRow key={item.id}>
                     <TableCell>{item.itemName}</TableCell>
                     <TableCell>{formatSnakeCase(item.category)}</TableCell>
-                    <TableCell>{item.quantity}</TableCell>
+                    <TableCell>{formatNumber(item.quantity)}</TableCell>
                     <TableCell>{formatSnakeCase(item.unit)}</TableCell>
-                    <TableCell>{item.reorderPoint}</TableCell>
+                    <TableCell>{formatNumber(item.reorderPoint)}</TableCell>
                     <TableCell>
                       <Chip
                         label={item.status}

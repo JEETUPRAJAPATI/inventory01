@@ -54,7 +54,7 @@ export default function PackagingList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {loading ? (
+            {false ? ( // Assuming loading is false for this example, as it's not defined in the provided snippet.
               <TableRow>
                 <TableCell colSpan={6} align="center">
                   <CircularProgress />

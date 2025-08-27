@@ -4,6 +4,7 @@ import SummaryCard from "../../../components/dashboard/SummaryCard";
 import OpsertOrderList from "../../production/components/OpsertOrderList";
 import { useAdminData } from "../../../hooks/useAdminData";
 import Loader from "../../../utils/Loader";
+import { formatNumber } from "../../../utils/numberFormatter";
 
 export default function AdminOpsertOverview() {
   const [filters, setFilters] = useState({
@@ -28,7 +29,7 @@ export default function AdminOpsertOverview() {
       <Grid item xs={12} md={3}>
         <SummaryCard
           title="Total Orders"
-          value={data.totalOrders || 0}
+          value={formatNumber(data.totalOrders || 0)}
           increase={data.ordersGrowth}
           color="primary"
         />
@@ -36,7 +37,7 @@ export default function AdminOpsertOverview() {
       <Grid item xs={12} md={3}>
         <SummaryCard
           title="In Progress"
-          value={data.inProgressOrders || 0}
+          value={formatNumber(data.inProgressOrders || 0)}
           increase={data.progressGrowth}
           color="warning"
         />
@@ -44,7 +45,7 @@ export default function AdminOpsertOverview() {
       <Grid item xs={12} md={3}>
         <SummaryCard
           title="Completed Today"
-          value={data.completedToday || 0}
+          value={formatNumber(data.completedToday || 0)}
           increase={data.completionGrowth}
           color="success"
         />

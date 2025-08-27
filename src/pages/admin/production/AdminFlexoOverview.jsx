@@ -5,6 +5,7 @@ import FlexoOrderList from "../../production/components/FlexoOrderList";
 import VerifyOrderDialog from "../../production/components/VerifyOrderDialog";
 import { useAdminData } from "../../../hooks/useAdminData";
 import Loader from "../../../utils/Loader";
+import { formatNumber } from "../../../utils/numberFormatter";
 
 export default function AdminFlexoOverview() {
   const [verifyDialogOpen, setVerifyDialogOpen] = useState(false);
@@ -33,7 +34,7 @@ export default function AdminFlexoOverview() {
       <Grid item xs={12} md={3}>
         <SummaryCard
           title="Total Orders"
-          value={data.totalOrders || 0}
+          value={formatNumber(data.totalOrders || 0)}
           increase={data.ordersGrowth}
           color="primary"
         />
@@ -41,7 +42,7 @@ export default function AdminFlexoOverview() {
       <Grid item xs={12} md={3}>
         <SummaryCard
           title="In Progress"
-          value={data.inProgressOrders || 0}
+          value={formatNumber(data.inProgressOrders || 0)}
           increase={data.progressGrowth}
           color="warning"
         />
@@ -49,7 +50,7 @@ export default function AdminFlexoOverview() {
       <Grid item xs={12} md={3}>
         <SummaryCard
           title="Completed Today"
-          value={data.completedToday || 0}
+          value={formatNumber(data.completedToday || 0)}
           increase={data.completionGrowth}
           color="success"
         />

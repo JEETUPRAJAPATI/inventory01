@@ -28,6 +28,7 @@ import {
   Delete,
 } from "@mui/icons-material";
 import { formatSnakeCase } from "../../../utils/formatSnakeCase";
+import { formatNumber } from "../../../utils/numberFormatter";
 export default function DCutBagMakingPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -177,7 +178,7 @@ export default function DCutBagMakingPage() {
                     <TableCell>
                       {formatSnakeCase(order.orderDetails?.jobName)}
                     </TableCell>
-                    <TableCell>{order.orderDetails?.quantity}</TableCell>
+                    <TableCell>{order.orderDetails?.quantity ? formatNumber(order.orderDetails.quantity) : "N/A"}</TableCell>
                     <TableCell>
                       {formatSnakeCase(order.orderDetails?.customerName)}
                     </TableCell>
@@ -203,7 +204,7 @@ export default function DCutBagMakingPage() {
                     <TableCell>
                       {formatSnakeCase(order.orderDetails?.bagDetails?.gsm)}
                     </TableCell>
-                    <TableCell>{order.scrapQuantity || "N/A"}</TableCell>
+                    <TableCell>{order.scrapQuantity ? formatNumber(order.scrapQuantity) : "N/A"}</TableCell>
                     <TableCell>
                       <Chip
                         label={formatSnakeCase(order.status)}

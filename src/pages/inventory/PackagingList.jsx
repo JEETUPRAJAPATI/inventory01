@@ -60,6 +60,9 @@ export default function PackagingList() {
     height: "",
     weight: "",
   });
+  // Assuming 'loading' state is managed elsewhere or will be added.
+  // For this example, we'll use a placeholder value.
+  const loading = false; 
 
   const handleEdit = (pkg) => {
     setSelectedPackage(pkg);

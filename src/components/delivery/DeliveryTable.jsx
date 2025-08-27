@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import { LocalShipping, CheckCircle } from "@mui/icons-material";
 import { formatSnakeCase } from "../../utils/formatSnakeCase";
+import { formatNumber } from "../../utils/numberFormatter";
 
 export default function DeliveryTable({ deliveries, onStatusUpdate }) {
   const theme = useTheme();
@@ -139,13 +140,7 @@ export default function DeliveryTable({ deliveries, onStatusUpdate }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={7} align="center">
-                  <CircularProgress />
-                </TableCell>
-              </TableRow>
-            ) : deliveries.length === 0 ? (
+            {deliveries.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} align="center">
                   <Typography>No deliveries found</Typography>

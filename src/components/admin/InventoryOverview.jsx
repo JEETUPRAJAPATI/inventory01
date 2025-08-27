@@ -19,6 +19,7 @@ import purchaseOrderService from "../../services/purchaseOrderService";
 import { API_BASE_URL } from "../../config/constants.js";
 import authService from "../../services/authService.js";
 import { formatSnakeCase } from "../../utils/formatSnakeCase.js";
+import { formatNumber } from "../../utils/numberFormatter.js";
 export default function InventoryOverview() {
   const [inventoryData, setInventoryData] = useState([]);
   const [error, setError] = useState(null);
@@ -120,10 +121,10 @@ export default function InventoryOverview() {
                   inventoryData.map((row) => (
                     <TableRow key={row.id}>
                       <TableCell>{formatSnakeCase(row.category)}</TableCell>
-                      <TableCell>{row.totalItems}</TableCell>
+                      <TableCell>{formatNumber(row.totalItems)}</TableCell>
                       <TableCell>
                         <Chip
-                          label={formatSnakeCase(row.lowStock)}
+                          label={formatNumber(row.lowStock)}
                           color={row.lowStock > 10 ? "error" : "warning"}
                           size="small"
                         />

@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { Send } from '@mui/icons-material';
 import toast from 'react-hot-toast';
+import { formatNumber } from '../../utils/numberFormatter.js';
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
