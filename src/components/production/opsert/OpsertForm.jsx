@@ -12,6 +12,7 @@ import FormSelect from "../../common/FormSelect";
 import { colorOptions } from "../../../constants/colors";
 import { bagTypes } from "../../../constants/productionTypes";
 import { printTypes } from "../../../constants/printTypes";
+import { formatNumber } from "../../../utils/numberFormatter";
 
 const initialFormData = {
   agent_name: "",
@@ -120,7 +121,7 @@ export default function OpsertForm({ open, onClose, onSubmit, record = null }) {
                 onChange={(e) => handleChange({
                   target: {
                     name: e.target.name,
-                    value: parseFloat(e.target.value || 0).toFixed(2)
+                    value: formatNumber(e.target.value || 0)
                   }
                 })}
                 required
@@ -132,7 +133,12 @@ export default function OpsertForm({ open, onClose, onSubmit, record = null }) {
                 name="qnt"
                 type="number"
                 value={formData.qnt}
-                onChange={handleChange}
+                onChange={(e) => handleChange({
+                  target: {
+                    name: e.target.name,
+                    value: formatNumber(e.target.value || 0)
+                  }
+                })}
                 required
               />
             </Grid>

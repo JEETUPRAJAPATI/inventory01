@@ -16,6 +16,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import adminService from "../../../services/adminService";
 import { formatSnakeCase } from "../../../utils/formatSnakeCase";
+import { formatNumber } from "../../../utils/numberFormatter";
 
 export default function OpsertOrderList({ orders, onFilterChange, filters }) {
   const handleStartPrinting = async (orderId) => {
