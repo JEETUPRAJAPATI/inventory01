@@ -27,6 +27,7 @@ import orderService from "/src/services/productionManagerService.js";
 import { formatSnakeCase } from "../../../utils/formatSnakeCase";
 import formatDate from "../../../utils/formatDate";
 import { formatToIndianDateTimeLines } from "../../../utils/dateUtils";
+import { formatNumber } from "../../../utils/numberFormatter";
 
 export default function WCutProductionPage() {
   function ProductionTable({ type }) {
@@ -205,7 +206,7 @@ export default function WCutProductionPage() {
                           <TableCell>
                             {formatSnakeCase(record.bagDetails?.gsm || "N/A")}
                           </TableCell>
-                          <TableCell>{record.quantity ?? "N/A"}</TableCell>
+                          <TableCell>{record.quantity ? formatNumber(record.quantity) : "N/A"}</TableCell>
                           <TableCell>
                             {formatSnakeCase(
                               record.bagDetails?.printColor || "N/A"

@@ -3,6 +3,7 @@ import { Grid } from "@mui/material";
 import SummaryCard from "../../../components/dashboard/SummaryCard";
 import ProductionOverview from "../../../components/admin/ProductionOverview";
 import adminService from "../../../services/adminService";
+import { formatNumber } from "../../../utils/numberFormatter";
 export default function ManagerDashboard() {
   const [stats, setStats] = useState({
     totalProduction: 0,
@@ -36,13 +37,13 @@ export default function ManagerDashboard() {
       {[
         {
           title: "Total Production",
-          value: stats.totalProduction,
+          value: formatNumber(stats.totalProduction),
           color: "primary",
         },
-        { title: "Active Orders", value: stats.activeOrders, color: "warning" },
+        { title: "Active Orders", value: formatNumber(stats.activeOrders), color: "warning" },
         {
           title: "Completed Today",
-          value: stats.completedToday,
+          value: formatNumber(stats.completedToday),
           color: "success",
         },
         {
