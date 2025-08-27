@@ -519,7 +519,11 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
                   ) : (
                     filteredMaterials.map((material) => (
                       <TableRow key={material._id}>
-                        <TableCell>{material._id}</TableCell>
+                        <TableCell>
+                          {material._id}
+                          <br />
+                          <small>({material.shortId})</small>
+                        </TableCell>
                         <TableCell>{selectedOrderId}</TableCell>
                         <TableCell>{formatSnakeCase(material.gsm)}</TableCell>
                         <TableCell>
