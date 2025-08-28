@@ -265,7 +265,7 @@ export const pdfFinishedProduct = (Details) => {
     doc.setFontSize(8);
     doc.setTextColor(150);
     doc.text(
-      "For inquiries, contact: support@company.com",
+      "For inquiries, contact: info@thailiwale.com",
       pageWidth / 2,
       285,
       { align: "center" }
