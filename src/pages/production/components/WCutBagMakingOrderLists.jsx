@@ -145,7 +145,11 @@ export default function WCutBagMakingOrderLists({
                     {order.productionManagers?.[0]?.production_details
                       ?.roll_size || "-"}
                   </TableCell>
-                  <TableCell>{order.bagDetails?.gsm ? parseFloat(order.bagDetails.gsm).toFixed(2) : "-"}</TableCell>
+                  <TableCell>
+                    {order.bagDetails?.gsm
+                      ? parseFloat(order.bagDetails.gsm).toFixed(2)
+                      : "-"}
+                  </TableCell>
                   <TableCell>{order.bagDetails?.color || "-"}</TableCell>
                   <TableCell>{order.bagDetails?.printColor || "-"}</TableCell>
                   <TableCell>
@@ -161,7 +165,9 @@ export default function WCutBagMakingOrderLists({
                     {order.productionManagers?.[0]?.production_details
                       ?.cylinder_size || "-"}
                   </TableCell>
-                  <TableCell>{parseFloat(order.quantity || 0).toFixed(2)}</TableCell>
+                  <TableCell>
+                    {parseFloat(order.quantity || 0).toFixed(2)}
+                  </TableCell>
                   <TableCell>
                     {order.productionManagers?.[0]?.production_details
                       ?.remarks ||
@@ -293,14 +299,16 @@ export default function WCutBagMakingOrderLists({
             type="number"
             value={scrapToUpdate}
             onChange={(e) => {
-              if (e.target.value > selectedOrder?.quantity) {
+              const value = Number(e.target.value); // convert string → number
+
+              if (value > selectedOrder?.quantity) {
                 toast.error(
                   "Scrap quantity cannot be more than order quantity."
                 );
                 return;
               }
 
-              setScrapToUpdate(e.target.value);
+              setScrapToUpdate(value); // keep as number in state
             }}
             inputProps={{ min: 0 }}
           />

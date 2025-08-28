@@ -732,13 +732,14 @@ export default function BagMakingOrderList({ status = "pending", bagType }) {
             type="number"
             value={scrapToUpdate}
             onChange={(e) => {
-              if (e.target.value > selectedOrder?.quantity) {
+              const value = Number(e.target.value); // convert string → number
+              if (value > selectedOrder?.quantity) {
                 toast.error(
                   "Scrap quantity cannot be more than order quantity."
                 );
                 return;
               }
-              setScrapToUpdate(e.target.value);
+              setScrapToUpdate(value); // keep it numeric
             }}
             inputProps={{ min: 0 }}
           />
