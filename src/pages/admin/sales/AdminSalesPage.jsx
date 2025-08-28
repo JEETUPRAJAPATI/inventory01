@@ -1,6 +1,6 @@
-import { Grid } from '@mui/material';
-import SummaryCard from '../../../components/dashboard/SummaryCard';
-import SalesOrderList from '../../../components/admin/sales/SalesOrderList';
+import { Grid } from "@mui/material";
+import SummaryCard from "../../../components/dashboard/SummaryCard";
+import SalesOrderList from "../../../components/admin/sales/SalesOrderList";
 
 export default function AdminSalesPage() {
   return (
@@ -17,7 +17,7 @@ export default function AdminSalesPage() {
         <SummaryCard
           title="Pending Orders"
           value="32"
-          increase="+5%"
+          increase="+10%"
           color="warning"
         />
       </Grid>
